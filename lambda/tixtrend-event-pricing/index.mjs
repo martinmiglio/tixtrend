@@ -9,11 +9,14 @@ const tableName = "tixtrend-event-prices";
 export const handler = async (event) => {
   try {
     const { httpMethod } = event;
+    if (!httpMethod) {
+      return handleGet(event);
+    }
     switch (httpMethod) {
       case "GET":
-        return handleGet(event, context);
+        return handleGet(event);
       case "OPTIONS":
-        return handleOptions(event, context);
+        return handleOptions();
       default:
         return {
           statusCode: 400,
@@ -31,9 +34,9 @@ export const handler = async (event) => {
   }
 };
 
-const handleGet = async (event, context) => {
-  const { pathParameters } = event;
-  const { event_id } = pathParameters;
+const handleGet = async (event) => {
+  const { queryStringParameters } = event;
+  const { event_id } = queryStringParameters;
 
   const { Items } = await dynamo
     .query({
@@ -60,7 +63,7 @@ const handleGet = async (event, context) => {
   };
 };
 
-const handleOptions = async (event, context) => {
+const handleOptions = async () => {
   // Return the allowed methods for CORS
   return {
     statusCode: 200,
