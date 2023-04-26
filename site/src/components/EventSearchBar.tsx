@@ -29,7 +29,7 @@ const EventSearchBar = ({
 
   return (
     <div className="flex justify-center items-center px-4 pb-4">
-      <div className="w-full max-w-sm flex items-center py-2 rounded-full bg-white">
+      <div className="w-full max-w-screen-sm flex items-center py-2 rounded-full bg-white">
         <input
           className="appearance-none bg-transparent border-none w-full text-slate-800 py-1 px-5 leading-tight focus:outline-none"
           type="text"
