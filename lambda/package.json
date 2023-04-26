@@ -1,0 +1,20 @@
+{
+    "name": "my-lambda",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "zip": "node scripts/zip-functions.js",
+        "upload:event-pricing": "aws lambda update-function-code --no-cli-pager --function-name tixtrend-event-pricing --zip-file fileb://temp/archives/tixtrend-event-pricing.zip",
+        "upload:event-watch": "aws lambda update-function-code --no-cli-pager --function-name tixtrend-event-watch --zip-file fileb://temp/archives/tixtrend-event-watch.zip",
+        "upload:poll-prices": "aws lambda update-function-code --no-cli-pager --function-name tixtrend-poll-prices --zip-file fileb://temp/archives/tixtrend-poll-prices.zip",
+        "upload": "npm run zip & npm run upload:event-pricing & npm run upload:event-watch & npm run upload:poll-prices"
+    },
+    "author": "Martin Miglio",
+    "dependencies": {
+        "aws-sdk": "^2.3.3"
+    },
+    "devDependencies": {
+        "archiver": "^5.3.1"
+    }
+}
