@@ -14,7 +14,10 @@ const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
   });
 
   return (
-    <div className="flex flex-row justify-center items-center cursor-pointer hover:shadow-xl transition duration-500 ease-in-out transform hover:-translate-y-1 w-full">
+    <div
+      className="flex flex-row justify-center items-center cursor-pointer hover:shadow-xl transition duration-500 ease-in-out transform hover:-translate-y-1 w-full"
+      onClick={() => onEventClick(eventData)}
+    >
       <div className="flex-initial px-5">
         <Image
           src={eventData.imageURL}

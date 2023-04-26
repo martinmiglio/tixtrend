@@ -28,6 +28,10 @@ const EventSearch = () => {
     setEventsData(events);
   };
 
+  const onEventClick = (eventData: EventData) => {
+    console.log("event clicked", eventData);
+  };
+
   useEffect(() => {
     return () => {
       setEventsData([]);
@@ -42,7 +46,7 @@ const EventSearch = () => {
       ) : (
         eventsData.map((eventData) => (
           <div className="mb-4" key={eventData.id}>
-            <EventInfoItem eventData={eventData} />
+            <EventInfoItem eventData={eventData} onEventClick={onEventClick} />
           </div>
         ))
       )}
