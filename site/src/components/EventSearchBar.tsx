@@ -37,6 +37,11 @@ const EventSearchBar = ({
           aria-label="Search for an event"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              onSearch(searchTerm);
+            }
+          }}
         />
       </div>
     </div>
