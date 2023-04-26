@@ -2,6 +2,8 @@
 /* This component is used to search for events by keywords.
 This will be used in the home page of the site to begin the flow. */
 import React, { useEffect, useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faTimes } from "@fortawesome/free-solid-svg-icons";
 
 const EventSearchBar = ({
   onSearch,
@@ -27,6 +29,11 @@ const EventSearchBar = ({
     onSearch(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
+  const clearSearch = () => {
+    setSearchTerm("");
+    setDebouncedSearchTerm("");
+  };
+
   return (
     <div className="flex justify-center items-center px-4 pb-4">
       <div className="w-full max-w-screen-sm flex items-center py-2 rounded-full bg-white">
@@ -43,6 +50,15 @@ const EventSearchBar = ({
             }
           }}
         />
+        {searchTerm.length > 0 && (
+          <button
+            className="flex-shrink-0 bg-transparent text-slate-800 hover:text-slate-700 text-sm py-1 px-5 rounded-full"
+            type="button"
+            onClick={clearSearch}
+          >
+            <FontAwesomeIcon icon={faTimes} />
+          </button>
+        )}
       </div>
     </div>
   );
