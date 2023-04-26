@@ -38,7 +38,6 @@ export default async function handler(
     return {
       id: event.id,
       name: event.name,
-      description: event.description,
       location: event._embedded.venues[0]?.name,
       date: event.dates.start.localDate,
       imageURL: event.images[0].url,

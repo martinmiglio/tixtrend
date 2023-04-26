@@ -31,7 +31,6 @@ const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
 
           <h2 className="text-xl">{eventData.location}</h2>
         </div>
-        <p className="text-lg">{eventData.description}</p>
       </div>
     </div>
   );
