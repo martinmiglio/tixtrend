@@ -34,7 +34,7 @@ const EventInfoItem = ({
           alt={eventData.name}
           width={300}
           height={300}
-          className="rounded-lg shadow-lg"
+          className="rounded-lg shadow-lg h-auto"
         />
       </div>
       <div className="flex-1">
