@@ -24,26 +24,21 @@ const EventSearchBar = ({
   }, [searchTerm]);
 
   useEffect(() => {
-    if (!debouncedSearchTerm) {
-      return;
-    }
     onSearch(debouncedSearchTerm);
   }, [debouncedSearchTerm]);
 
   return (
-    <div className="flex justify-center items-center pt-4 py-4">
-      <form className="w-full max-w-sm">
-        <div className="flex items-center py-2 rounded-full bg-white">
-          <input
-            className="appearance-none bg-transparent border-none w-full text-slate-800 py-1 px-5 leading-tight focus:outline-none"
-            type="text"
-            placeholder="Search for an event"
-            aria-label="Search for an event"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-          />
-        </div>
-      </form>
+    <div className="flex justify-center items-center px-4 pb-4">
+      <div className="w-full max-w-sm flex items-center py-2 rounded-full bg-white">
+        <input
+          className="appearance-none bg-transparent border-none w-full text-slate-800 py-1 px-5 leading-tight focus:outline-none"
+          type="text"
+          placeholder="Search for an event"
+          aria-label="Search for an event"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
     </div>
   );
 };
