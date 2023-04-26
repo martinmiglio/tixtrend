@@ -29,9 +29,7 @@ export default async function handler(
 
   // check if there are any events
   if (data.page.totalElements === 0) {
-    res.status(404).json({
-      message: `No events found for keyword ${keyword}`,
-    });
+    res.status(200).json([]);
     return;
   }
 
@@ -47,6 +45,7 @@ export default async function handler(
     };
   });
 
-  // return the events
+  // return the events with a cache header
+  res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=240');
   res.status(200).json(events);
 }
