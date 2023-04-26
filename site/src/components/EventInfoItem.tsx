@@ -6,15 +6,13 @@ import Image from "next/image";
 import { EventData } from "@utils/types";
 
 const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
-  // if i wanted the image left aligned and the text to fill the rest of the space
-  const date = new Date(eventData.date);
-  const formattedDate = date.toLocaleDateString("en-us", {
+  const formattedDate = new Date(eventData.date).toLocaleDateString("en-us", {
     weekday: "long",
     year: "numeric",
     month: "short",
     day: "numeric",
   });
-  console.log(eventData.date + " " + formattedDate);
+
   return (
     <div className="flex flex-row justify-center items-center cursor-pointer hover:shadow-xl transition duration-500 ease-in-out transform hover:-translate-y-1 w-full">
       <div className="flex-initial px-5">
