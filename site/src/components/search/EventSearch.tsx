@@ -8,7 +8,7 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { EventData } from "@utils/types/EventData";
 
-const EventSearchBar = dynamic(() => import("@components/EventSearchBar"));
+const EventSearchBar = dynamic(() => import("@components/search/EventSearchBar"));
 const EventInfoItem = dynamic(() => import("@components/EventInfoItem"));
 
 const EventSearch = () => {

@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { EventData } from "@utils/types/EventData/EventData";
 import { PriceData } from "@utils/types/PriceData/PriceData";
 
-const PriceChart = dynamic(() => import("@components/PriceChart"), {
+const PriceChart = dynamic(() => import("@components/chart/PriceChart"), {
   ssr: false,
   loading: () => <div className="text-center text-2xl">Loading...</div>,
 });

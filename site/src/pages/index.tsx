@@ -1,5 +1,5 @@
 import Head from "next/head";
-import EventSearch from "@components/EventSearch";
+import EventSearch from "@components/search/EventSearch";
 
 export default function Home() {
   return (

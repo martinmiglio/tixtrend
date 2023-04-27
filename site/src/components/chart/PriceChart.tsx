@@ -3,8 +3,8 @@
 This will be used in the event page of the site to display the price chart. */
 
 import React, { useEffect, useState } from "react";
-import Plot from "react-plotly.js";
 
+import Graph, { DataPoint } from "./Graph";
 import { PriceData } from "@utils/types/PriceData/PriceData";
 
 const PriceChart = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
@@ -32,28 +32,17 @@ const PriceChart = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
     };
   }, [priceDataSet]);
 
-  // sometimes priceHistory is undefined, so we need to check for that
+  //data needs to be in the form of [{date: Date, value: number}] (DataPoint)
 
   return (
     <div className="w-screen">
-      <Plot
-        data={[
-          {
-            x: eventDataDate,
-            y: eventDataMaxPrice,
-            type: "scatter",
-            mode: "lines",
-            marker: { color: "red" },
-          },
-          {
-            x: eventDataDate,
-            y: eventDataMinPrice,
-            type: "scatter",
-            mode: "lines",
-            marker: { color: "blue" },
-          },
-        ]}
-        layout={{ width: 720, height: 440, title: "Price Chart" }}
+      <Graph
+        data={priceDataSet.map((priceData: PriceData): DataPoint => {
+          return {
+            date: priceData.timestamp.valueOf(),
+            value: priceData.min,
+          };
+        })}
       />
       <table>
         <tbody>
