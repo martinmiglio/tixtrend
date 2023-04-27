@@ -38,7 +38,6 @@ export const handler = async (event) => {
 
 const handleGet = async (event) => {
   const { queryStringParameters } = event;
-
   const { event_id } = queryStringParameters;
 
   if (!event_id) {

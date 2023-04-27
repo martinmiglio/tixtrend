@@ -38,6 +38,15 @@ const handleGet = async (event) => {
   const { queryStringParameters } = event;
   const { event_id } = queryStringParameters;
 
+  if (!event_id) {
+    return {
+      statusCode: 400,
+      body: JSON.stringify({
+        message: "Event ID is required.",
+      }),
+    };
+  }
+
   const { Items } = await dynamo
     .query({
       TableName: tableName,
