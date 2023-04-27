@@ -17,11 +17,14 @@
     "eslint": "8.39.0",
     "eslint-config-next": "13.3.1",
     "next": "13.3.1",
+    "plotly.js": "^2.21.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-plotly.js": "^2.6.0",
     "typescript": "5.0.4"
   },
   "devDependencies": {
+    "@types/react-plotly.js": "^2.6.0",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.23",
     "tailwindcss": "^3.3.2"

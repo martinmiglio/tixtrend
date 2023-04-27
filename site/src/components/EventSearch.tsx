@@ -4,9 +4,12 @@ This will be used in the home page of the site to begin the flow.
 This component will display EventSearchBar and EventInfoItem components. */
 
 import React, { useEffect, useState } from "react";
-import EventSearchBar from "./EventSearchBar";
-import EventInfoItem from "./EventInfoItem";
-import { EventData } from "@utils/types";
+import Link from "next/link";
+import dynamic from "next/dynamic";
+import { EventData } from "@utils/types/EventData";
+
+const EventSearchBar = dynamic(() => import("@components/EventSearchBar"));
+const EventInfoItem = dynamic(() => import("@components/EventInfoItem"));
 
 const EventSearch = () => {
   const [eventsData, setEventsData] = useState<EventData[]>([]);
@@ -42,7 +45,9 @@ const EventSearch = () => {
       ) : (
         eventsData.map((eventData) => (
           <div className="mb-4" key={eventData.id}>
-            <EventInfoItem eventData={eventData} />
+            <Link href={`/event/${eventData.id}`} passHref>
+              <EventInfoItem eventData={eventData} />
+            </Link>
           </div>
         ))
       )}

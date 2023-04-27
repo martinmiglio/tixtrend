@@ -2,7 +2,7 @@
 /* this is the API endpoint that will be called by the site to find events by keyword */
 
 import type { NextApiRequest, NextApiResponse } from "next";
-import { EventData } from "@utils/types";
+import { EventData } from "@utils/types/EventData";
 
 export default async function handler(
   req: NextApiRequest,

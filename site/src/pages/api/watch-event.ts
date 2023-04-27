@@ -14,8 +14,6 @@ export default async function handler(
     `https://api.tixtrend.martinmiglio.dev/watch?event_id=${event_id}`
   );
 
-  console.log(response);
-
   // check for staus code 409
   if (response.status === 409) {
     res.status(409).json({
