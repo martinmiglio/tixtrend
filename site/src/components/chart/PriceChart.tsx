@@ -20,7 +20,6 @@ const PriceChart = ({
   return (
     <Graph
       data={priceDataSet.map((priceData: PriceData): DataPoint => {
-        console.log(priceData.timestamp, priceData.min);
         return {
           date: priceData.timestamp.valueOf(),
           value: priceData.min,
