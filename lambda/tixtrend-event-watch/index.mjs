@@ -57,9 +57,10 @@ const handleGet = async (event) => {
     .promise();
   if (Item) {
     return {
-      statusCode: 409,
+      statusCode: 200,
       body: JSON.stringify({
         message: "Event is already being watched.",
+        watched: true,
         event: Item,
       }),
     };
@@ -96,6 +97,7 @@ const handleGet = async (event) => {
     statusCode: 200,
     body: JSON.stringify({
       message: "Event added successfully.",
+      watched: false,
       event: data,
     }),
   };

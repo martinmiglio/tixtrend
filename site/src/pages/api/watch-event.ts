@@ -14,14 +14,6 @@ export default async function handler(
     `https://api.tixtrend.martinmiglio.dev/watch?event_id=${event_id}`
   );
 
-  // check for staus code 409
-  if (response.status === 409) {
-    res.status(409).json({
-      message: "Event already in watch list.",
-    });
-    return;
-  }
-
   // check if status code is 200
   if (response.status !== 200) {
     res.status(500).json({

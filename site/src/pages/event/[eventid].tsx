@@ -32,13 +32,12 @@ const Event = () => {
   useEffect(() => {
     if (eventid) {
       fetch(`/api/watch-event?event_id=${eventid}`).then((response) => {
-        if (response.status === 409) {
-          setLoading(false);
-          setIsWatched(true);
-          fetchPriceDataSet();
-        } else if (response.status === 200) {
-          setLoading(false);
-          setIsWatched(false);
+        if (response.status === 200) {
+          response.json().then((data) => {
+            setIsWatched(data.isWatched);
+            fetchPriceDataSet();
+            setLoading(false);
+          });
         } else {
           console.error("Something went wrong watching event");
         }
