@@ -12,13 +12,13 @@ export const handler = async (event) => {
   try {
     const { httpMethod } = event;
     if (!httpMethod) {
-      return handleGet(event);
+      return await handleGet(event);
     }
     switch (httpMethod) {
       case "GET":
-        return handleGet(event);
+        return await handleGet(event);
       case "OPTIONS":
-        return handleOptions();
+        return await handleOptions();
       default:
         return {
           statusCode: 400,
@@ -38,24 +38,50 @@ export const handler = async (event) => {
 
 const handleGet = async (event) => {
   const { queryStringParameters } = event;
-  const { event_id } = queryStringParameters;
-
-  if (!event_id) {
+  if (!queryStringParameters) {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: "Event ID is required.",
+        message: "Missing query string parameters.",
       }),
     };
   }
 
+  const { event_id, list } = queryStringParameters;
+  if (event_id) {
+    return checkEventWatch(event_id);
+  }
+  if (list) {
+    return getWatchList(list);
+  }
+
+  return {
+    statusCode: 400,
+    body: JSON.stringify({
+      message: "Unknown query string parameters.",
+    }),
+  };
+};
+
+const checkEventWatch = async (event_id) => {
   const { Item } = await dynamo
     .get({
       TableName: tableName,
       Key: { event_id },
     })
     .promise();
+
   if (Item) {
+    const params = {
+      TableName: tableName,
+      Key: { event_id },
+      UpdateExpression: "set watch_count = watch_count + :val",
+      ExpressionAttributeValues: {
+        ":val": 1,
+      },
+    };
+    await dynamo.update(params).promise();
+
     return {
       statusCode: 200,
       body: JSON.stringify({
@@ -88,6 +114,7 @@ const handleGet = async (event) => {
     TableName: tableName,
     Item: {
       event_id,
+      watch_count: 1,
       timestamp,
       ttl,
     },
@@ -99,6 +126,28 @@ const handleGet = async (event) => {
       message: "Event added successfully.",
       watched: false,
       event: data,
+    }),
+  };
+};
+
+const getWatchList = async (count) => {
+  const params = {
+    TableName: tableName,
+  };
+
+  const { Items } = await dynamo.scan(params).promise();
+
+  if (count > 0) {
+    Items.sort((a, b) => b.watch_count - a.watch_count);
+    Items.splice(count);
+  }
+
+  return {
+    statusCode: 200,
+    body: JSON.stringify({
+      message: "Watch list retrieved successfully.",
+      count: Items.length,
+      events: Items,
     }),
   };
 };
