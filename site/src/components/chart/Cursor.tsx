@@ -5,21 +5,13 @@ import { Vector2, useGesture } from "@use-gesture/react";
 import useMediaQuery from "@utils/usehooks-ts";
 
 type CursorProps = {
-  r: number;
-  borderWidth: number;
-  borderColor: string;
   parentWidth: number;
   parentHeight: number;
 };
 
-const Cursor = ({
-  r,
-  borderWidth,
-  borderColor,
-  parentWidth,
-  parentHeight,
-}: CursorProps) => {
-  const radius = r + borderWidth / 2;
+const Cursor = ({ parentWidth, parentHeight }: CursorProps) => {
+  const CURSOR_RADIUS = 5;
+
   const isMobile = useMediaQuery("(max-width: 640px)");
   const [pathElement, setPathElement] = useState<SVGPathElement | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -38,19 +30,15 @@ const Cursor = ({
     setPathElement(pathElement);
   }, []);
 
-  const [{ x }, setX] = useSpring(() => ({
+  const [{ x, y }, api] = useSpring(() => ({
     x: -1.25 * parentWidth,
-    config: { mass: 1, tension: 300, friction: 30 },
-  }));
-
-  const [{ y }, setY] = useSpring(() => ({
     y: -1 * parentHeight,
-    config: { tension: 210, friction: 20, precision: 1, clamp: true },
+    config: { mass: 1, tension: 300, friction: 30, precision: 1, clamp: true },
   }));
 
-  const motion = (xy: Vector2) => {
+  const cursorAnimation = (xy: Vector2) => {
     if (cursorRef.current) {
-      const [x, y] = xy;
+      const [x] = xy;
       const { width: cursorX } = cursorRef.current.getBoundingClientRect();
 
       if (!pathElement) {
@@ -62,8 +50,11 @@ const Cursor = ({
         return;
       }
 
-      setX({ x: pathPoint.x - cursorX / 2 });
-      setY({ y: pathPoint.y - parentHeight * 2 });
+      api.start({
+        x: pathPoint.x - cursorX / 2,
+        y: pathPoint.y - parentHeight * 2,
+      });
+
       setVisible(true);
     }
   };
@@ -97,14 +88,14 @@ const Cursor = ({
   const mobileGesture = {
     onDrag: ({ active, xy }: { active: boolean; xy: Vector2 }) => {
       if (active) {
-        motion(xy);
+        cursorAnimation(xy);
       }
     },
   };
 
   const desktopGesture = {
     onMove: ({ xy }: { xy: Vector2 }) => {
-      motion(xy);
+      cursorAnimation(xy);
     },
   };
 
@@ -119,23 +110,34 @@ const Cursor = ({
         justifyContent: "center",
         alignItems: "center",
         width: "200%",
-        height: parentHeight * 2,
+        height: "200%",
         x,
         y,
       }}
       {...bind()}
     >
       {visible && (
-        <div
-          style={{
-            width: radius * 2,
-            height: radius * 2,
-            borderRadius: radius,
-            borderColor,
-            borderWidth,
-            backgroundColor: "white",
-          }}
-        />
+        <>
+          <div
+            style={{
+              width: CURSOR_RADIUS * 2,
+              height: CURSOR_RADIUS * 2,
+              borderRadius: CURSOR_RADIUS,
+              borderColor: "#3977e3",
+              borderWidth: CURSOR_RADIUS / 3,
+              backgroundColor: "white",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              width: 1,
+              height: parentHeight * 2,
+              backgroundColor: "#d9e1f2",
+              opacity: 0.5,
+            }}
+          />
+        </>
       )}
     </animated.div>
   );

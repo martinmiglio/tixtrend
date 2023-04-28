@@ -1,29 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { scaleTime, scaleLinear } from "d3-scale";
 import * as shape from "d3-shape";
 
 import Cursor from "./Cursor";
-import useWindowDimensions from "@components/helpers/WindowDimensions";
 
 export interface DataPoint {
   date: number;
   value: number;
 }
 
-const Graph = ({ data }: { data: DataPoint[] }) => {
-  let screenWidth = 640;
-  if (typeof window !== "undefined") {
-    const { width } = useWindowDimensions();
-    screenWidth = width;
-  }
-  const width = 640;
+interface GraphProps {
+  data: DataPoint[];
+}
 
+const Graph = ({ data }: GraphProps) => {
+  const width = 640;
   const φ = (1 + Math.sqrt(5)) / 2;
   const height = (1 - 1 / φ) * width;
   const strokeWidth = 4;
   const padding = strokeWidth / 2;
-  const CURSOR_RADIUS = 8;
-  const STROKE_WIDTH = CURSOR_RADIUS / 2;
+
   const getDomain = (domain: number[]) => [
     Math.min(...domain),
     Math.max(...domain),
@@ -37,24 +33,14 @@ const Graph = ({ data }: { data: DataPoint[] }) => {
     .domain(getDomain(data.map((d) => d.value)))
     .range([height - padding, padding]);
 
-  const [d, setD] = useState(
-    shape
-      .line<DataPoint>()
-      .x((p: { date: number }) => scaleX(p.date))
-      .y((p: { value: number }) => scaleY(p.value))
-      .curve(shape.curveBasis)(data) as string
-  );
+  const graphPath = shape
+    .line<DataPoint>()
+    .x((p: { date: number }) => scaleX(p.date))
+    .y((p: { value: number }) => scaleY(p.value))
+    .curve(shape.curveBasis)(data) as string;
 
-  useEffect(() => {
-    setD(
-      shape
-        .line<DataPoint>()
-        .x((p: { date: number }) => scaleX(p.date))
-        .y((p: { value: number }) => scaleY(p.value))
-        .curve(shape.curveBasis)(data) as string
-    );
-  }, [data]);
-
+  // issues with path: https://github.com/facebook/react/issues/15187
+  // Warning: Prop `d` did not match. Server:
   return (
     <div style={{ width, height, position: "relative", overflow: "hidden" }}>
       <svg style={{ width, height }}>
@@ -67,23 +53,20 @@ const Graph = ({ data }: { data: DataPoint[] }) => {
           </linearGradient>
         </defs>
         <path
-          d={`${d}L ${width} ${height} L 0 ${height}`}
+          // the gradient path
+          d={`${graphPath}L ${width} ${height} L 0 ${height}`}
           fill="url(#gradient)"
         />
         <path
+          // the graph path
           id="graph_path"
           fill="transparent"
           stroke="#3977e3"
-          {...{ d, strokeWidth }}
+          d={graphPath}
+          strokeWidth={strokeWidth}
         />
       </svg>
-      <Cursor
-        r={4}
-        borderWidth={1}
-        borderColor="#3977e3"
-        parentWidth={width}
-        parentHeight={height}
-      />
+      <Cursor parentWidth={width} parentHeight={height} />
     </div>
   );
 };
