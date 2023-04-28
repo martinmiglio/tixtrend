@@ -39,7 +39,7 @@ const PriceTable = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
           </tr>
           {eventDataDate.map((date, index) => {
             return (
-              <tr key={index}>
+              <tr key={date.valueOf()}>
                 <td>{date.toDateString()}</td>
                 <td>{eventDataMinPrice[index]}</td>
                 <td>{eventDataMaxPrice[index]}</td>
