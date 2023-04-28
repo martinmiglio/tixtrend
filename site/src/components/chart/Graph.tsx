@@ -1,22 +1,19 @@
 import React from "react";
 import { scaleTime, scaleLinear } from "d3-scale";
 import * as shape from "d3-shape";
+import dynamic from "next/dynamic";
 
-import Cursor from "./Cursor";
+import { DataPoint } from "./DataPoint";
 
-export interface DataPoint {
-  date: number;
-  value: number;
-}
+const Cursor = dynamic(() => import("./Cursor"), { ssr: false });
 
 interface GraphProps {
   data: DataPoint[];
+  height: number;
+  width: number;
 }
 
-const Graph = ({ data }: GraphProps) => {
-  const width = 640;
-  const φ = (1 + Math.sqrt(5)) / 2;
-  const height = (1 - 1 / φ) * width;
+const Graph = ({ data, height, width }: GraphProps) => {
   const strokeWidth = 4;
   const padding = strokeWidth / 2;
 
@@ -39,6 +36,8 @@ const Graph = ({ data }: GraphProps) => {
     .y((p: { value: number }) => scaleY(p.value))
     .curve(shape.curveBasis)(data) as string;
 
+  const graphPathRef = React.useRef<SVGPathElement>(null);
+
   // issues with path: https://github.com/facebook/react/issues/15187
   // Warning: Prop `d` did not match. Server:
   return (
@@ -59,14 +58,18 @@ const Graph = ({ data }: GraphProps) => {
         />
         <path
           // the graph path
-          id="graph_path"
+          ref={graphPathRef}
           fill="transparent"
           stroke="#3977e3"
           d={graphPath}
           strokeWidth={strokeWidth}
         />
       </svg>
-      <Cursor parentWidth={width} parentHeight={height} />
+      <Cursor
+        parentWidth={width}
+        parentHeight={height}
+        graphPathRef={graphPathRef}
+      />
     </div>
   );
 };

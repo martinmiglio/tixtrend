@@ -7,9 +7,10 @@ import useMediaQuery from "@utils/usehooks-ts";
 type CursorProps = {
   parentWidth: number;
   parentHeight: number;
+  graphPathRef: React.RefObject<SVGPathElement>;
 };
 
-const Cursor = ({ parentWidth, parentHeight }: CursorProps) => {
+const Cursor = ({ parentWidth, parentHeight, graphPathRef }: CursorProps) => {
   const CURSOR_RADIUS = 5;
 
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -18,11 +19,7 @@ const Cursor = ({ parentWidth, parentHeight }: CursorProps) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!cursorRef.current) {
-      return;
-    }
-    const selector = "path#graph_path";
-    const graphPath = document.querySelector(selector);
+    const graphPath = graphPathRef.current;
     if (!graphPath) {
       return;
     }
@@ -31,10 +28,16 @@ const Cursor = ({ parentWidth, parentHeight }: CursorProps) => {
   }, []);
 
   const [{ x, y }, api] = useSpring(() => ({
-    x: -1.25 * parentWidth,
-    y: -1 * parentHeight,
+    x: 0,
+    y: 0,
     config: { mass: 1, tension: 300, friction: 30, precision: 1, clamp: true },
   }));
+
+  useEffect(() => {
+    if (parentHeight && parentWidth) {
+      api.set({ x: -1.25 * parentWidth, y: -1 * parentHeight });
+    }
+  }, []);
 
   const cursorAnimation = (xy: Vector2) => {
     if (cursorRef.current) {
@@ -51,7 +54,7 @@ const Cursor = ({ parentWidth, parentHeight }: CursorProps) => {
       }
 
       api.start({
-        x: pathPoint.x - cursorX / 2,
+        x: pathPoint.x - cursorX / 2 + 1,
         y: pathPoint.y - parentHeight * 2,
       });
 
