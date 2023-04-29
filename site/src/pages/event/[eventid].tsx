@@ -90,15 +90,17 @@ const Event = () => {
       </div>
       {!isLoadingWatched &&
         (isWatched ? (
-          <div className="text-center text-2xl mt-10">
-            This event is being tracked. Waiting for data for event... Check
-            back later!
+          <div className="text-center text-2xl my-10">
+            This event is being tracked. Waiting for data for event...
           </div>
         ) : (
-          <div className="text-center text-2xl mt-10">
-            Now Tracking event...
+          <div className="text-center text-2xl my-10">
+            Now Tracking event... Check back later for price history!
           </div>
         ))}
+      <div className="text-center text-xl my-10 text-gray-400">
+        Check back later for price history!
+      </div>
       <FooterBar />
     </div>
   );
