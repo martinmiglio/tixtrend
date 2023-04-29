@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { PriceData } from "@utils/types/PriceData/PriceData";
 import { EventData } from "@utils/types/EventData/EventData";
 import useWindowDimensions from "@components/helpers/WindowDimensions";
-import PriceTable from "@components/chart/PriceTable";
 import PriceChart from "@components/chart/PriceChart";
 import EventInfoItem from "@components/EventInfoItem";
 import HeaderBar from "@components/HeaderBar";
@@ -69,7 +68,7 @@ const Event = () => {
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <HeaderBar noTagline />
         <div className="w-full inline-flex flex-col justify-center items-center">
-          <div className="w-full p-5">
+          <div className="w-full p-5 shadow-xl rounded-md">
             <EventInfoItem eventData={eventData} />
           </div>
           <PriceChart
@@ -86,18 +85,18 @@ const Event = () => {
   return (
     <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
       <HeaderBar noTagline />
-      <div className="w-full p-5">
+      <div className="w-full p-5 shadow-xl rounded-md">
         <EventInfoItem eventData={eventData} />
       </div>
       {!isLoadingWatched &&
         (isWatched ? (
-          <div className="text-center text-2xl">
-            This event is being tracked. Waiting for data for event {eventid}...
-            Check back later!
+          <div className="text-center text-2xl mt-10">
+            This event is being tracked. Waiting for data for event... Check
+            back later!
           </div>
         ) : (
-          <div className="text-center text-2xl">
-            Now Tracking event {eventid}...
+          <div className="text-center text-2xl mt-10">
+            Now Tracking event...
           </div>
         ))}
       <FooterBar />

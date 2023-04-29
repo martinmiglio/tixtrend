@@ -46,7 +46,7 @@ const EventSearch = () => {
         <></>
       ) : (
         eventsData.map((eventData) => (
-          <div className="mb-4" key={eventData.id}>
+          <div className="my-2 shadow-lg rounded-md hover:shadow-xl" key={eventData.id}>
             <Link href={`/event/${eventData.id}`} passHref>
               <EventInfoItem eventData={eventData} />
             </Link>
