@@ -108,6 +108,8 @@ const Cursor = ({ parentWidth, parentHeight, graphPathRef }: CursorProps) => {
     <animated.div
       ref={cursorRef}
       style={{
+        touchAction: "none",
+        userSelect: "none",
         position: "absolute",
         display: "flex",
         justifyContent: "center",
