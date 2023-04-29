@@ -135,7 +135,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
 
 export default Event;
 
-export async function getStaticProps() {
+export async function getServerSideProps() {
   const baseURL = process.env.SITE_URL;
   return { props: { baseURL } };
 }
