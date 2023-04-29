@@ -88,21 +88,16 @@ const Cursor = ({ parentWidth, parentHeight, graphPathRef }: CursorProps) => {
     return minPoint;
   };
 
-  const mobileGesture = {
+  const bind = useGesture({
+    onMove: ({ xy }: { xy: Vector2 }) => {
+      cursorAnimation(xy);
+    },
     onDrag: ({ active, xy }: { active: boolean; xy: Vector2 }) => {
       if (active) {
         cursorAnimation(xy);
       }
     },
-  };
-
-  const desktopGesture = {
-    onMove: ({ xy }: { xy: Vector2 }) => {
-      cursorAnimation(xy);
-    },
-  };
-
-  const bind = useGesture(isMobile ? mobileGesture : desktopGesture);
+  });
 
   return (
     <animated.div
