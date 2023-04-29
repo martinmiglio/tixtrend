@@ -20,7 +20,7 @@ export default function About() {
             <div className="relative">
               <dt>
                 <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                  <FontAwesomeIcon icon={faChartLine} />
+                  <FontAwesomeIcon className="h-5 w-5" icon={faChartLine} />
                 </div>
                 <p className="ml-16 text-lg leading-6 font-medium">
                   Track Ticket Prices Over Time
@@ -36,7 +36,7 @@ export default function About() {
             <div className="relative">
               <dt>
                 <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
-                  <FontAwesomeIcon icon={faDatabase} />
+                  <FontAwesomeIcon className="h-5 w-5" icon={faDatabase} />
                 </div>
                 <p className="ml-16 text-lg leading-6 font-medium">
                   Data from Ticketmaster's Discover API
