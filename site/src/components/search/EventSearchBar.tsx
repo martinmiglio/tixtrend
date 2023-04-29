@@ -41,7 +41,7 @@ const EventSearchBar = ({
   }, []);
 
   return (
-    <div className="flex justify-center items-center px-4 pb-4">
+    <div className="flex justify-center items-center pb-4">
       <div className="w-full max-w-screen-sm flex items-center py-2 rounded-full bg-white">
         <input
           ref={searchInput}

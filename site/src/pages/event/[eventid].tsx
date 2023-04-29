@@ -7,6 +7,8 @@ import useWindowDimensions from "@components/helpers/WindowDimensions";
 import PriceTable from "@components/chart/PriceTable";
 import PriceChart from "@components/chart/PriceChart";
 import EventInfoItem from "@components/EventInfoItem";
+import HeaderBar from "@components/HeaderBar";
+import FooterBar from "@components/FooterBar";
 
 const Event = () => {
   const router = useRouter();
@@ -64,22 +66,26 @@ const Event = () => {
 
   if (priceDataSet.length > 0) {
     return (
-      <div className="w-screen inline-flex flex-col justify-center items-center">
-        <div className="w-full p-5">
-          <EventInfoItem eventData={eventData} />
+      <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <HeaderBar noTagline />
+        <div className="w-full inline-flex flex-col justify-center items-center">
+          <div className="w-full p-5">
+            <EventInfoItem eventData={eventData} />
+          </div>
+          <PriceChart
+            priceDataSet={priceDataSet}
+            height={windowHeight * 0.5}
+            width={windowWidth}
+          />
         </div>
-        <PriceChart
-          priceDataSet={priceDataSet}
-          height={windowHeight * 0.5}
-          width={windowWidth}
-        />
-        <PriceTable priceDataSet={priceDataSet} />
+        <FooterBar />
       </div>
     );
   }
 
   return (
-    <div className="w-screen">
+    <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+      <HeaderBar noTagline />
       <div className="w-full p-5">
         <EventInfoItem eventData={eventData} />
       </div>
@@ -94,6 +100,7 @@ const Event = () => {
             Now Tracking event {eventid}...
           </div>
         ))}
+      <FooterBar />
     </div>
   );
 };

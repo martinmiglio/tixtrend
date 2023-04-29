@@ -8,7 +8,9 @@ import Link from "next/link";
 import dynamic from "next/dynamic";
 import { EventData } from "@utils/types/EventData";
 
-const EventSearchBar = dynamic(() => import("@components/search/EventSearchBar"));
+const EventSearchBar = dynamic(
+  () => import("@components/search/EventSearchBar")
+);
 const EventInfoItem = dynamic(() => import("@components/EventInfoItem"));
 
 const EventSearch = () => {
@@ -38,7 +40,7 @@ const EventSearch = () => {
   }, []);
 
   return (
-    <div className="w-screen">
+    <div className="w-full">
       <EventSearchBar onSearch={searchEvents} />
       {!eventsData || eventsData.length === 0 ? (
         <></>
