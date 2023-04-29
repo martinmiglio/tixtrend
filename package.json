@@ -1,0 +1,7 @@
+{
+    "name": "tixtrend",
+    "scripts": {
+        "dev:site": "cd site && npm run dev",
+        "upload:lambda": "cd lambda && npm run upload"
+    }
+}
