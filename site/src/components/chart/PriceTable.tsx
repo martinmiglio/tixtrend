@@ -29,20 +29,22 @@ const PriceTable = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
   }, [priceDataSet]);
 
   return (
-    <div>
-      <table>
-        <tbody>
+    <div className="w-full inline-flex center-items justify-center">
+      <table className="table-auto">
+        <thead>
           <tr>
-            <th>Date</th>
-            <th>Min Price</th>
-            <th>Max Price</th>
+            <th className="px-4 py-2">Date</th>
+            <th className="px-4 py-2">Min Price</th>
+            <th className="px-4 py-2">Max Price</th>
           </tr>
+        </thead>
+        <tbody>
           {eventDataDate.map((date, index) => {
             return (
               <tr key={date.valueOf()}>
-                <td>{date.toDateString()}</td>
-                <td>{eventDataMinPrice[index]}</td>
-                <td>{eventDataMaxPrice[index]}</td>
+                <td className="border px-4 py-2">{date.toDateString()}</td>
+                <td className="border px-4 py-2">{eventDataMinPrice[index]}</td>
+                <td className="border px-4 py-2">{eventDataMaxPrice[index]}</td>
               </tr>
             );
           })}
