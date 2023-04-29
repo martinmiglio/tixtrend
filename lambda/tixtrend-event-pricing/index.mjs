@@ -68,9 +68,6 @@ const handleGet = async (event) => {
 
   return {
     statusCode: 200,
-    headers: {
-      "Cache-Control": { value: "public, max-age=21600" },
-    },
     body: JSON.stringify(Items),
   };
 };
