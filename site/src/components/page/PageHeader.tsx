@@ -31,11 +31,9 @@ const PageHeader = ({ title, description, url }: PageHeaderProps) => {
         dangerouslySetInnerHTML={{
           __html: `
           window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
+          function gtag(){window.dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', 'G-G6RF669QT8', {
-            page_path: window.location.pathname,
-          });
+          gtag('config', 'G-G6RF669QT8');
         `,
         }}
       />
