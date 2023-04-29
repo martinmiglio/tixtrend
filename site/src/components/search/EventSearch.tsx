@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import dynamic from "next/dynamic";
 import { EventData } from "@utils/types/EventData";
+import * as analytics from "@utils/analytics";
 
 const EventSearchBar = dynamic(
   () => import("@components/search/EventSearchBar")
@@ -21,7 +22,7 @@ const EventSearch = () => {
       setEventsData([]);
       return;
     }
-
+    analytics.event({ action: "search", params: { searchTerm } });
     searchTerm = encodeURIComponent(searchTerm);
 
     const response = await fetch(`/api/find-event?keyword=${searchTerm}`);
@@ -46,7 +47,10 @@ const EventSearch = () => {
         <></>
       ) : (
         eventsData.map((eventData) => (
-          <div className="my-2 shadow-lg rounded-md hover:shadow-xl" key={eventData.id}>
+          <div
+            className="my-2 shadow-lg rounded-md hover:shadow-xl"
+            key={eventData.id}
+          >
             <Link href={`/event/${eventData.id}`} passHref>
               <EventInfoItem eventData={eventData} />
             </Link>

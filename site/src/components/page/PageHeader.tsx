@@ -21,22 +21,6 @@ const PageHeader = ({ title, description, url }: PageHeaderProps) => {
       <meta name="twitter:creator" content="@martinmiglio" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
-      <Script
-        strategy="afterInteractive"
-        src="https://www.googletagmanager.com/gtag/js?id=G-G6RF669QT8"
-      />
-      <Script
-        id="google-analytics"
-        strategy="afterInteractive"
-        dangerouslySetInnerHTML={{
-          __html: `
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){window.dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'G-G6RF669QT8');
-        `,
-        }}
-      />
     </Head>
   );
 };
