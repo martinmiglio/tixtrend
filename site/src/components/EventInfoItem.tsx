@@ -19,7 +19,7 @@ const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
     <div
       className={`flex flex-${
         isMobile ? "col" : "row"
-      } justify-center items-center`}
+      } justify-center items-center w-full`}
     >
       <div className={`flex-initial ${isMobile ? "" : "px-5"}`}>
         <Image
