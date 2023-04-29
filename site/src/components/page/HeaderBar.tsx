@@ -11,10 +11,12 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
           </Link>
           <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400 space-x-8 mr-4">
             <li>
-              <Link href="/">Search</Link>
+              <Link href="/" className="hover:underline">
+                Search
+              </Link>
             </li>
             <li>
-              <Link href="/about" className="hover:underline ">
+              <Link href="/about" className="hover:underline">
                 About
               </Link>
             </li>
