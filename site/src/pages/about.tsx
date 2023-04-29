@@ -10,7 +10,7 @@ export default function About({ baseURL }: { baseURL: string }) {
   return (
     <>
       <PageHeader
-        title="About: Tix Trend"
+        title="Tix Trend - About"
         description="Track ticket prices over time and never miss a deal again."
         url={baseURL + "/about"}
       />
