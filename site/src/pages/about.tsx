@@ -6,13 +6,13 @@ import PageHeader from "@components/page/PageHeader";
 import HeaderBar from "@components/page/HeaderBar";
 import FooterBar from "@components/page/FooterBar";
 
-export default function About() {
+export default function About({ baseURL }: { baseURL: string }) {
   return (
     <>
       <PageHeader
         title="About: Tix Trend"
         description="Track ticket prices over time and never miss a deal again."
-        url={process.env.SITE_URL + "/about"}
+        url={baseURL + "/about"}
       />
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <HeaderBar />
@@ -69,4 +69,9 @@ export default function About() {
       </div>
     </>
   );
+}
+
+export async function getStaticProps() {
+  const baseURL = process.env.SITE_URL;
+  return { props: { baseURL } };
 }
