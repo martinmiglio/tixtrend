@@ -14,9 +14,9 @@ const Event = ({ baseURL }: { baseURL: string }) => {
   const router = useRouter();
   const { eventid } = router.query;
 
+  const [loadingEventData, setLoadingEventData] = useState(true);
+  const [loadingPriceData, setLoadingPriceData] = useState(true);
   const [eventData, setEventData] = useState<EventData | null>(null);
-  const [isLoadingWatched, setIsLoadingWatched] = useState(true);
-  const [isWatched, setIsWatched] = useState(false);
   const [priceDataSet, setPriceDataSet] = useState<PriceData[]>([]);
   const { height: windowHeight, width: windowWidth } = useWindowDimensions();
 
@@ -30,8 +30,9 @@ const Event = ({ baseURL }: { baseURL: string }) => {
           setPriceDataSet(data);
         });
       } else {
-        console.error("Something went wrong getting prices");
+        setPriceDataSet([]);
       }
+      setLoadingPriceData(false);
     });
   };
 
@@ -41,6 +42,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
         if (response.status === 200) {
           response.json().then((data) => {
             setEventData(data);
+            setLoadingEventData(false);
           });
         } else {
           console.error("Something went wrong getting event");
@@ -48,11 +50,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
       });
       fetch(`/api/watch-event?event_id=${eventid}`).then((response) => {
         if (response.status === 200) {
-          response.json().then((data) => {
-            setIsWatched(data.watched);
-            fetchPriceDataSet();
-            setIsLoadingWatched(false);
-          });
+          fetchPriceDataSet();
         } else {
           console.error("Something went wrong watching event");
         }
@@ -60,46 +58,8 @@ const Event = ({ baseURL }: { baseURL: string }) => {
     }
   }, [eventid]);
 
-  if (!eventData) {
-    return (
-      <>
-        <PageHeader
-          title="Event: Tix Trend"
-          description="Track ticket prices over time and never miss a deal again."
-          url={baseURL + `event/${eventid}`}
-        />
-        <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-          <HeaderBar noTagline />
-          <div className="text-center text-2xl my-10">No Event Data Found</div>
-        </div>
-      </>
-    );
-  }
-
-  if (priceDataSet.length > 0) {
-    return (
-      <>
-        <PageHeader
-          title={`Tix Trend - ${eventData.name}`}
-          description={`Price History for ${eventData.name}`}
-          url={baseURL + `event/${eventid}`}
-        />
-        <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-          <HeaderBar noTagline />
-          <div className="w-full inline-flex flex-col justify-center items-center">
-            <div className="w-full p-5 shadow-xl rounded-md">
-              <EventInfoItem eventData={eventData} />
-            </div>
-            <PriceChart
-              priceDataSet={priceDataSet}
-              height={windowHeight * 0.5}
-              width={windowWidth}
-            />
-          </div>
-          <FooterBar />
-        </div>
-      </>
-    );
+  if (loadingEventData || !eventData) {
+    return <></>;
   }
 
   return (
@@ -111,21 +71,27 @@ const Event = ({ baseURL }: { baseURL: string }) => {
       />
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <HeaderBar noTagline />
-        <div className="w-full p-5 shadow-xl rounded-md">
-          <EventInfoItem eventData={eventData} />
-        </div>
-        {!isLoadingWatched &&
-          (isWatched ? (
-            <div className="text-center text-2xl my-10">
-              This event is being tracked. Waiting for data for event...
-            </div>
-          ) : (
-            <div className="text-center text-2xl my-10">
-              Now Tracking event... Check back later for price history!
-            </div>
-          ))}
-        <div className="text-center text-xl my-10 text-gray-400">
-          Check back later for price history!
+        <div className="w-full inline-flex flex-col justify-center items-center">
+          <div className="w-full p-5 shadow-xl rounded-md">
+            <EventInfoItem eventData={eventData} />
+          </div>
+          {!loadingPriceData &&
+            (priceDataSet.length === 0 ? (
+              <div>
+                <div className="text-center text-2xl mt-10">
+                  No price history yet, check back later!
+                </div>
+                <div className="text-center text-xl my-10 text-gray-400 font-thin">
+                  Data on new events is updated once a day.
+                </div>
+              </div>
+            ) : (
+              <PriceChart
+                priceDataSet={priceDataSet}
+                height={windowHeight * 0.5}
+                width={windowWidth}
+              />
+            ))}
         </div>
         <FooterBar />
       </div>
