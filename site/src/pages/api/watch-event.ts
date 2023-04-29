@@ -11,7 +11,7 @@ export default async function handler(
   const event_id = req.query.event_id;
 
   const response = await fetch(
-    `https://api.tixtrend.martinmiglio.dev/watch?event_id=${event_id}`
+    process.env.TIXTREND_API_URL + `/watch?event_id=${event_id}`
   );
 
   // check if status code is 200

@@ -14,7 +14,7 @@ export default async function handler(
 
   // make a request to TicketMaster's API
   const response = await fetch(
-    `https://api.tixtrend.martinmiglio.dev/watch?list=${event_count}`
+    process.env.TIXTREND_API_URL + `/watch?list=${event_count}`
   );
 
   // check if status code is 200

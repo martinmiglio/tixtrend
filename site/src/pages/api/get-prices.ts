@@ -13,7 +13,7 @@ export default async function handler(
 
   // make a request to the API
   const response = await fetch(
-    `https://api.tixtrend.martinmiglio.dev/prices?event_id=${event_id}`
+    process.env.TIXTREND_API_URL + `/prices?event_id=${event_id}`
   );
 
   // check if status code is 200
@@ -39,6 +39,9 @@ export default async function handler(
   });
 
   // return the prices with a cache header
-  res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=240');
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=120, stale-while-revalidate=240"
+  );
   res.status(200).json(prices);
 }
