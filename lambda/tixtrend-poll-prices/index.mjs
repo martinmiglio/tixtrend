@@ -30,30 +30,11 @@ export const handler = async (event) => {
     const promises = Items.map(async (item) => {
       const { event_id } = item;
 
-      const url = `${API_URL}/${event_id}?apikey=${process.env.TICKETMASTER_API_KEY}`;
-      const response = await fetch(url);
+      const event_data = await getEventPrice(event_id);
 
-      if (!response.ok) {
+      if (!event_data) {
         return;
       }
-
-      const data = await response.json();
-
-      const { priceRanges } = data;
-      const { min, max, currency } = priceRanges[0];
-
-      const timestamp = Date.now();
-      const event_start_date = new Date(data.dates.start.dateTime);
-      const ttl = Math.floor(event_start_date.getTime() / 1000) + 60 * 60 * 24;
-
-      const event_data = {
-        event_id,
-        timestamp,
-        currency,
-        min,
-        max,
-        ttl,
-      };
 
       await dynamo
         .put({
@@ -65,7 +46,10 @@ export const handler = async (event) => {
       return event_data;
     });
 
-    const events_data = await Promise.all(promises);
+    let events_data = await Promise.all(promises);
+
+    // remove any null values
+    events_data = events_data.filter((event) => event);
 
     return {
       statusCode: 200,
@@ -80,4 +64,40 @@ export const handler = async (event) => {
       body: JSON.stringify(error, Object.getOwnPropertyNames(error)),
     };
   }
+};
+
+const getEventPrice = async (event_id) => {
+  const url = `${API_URL}/${event_id}?apikey=${process.env.TICKETMASTER_API_KEY}`;
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    // if too many requests, recuse with a delay
+    if (response.status === 429) {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      return getEventPrice(event_id);
+    }
+    return;
+  }
+
+  const data = await response.json();
+
+  const { priceRanges } = data;
+  if (!priceRanges) {
+    // this event doesn't have a price range yet, skip for now
+    return;
+  }
+  const { min, max, currency } = priceRanges[0];
+
+  const timestamp = Date.now();
+  const event_start_date = new Date(data.dates.start.dateTime);
+  const ttl = Math.floor(event_start_date.getTime() / 1000) + 60 * 60 * 24;
+
+  return {
+    event_id,
+    timestamp,
+    currency,
+    min,
+    max,
+    ttl,
+  };
 };
