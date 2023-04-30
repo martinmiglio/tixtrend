@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { scaleTime, scaleLinear } from "d3-scale";
 import * as shape from "d3-shape";
 import dynamic from "next/dynamic";

@@ -2,8 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import { useSpring, animated } from "@react-spring/web";
 import { Vector2, useGesture } from "@use-gesture/react";
 
-import useMediaQuery from "@utils/usehooks-ts";
-
 type CursorProps = {
   parentWidth: number;
   parentHeight: number;
@@ -19,7 +17,6 @@ const Cursor = ({
 }: CursorProps) => {
   const CURSOR_RADIUS = 5;
 
-  const isMobile = useMediaQuery("(max-width: 640px)");
   const [pathElement, setPathElement] = useState<SVGPathElement | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
