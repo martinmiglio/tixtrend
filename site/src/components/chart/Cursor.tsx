@@ -8,9 +8,15 @@ type CursorProps = {
   parentWidth: number;
   parentHeight: number;
   graphPathRef: React.RefObject<SVGPathElement>;
+  onMouseMove: (point: { x: number; y: number }) => void;
 };
 
-const Cursor = ({ parentWidth, parentHeight, graphPathRef }: CursorProps) => {
+const Cursor = ({
+  parentWidth,
+  parentHeight,
+  graphPathRef,
+  onMouseMove,
+}: CursorProps) => {
   const CURSOR_RADIUS = 5;
 
   const isMobile = useMediaQuery("(max-width: 640px)");
@@ -41,7 +47,8 @@ const Cursor = ({ parentWidth, parentHeight, graphPathRef }: CursorProps) => {
 
   const cursorAnimation = (xy: Vector2) => {
     if (cursorRef.current) {
-      const [x] = xy;
+      const [x, y] = xy;
+      onMouseMove({ x, y });
       const { width: cursorX } = cursorRef.current.getBoundingClientRect();
 
       if (!pathElement) {

@@ -1,11 +1,12 @@
 //graph-test.tsx
 /* a test page for the graph component */
-import React from "react";
+import React, { useState } from "react";
 import { PriceData } from "@utils/types/PriceData/PriceData";
 
 import Graph from "@components/chart/Graph";
 import useWindowDimensions from "@components/helpers/WindowDimensions";
 import { DataPoint } from "@components/chart/DataPoint";
+import PriceDisplay from "@components/chart/PriceDisplay";
 
 const createFakeData = (n: number) => {
   const data: PriceData[] = [];
@@ -34,10 +35,16 @@ const fakeData = createFakeData(25);
 
 const GraphTest = () => {
   const { height, width } = useWindowDimensions();
+  const [currentValue, setCurrentValue] = useState<PriceData | null>(null);
+
+  const handleCurrentValueChange = (index: number) => {
+    setCurrentValue(fakeData[index]);
+  };
 
   return (
     <div className="w-screen">
       <div className="mx-auto">
+        <PriceDisplay priceData={currentValue} />
         <Graph
           data={fakeData.map((priceData: PriceData): DataPoint => {
             return {
@@ -45,8 +52,9 @@ const GraphTest = () => {
               value: priceData.min,
             };
           })}
-          height={width < 640 ? 0.75 * height : height}
+          height={width < 640 ? 0.75 * height : 0.9 * height}
           width={width}
+          onCurrentValueChange={handleCurrentValueChange}
         />
       </div>
     </div>
