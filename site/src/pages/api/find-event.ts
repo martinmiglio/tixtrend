@@ -13,7 +13,7 @@ export default async function handler(
 
   // make a request to TicketMaster's API
   const response = await fetch(
-    `https://app.ticketmaster.com/discovery/v2/events.json?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}`
+    `https://app.ticketmaster.com/discovery/v2/suggest?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`
   );
 
   // parse the response as JSON
@@ -28,7 +28,7 @@ export default async function handler(
   }
 
   // check if there are any events
-  if (data.page.totalElements === 0) {
+  if (data._embedded.events === 0) {
     res.status(200).json([]);
     return;
   }
@@ -45,6 +45,9 @@ export default async function handler(
   });
 
   // return the events with a cache header
-  res.setHeader('Cache-Control', 'public, s-maxage=120, stale-while-revalidate=240');
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=120, stale-while-revalidate=240"
+  );
   res.status(200).json(events);
 }
