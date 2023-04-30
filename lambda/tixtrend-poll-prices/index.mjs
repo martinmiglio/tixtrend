@@ -1,24 +1,23 @@
-/* This lambda function polls the Ticketmaster API for the price of each event in the watch list. */
+// tixtrend-poll-prices\index.mjs
+// this function is triggered by the price poll queue
+// it will read an event id from the queue and poll the price, then save it to the database
 
 import AWS from "aws-sdk";
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
+const sqs = new AWS.SQS();
 
-const watchListTableName = "tixtrend-watched-events";
-const priceListTableName = "tixtrend-event-prices";
-
+const eventPricesTableName = "tixtrend-event-prices";
+const pricePollQueueURL =
+  "https://sqs.us-east-1.amazonaws.com/501123347638/tixtrend-price-poll-queue.fifo";
 const API_URL = "https://app.ticketmaster.com/discovery/v2/events";
 
 export const handler = async (event) => {
   try {
-    const { Items } = await dynamo
-      .scan({
-        TableName: watchListTableName,
-        ProjectionExpression: "event_id",
-      })
-      .promise();
-
-    if (Items.length === 0) {
+    console.info("EVENT\n" + JSON.stringify(event, null, 2));
+    // read an event id from the sqs queue
+    const { Records } = event;
+    if (Records.length === 0) {
       return {
         statusCode: 200,
         body: JSON.stringify({
@@ -26,36 +25,41 @@ export const handler = async (event) => {
         }),
       };
     }
+    const { body: event_id, receiptHandle } = Records[0];
 
-    const promises = Items.map(async (item) => {
-      const { event_id } = item;
+    // get the price of the event
+    const eventPrice = await getEventPrice(event_id);
 
-      const event_data = await getEventPrice(event_id);
+    if (!eventPrice) {
+      return {
+        statusCode: 500,
+        body: JSON.stringify({
+          message: `Event ${event_id} not found.`,
+        }),
+      };
+    }
 
-      if (!event_data) {
-        return;
-      }
+    // save the price to the database
+    await dynamo
+      .put({
+        TableName: eventPricesTableName,
+        Item: eventPrice,
+      })
+      .promise();
 
-      await dynamo
-        .put({
-          TableName: priceListTableName,
-          Item: event_data,
-        })
-        .promise();
-
-      return event_data;
-    });
-
-    let events_data = await Promise.all(promises);
-
-    // remove any null values
-    events_data = events_data.filter((event) => event);
+    // delete the message from the queue
+    await sqs
+      .deleteMessage({
+        QueueUrl: pricePollQueueURL,
+        receiptHandle,
+      })
+      .promise();
 
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: "Successfully polled all events.",
-        events_data,
+        message: `Successfully polled event ${event_id}.`,
+        eventPrice,
       }),
     };
   } catch (error) {

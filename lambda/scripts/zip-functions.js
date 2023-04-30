@@ -6,6 +6,7 @@ const directories = [
   "../tixtrend-event-pricing",
   "../tixtrend-event-watch",
   "../tixtrend-poll-prices",
+  "../tixtrend-queue-watched-events",
 ];
 
 const out_dir = path.join(__dirname, "/../temp/archives/");
