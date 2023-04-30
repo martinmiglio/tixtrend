@@ -1,5 +1,7 @@
+const { withAxiom } = require("next-axiom");
 /** @type {import('next').NextConfig} */
-const nextConfig = {
+
+module.exports = withAxiom({
   reactStrictMode: true,
   images: {
     remotePatterns: [
@@ -7,6 +9,4 @@ const nextConfig = {
       { protocol: "https", hostname: "**.ticketweb.com" },
     ],
   },
-};
-
-module.exports = nextConfig;
+});
