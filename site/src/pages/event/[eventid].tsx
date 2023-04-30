@@ -9,6 +9,7 @@ import EventInfoItem from "@components/EventInfoItem";
 import HeaderBar from "@components/page/HeaderBar";
 import FooterBar from "@components/page/FooterBar";
 import PageHeader from "@components/page/PageHeader";
+import LoadingDots from "@components/page/LoadingDots";
 
 const Event = ({ baseURL }: { baseURL: string }) => {
   const router = useRouter();
@@ -59,7 +60,17 @@ const Event = ({ baseURL }: { baseURL: string }) => {
   }, [eventid]);
 
   if (loadingEventData || !eventData) {
-    return <></>;
+    return (
+      <>
+        <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+          <HeaderBar noTagline />
+          <div className="h-screen flex justify-center items-center">
+            <LoadingDots dotSize={8} dotSeparation={6} />
+          </div>
+          <FooterBar />
+        </div>
+      </>
+    );
   }
 
   return (
@@ -75,8 +86,8 @@ const Event = ({ baseURL }: { baseURL: string }) => {
           <div className="w-full p-5 shadow-xl rounded-md">
             <EventInfoItem eventData={eventData} />
           </div>
-          {!loadingPriceData &&
-            (priceDataSet.length === 0 ? (
+          {!loadingPriceData ? (
+            priceDataSet.length === 0 ? (
               <div>
                 <div className="text-center text-2xl mt-10">
                   No price history yet, check back later!
@@ -91,7 +102,12 @@ const Event = ({ baseURL }: { baseURL: string }) => {
                 height={windowHeight * 0.5}
                 width={windowWidth}
               />
-            ))}
+            )
+          ) : (
+            <div className="flex justify-center items-center my-20">
+              <LoadingDots dotSize={8} dotSeparation={6} />
+            </div>
+          )}
         </div>
         <FooterBar />
       </div>
