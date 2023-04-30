@@ -57,12 +57,3 @@ export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
     </>
   );
 };
-
-// if i wanted to prevent the end tick label from being cut off, i could do something like this:
-// const lastTick = ticks[ticks.length - 1];
-// const lastTickValue = lastTick.value;
-// const lastTickOffset = lastTick.xOffset;
-// const lastTickLabel = lastTickValue.toLocaleDateString(undefined, {
-//   month: "short",
-//   day: "numeric",
-// });
