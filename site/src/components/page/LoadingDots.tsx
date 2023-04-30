@@ -16,8 +16,6 @@ const LoadingDots = ({ dotSize, dotSeparation }: LoadingDotsProps) => {
     Array.from({ length: DOT_COUNT - 1 }, () => 1).concat([0])
   );
 
-  console.log(opacityValues.map((opacity) => opacity * 0.8 + 0.2));
-
   useEffect(() => {
     const intervalId = setInterval(() => {
       setOpacityValues((prevValues) => {
