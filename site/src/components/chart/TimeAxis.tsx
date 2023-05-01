@@ -8,6 +8,7 @@ type AxisBottomProps = {
 
 // tick length
 const TICK_LENGTH = 6;
+const COLOR = "rgb(229 231 235)";
 
 export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
   const range = xScale.range();
@@ -19,32 +20,27 @@ export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
 
     return ticks.map((value, index) => {
       let offset = xScale(value);
-      if (index === 0) {
-        offset += 20;
-      }
-      if (index === ticks.length - 1) {
-        offset -= 20;
-      }
-
       return {
         value,
         xOffset: offset,
+        fill:
+          index === 0 || index === ticks.length - 1 ? "rgba(0,0,0,0)" : COLOR,
       };
     });
   }, [xScale]);
 
   return (
     <>
-      {ticks.map(({ value, xOffset }) => (
+      {ticks.map(({ value, xOffset, fill }) => (
         <g key={value.valueOf()} transform={`translate(${xOffset}, 0)`}>
-          <line y2={TICK_LENGTH} stroke="rgb(229 231 235)" />
+          <line y2={TICK_LENGTH} stroke={fill} />
           <text
             key={value.valueOf()}
             style={{
               fontSize: "10px",
               textAnchor: "middle",
               transform: "translateY(20px)",
-              fill: "rgb(229 231 235)",
+              fill: fill,
             }}
           >
             {value.toLocaleDateString(undefined, {
