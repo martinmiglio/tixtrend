@@ -37,10 +37,18 @@ const Cursor = ({
   }));
 
   useEffect(() => {
-    if (parentHeight && parentWidth) {
-      api.set({ x: -1.25 * parentWidth, y: -1 * parentHeight });
+    if (parentHeight && parentWidth && pathElement) {
+      const pathPoint = findPathPointByX(pathElement, parentWidth - 1);
+      if (!pathPoint) {
+        return;
+      }
+      onMouseMove({ x: parentWidth - 1, y: pathPoint.y - parentHeight * 2 });
+      api.set({
+        x: 0,
+        y: pathPoint.y - parentHeight * 2,
+      });
     }
-  }, []);
+  }, [pathElement]);
 
   const cursorAnimation = (xy: Vector2) => {
     if (cursorRef.current) {
