@@ -22,6 +22,10 @@ const PageHeader = ({ title, description, url }: PageHeaderProps) => {
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <link rel="canonical" href={parsedURL.protocol + "//" + parsedURL.host} />
+      <link
+        href="https://fonts.cdnfonts.com/css/averta-blackitalic"
+        rel="stylesheet"
+      />
       <link rel="icon" type="image/svg+xml" href="favicon.svg" />
       <link rel="icon" type="image/png" href="favicon.png" />
     </Head>
