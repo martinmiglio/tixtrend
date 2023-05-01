@@ -33,7 +33,7 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
       </div>
       {!noTagline && (
         <div className="w-full flex flex-col justify-center items-center pb-5">
-          <h2 className="mt-2 text-3xl leading-8 font-extrabold tracking-tight sm:text-4xl">
+          <h2 className="mt-2 text-3xl leading-10 font-extrabold md:tracking-normal tracking-tighter sm:text-4xl font-[averta-extrabolditalic]">
             Stay Ahead of the Game
           </h2>
           <h3 className="text-xl my-2 leading-6 tracking-tight">
