@@ -16,9 +16,6 @@ export default async function handler(
     `https://app.ticketmaster.com/discovery/v2/suggest?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`
   );
 
-  // parse the response as JSON
-  const data = await response.json();
-
   // check if status code is 200
   if (response.status !== 200) {
     res.status(500).json({
@@ -27,8 +24,16 @@ export default async function handler(
     return;
   }
 
+  // parse the response as JSON
+  const data = await response.json();
+
   // check if there are any events
-  if (data._embedded.events === 0) {
+  if (
+    !data ||
+    !data._embedded ||
+    !data._embedded.events ||
+    data._embedded.events === 0
+  ) {
     res.status(200).json([]);
     return;
   }
@@ -38,7 +43,7 @@ export default async function handler(
     return {
       id: event.id,
       name: event.name,
-      location: event._embedded.venues[0]?.name,
+      location: event._embedded.venues[0]?.name ?? "TBA",
       date: event.dates.start.localDate,
       imageURL: event.images[0].url,
     };
