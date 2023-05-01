@@ -1,8 +1,9 @@
 // PriceDisplay.ts
 /* this component is responsible for displaying the price with the appropriate currency symbol*/
-
-import { PriceData } from "@utils/types/PriceData/PriceData";
 import React from "react";
+
+import NumberScroller from "@components/page/NumberScroller";
+import { PriceData } from "@utils/types/PriceData/PriceData";
 
 const CURRENCY_SYMBOLS = {
   USD: "$", // US Dollar
@@ -12,19 +13,23 @@ const CURRENCY_SYMBOLS = {
 };
 
 const PriceDisplay = ({ priceData }: { priceData: PriceData | null }) => {
-  const currency =
-    priceData && priceData.currency in CURRENCY_SYMBOLS
-      ? CURRENCY_SYMBOLS[
-          priceData.currency.toUpperCase() as keyof typeof CURRENCY_SYMBOLS
-        ]
-      : "$";
+  let currency = "";
+
+  if (priceData) {
+    currency =
+      priceData.currency in CURRENCY_SYMBOLS
+        ? CURRENCY_SYMBOLS[
+            priceData.currency.toUpperCase() as keyof typeof CURRENCY_SYMBOLS
+          ]
+        : priceData.currency.toUpperCase();
+  }
 
   return (
     <div className="flex items-center pt-4">
-      <p className="text-3xl font-bold ml-1">
+      <div className="text-3xl font-bold ml-1 flex">
         {currency}
-        {priceData ? priceData.min.toFixed(2) : "0.00"}
-      </p>
+        <NumberScroller value={priceData ? priceData.min : 0.0} />
+      </div>
     </div>
   );
 };
