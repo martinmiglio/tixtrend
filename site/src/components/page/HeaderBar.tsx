@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
   return (
@@ -7,6 +8,13 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
       <div className="border-b border-gray-700 mb-3">
         <div className="sm:flex sm:items-center sm:justify-between pb-2">
           <Link href="/" className="flex items-center mb-4 sm:mb-0">
+            <Image
+              src="/logo-gray.svg"
+              alt="TixTrend Logo"
+              width={60}
+              height={60}
+              className="mr-2"
+            />
             <h1 className="text-4xl">TixTrend</h1>
           </Link>
           <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400 space-x-8 mr-4">
