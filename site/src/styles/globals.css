@@ -7,3 +7,10 @@ body {
   color: rgb(229 231 235);
   font-family: Averta, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
+
+@font-face {
+  font-family: 'averta-extrabolditalic';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averta-ExtraBoldItalic'), url('https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff') format('woff');
+}
