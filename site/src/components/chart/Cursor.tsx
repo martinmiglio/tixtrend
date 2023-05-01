@@ -15,7 +15,7 @@ const Cursor = ({
   graphPathRef,
   onMouseMove,
 }: CursorProps) => {
-  const CURSOR_RADIUS = 5;
+  const CURSOR_RADIUS = 7;
 
   const [pathElement, setPathElement] = useState<SVGPathElement | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
@@ -135,7 +135,7 @@ const Cursor = ({
               width: CURSOR_RADIUS * 2,
               height: CURSOR_RADIUS * 2,
               borderRadius: CURSOR_RADIUS,
-              borderColor: "#3977e3",
+              borderColor: "#1a202c",
               borderWidth: CURSOR_RADIUS / 3,
               backgroundColor: "white",
             }}
