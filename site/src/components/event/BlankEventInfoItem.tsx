@@ -6,7 +6,11 @@ const BlankEventInfoItem = () => {
 
   const isMobile = useMediaQuery("(max-width: 640px)");
   return (
-    <div className="flex flex-row justify-center items-center w-full">
+    <div
+      className={`flex flex-${
+        isMobile ? "col" : "row"
+      } justify-center items-center w-full`}
+    >
       <div className={`flex-initial ${isMobile ? "" : "px-5"}`}>
         <div
           className={`animate-pulse ${COLOR} h-[169px] w-[300px] rounded-lg shadow-lg`}
