@@ -5,7 +5,7 @@ import { PriceData } from "@utils/types/PriceData/PriceData";
 import { EventData } from "@utils/types/EventData/EventData";
 import useWindowDimensions from "@components/helpers/WindowDimensions";
 import PriceChart from "@components/chart/PriceChart";
-import EventInfoItem from "@components/EventInfoItem";
+import EventInfoItem from "@components/event/EventInfoItem";
 import HeaderBar from "@components/page/HeaderBar";
 import FooterBar from "@components/page/FooterBar";
 import PageHeader from "@components/page/PageHeader";

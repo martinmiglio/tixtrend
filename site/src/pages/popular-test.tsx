@@ -2,7 +2,7 @@
 /* this page is used to test the popular events component */
 
 import React from "react";
-import PopularEvents from "@components/PopularEvents";
+import PopularEvents from "@components/event/PopularEvents";
 
 const PopularTest = () => {
   return (

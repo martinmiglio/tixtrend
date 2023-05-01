@@ -26,7 +26,7 @@ const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
           src={eventData.imageURL}
           alt={eventData.name}
           width={300}
-          height={300}
+          height={169}
           className="rounded-lg shadow-lg h-auto"
         />
       </div>
