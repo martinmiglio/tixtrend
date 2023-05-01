@@ -78,7 +78,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
       <PageHeader
         title={`Tix Trend - ${eventData.name}`}
         description={`Price History for ${eventData.name}`}
-        url={baseURL + `event/${eventid}`}
+        url={baseURL + `/event/${eventid}`}
       />
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <HeaderBar noTagline />
