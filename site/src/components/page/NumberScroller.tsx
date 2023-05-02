@@ -3,7 +3,7 @@ import { useSpring, animated, Interpolation } from "@react-spring/web";
 
 const NumberScroller = ({ value }: { value: number }) => {
   const { number } = useSpring({
-    from: { number: 0.0 },
+    from: { number: 0.01 },
     number: value,
     delay: 200,
     config: { mass: 1, tension: 20, friction: 7, clamp: true },
@@ -11,7 +11,7 @@ const NumberScroller = ({ value }: { value: number }) => {
 
   const [numberValueString, setNumberValueString] = useState<
     string | Interpolation<number, string>
-  >("0.00");
+  >("0.01");
 
   useEffect(() => {
     const interp = number.to((n) => n.toFixed(2));
