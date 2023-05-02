@@ -14,9 +14,9 @@ export const handler = async (event) => {
     }
     switch (httpMethod) {
       case "GET":
-        return handleGet(event);
+        return await handleGet(event);
       case "OPTIONS":
-        return handleOptions();
+        return await handleOptions();
       default:
         return {
           statusCode: 400,
