@@ -14,6 +14,7 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
               width={60}
               height={60}
               className="mr-2"
+              priority
             />
             <h1 className="text-4xl">TixTrend</h1>
           </Link>
