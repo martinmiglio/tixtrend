@@ -1,4 +1,18 @@
-@import url('https://fonts.cdnfonts.com/css/averta-blackitalic');
+@font-face {
+  font-family: 'Averta-Regular';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Averta-Regular'), url('https://fonts.cdnfonts.com/s/14933/Averta.woff') format('woff');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Averta-ExtraBoldItalic';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Averta-ExtraBoldItalic'), url('https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff') format('woff');
+  font-display: swap;
+}
 
 @tailwind base;
 @tailwind components;
@@ -7,5 +21,4 @@
 body {
   background-color: #1a202c;
   color: rgb(229 231 235);
-  font-family: Averta-Regular, Helvetica Neue, Helvetica, Arial, sans-serif;
 }
