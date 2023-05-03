@@ -17,7 +17,12 @@ const PageHeader = ({ title, description, url }: PageHeaderProps) => {
       <meta property="og:description" content={description} key="ogdesc" />
       <meta property="og:url" content={parsedURL.href} key="ogurl" />
       <meta property="og:type" content="website" />
-      <meta property="og:image" content="/wide-1200x630.png" />
+      <meta
+        property="og:image"
+        content={
+          parsedURL.protocol + "//" + parsedURL.host + "/wide-1200x630.png"
+        }
+      />
       <meta name="twitter:site" content={title} />
       <meta name="twitter:creator" content="@martinmiglio" />
       <meta name="twitter:title" content={title} />
