@@ -27,6 +27,15 @@ const PageHeader = ({ title, description, url }: PageHeaderProps) => {
       <meta name="twitter:creator" content="@martinmiglio" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
+      <meta name="twitter:card" content="summary_large_image" />
+      <meta
+        name="twitter:image"
+        content={
+          parsedURL.protocol + "//" + parsedURL.host + "/wide-1200x630.png"
+        }
+      />
+      <meta property="twitter:domain" content={parsedURL.hostname}></meta>
+      <meta property="twitter:url" content={parsedURL.href} />
       <link rel="canonical" href={parsedURL.protocol + "//" + parsedURL.host} />
       <link rel="icon" type="image/svg+xml" href="favicon.svg" />
       <link rel="icon" type="image/png" href="favicon.png" />
