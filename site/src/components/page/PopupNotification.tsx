@@ -30,7 +30,7 @@ const PopupNotification = ({
       {isActive && (
         <div className="absolute top-0 right-0">
           <div
-            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-200 rounded-lg shadow-lg p-4"
+            className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-200 rounded-lg shadow-lg p-4 z-50"
             style={{
               opacity: popupOpacity,
               transition: `opacity ${popupDuration * 0.2}ms`,
