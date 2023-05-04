@@ -84,7 +84,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
         <HeaderBar noTagline />
         <div className="w-full inline-flex flex-col justify-center items-center">
           <div className="w-full p-5 shadow-xl rounded-md">
-            <EventInfoItem eventData={eventData} />
+            <EventInfoItem eventData={eventData} showSaveButton={true} />
           </div>
           {!loadingPriceData ? (
             priceDataSet.length === 0 ? (

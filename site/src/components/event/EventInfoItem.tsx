@@ -5,8 +5,15 @@ import React from "react";
 import Image from "next/image";
 import { EventData } from "@utils/types/EventData";
 import useMediaQuery from "@utils/usehooks-ts";
+import SaveEventButton from "./SaveEventButton";
 
-const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
+const EventInfoItem = ({
+  eventData,
+  showSaveButton,
+}: {
+  eventData: EventData;
+  showSaveButton?: boolean;
+}) => {
   const isMobile = useMediaQuery("(max-width: 640px)");
   const formattedDate = new Date(eventData.date).toLocaleDateString("en-us", {
     weekday: "long",
@@ -31,6 +38,9 @@ const EventInfoItem = ({ eventData }: { eventData: EventData }) => {
         />
       </div>
       <div className="flex-1">
+        <div className="flex justify-end">
+          {showSaveButton && <SaveEventButton event={eventData} />}
+        </div>
         <div
           className={`flex flex-col justify-center items-center ${
             isMobile ? "px-2" : ""
