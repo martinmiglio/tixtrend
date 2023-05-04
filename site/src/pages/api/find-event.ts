@@ -11,35 +11,49 @@ export default async function handler(
   // get the keyword from the query string
   const keyword = req.query.keyword;
 
-  // make a request to TicketMaster's API
-  const response = await fetch(
-    `https://app.ticketmaster.com/discovery/v2/suggest?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`
-  );
+  const events = await getSearchEvents(keyword as string);
 
-  // check if status code is 200
-  if (response.status !== 200) {
+  if (!events) {
     res.status(500).json({
-      message: `An error occurred while fetching the data. ${response.status}`,
+      message: `No events found for keyword ${keyword}`,
     });
     return;
   }
+  // return the events with a cache header
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=120, stale-while-revalidate=240"
+  );
+  res.status(200).json(events);
+}
 
-  // parse the response as JSON
-  const data = await response.json();
+const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
+  const endpoints = [
+    `https://app.ticketmaster.com/discovery/v2/events?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`,
+    `https://app.ticketmaster.com/discovery/v2/suggest?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`,
+  ];
 
-  // check if there are any events
-  if (
-    !data ||
-    !data._embedded ||
-    !data._embedded.events ||
-    data._embedded.events === 0
-  ) {
-    res.status(200).json([]);
-    return;
-  }
+  // make requests to both endpoints, merging the results and removing duplicates by id
+  const responses = await Promise.all(
+    endpoints.map((endpoint) => fetch(endpoint))
+  );
+  const data = await Promise.all(responses.map((response) => response.json()));
+  const events = data.map((d: any) => d._embedded.events).flat();
+  const uniqueEvents = events.filter(
+    (event: any, index: number, self: any) =>
+      index === self.findIndex((e: any) => e.id === event.id)
+  );
+
+  // order by date
+  uniqueEvents.sort((a: any, b: any) => {
+    return (
+      new Date(a.dates.start.localDate).getTime() -
+      new Date(b.dates.start.localDate).getTime()
+    );
+  });
 
   // parse into EventData type
-  const events: EventData[] = data._embedded.events.map((event: any) => {
+  return uniqueEvents.map((event: any) => {
     return {
       id: event.id,
       name: event.name,
@@ -48,11 +62,4 @@ export default async function handler(
       imageURL: event.images[0].url,
     };
   });
-
-  // return the events with a cache header
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240"
-  );
-  res.status(200).json(events);
-}
+};
