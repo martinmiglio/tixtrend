@@ -18,6 +18,13 @@ module.exports = {
         "Arial",
         "sans-serif",
       ],
+      heading: [
+        "Averta-Bold",
+        "Helvetica Neue",
+        "Helvetica",
+        "Arial",
+        "sans-serif",
+      ],
     },
   },
   plugins: [],
