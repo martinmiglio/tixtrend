@@ -13,7 +13,7 @@ const BlankEventInfoItem = () => {
       <div className="flex-1">
         <div className="flex flex-col justify-center items-center px-2 sm:px-0">
           <div
-            className={`animate-pulse ${COLOR}  h-10 w-96 rounded-lg shadow-lg mb-4`}
+            className={`animate-pulse ${COLOR}  h-10 w-80 sm:w-96 rounded-lg shadow-lg mt-2 mb-2 sm:mt-1 sm:mb-4`}
           ></div>
           <div
             className={`animate-pulse ${COLOR}  h-9 w-56 rounded-lg shadow-lg mb-2`}
