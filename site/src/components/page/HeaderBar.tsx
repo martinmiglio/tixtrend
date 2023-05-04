@@ -1,15 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 
 const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
-  const [hasSavedEvents, setHasSavedEvents] = useState(false);
-
-  useEffect(() => {
-    const savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
-    setHasSavedEvents(savedEvents.length > 0);
-  }, []);
-
   return (
     <>
       <div className="border-b border-gray-700 mb-3">
@@ -31,11 +24,11 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
                 Search
               </Link>
             </li>
-            {hasSavedEvents && (
+            <li>
               <Link href="/saved-events" className="hover:underline">
                 Saved Events
               </Link>
-            )}
+            </li>
             <li>
               <Link href="/about" className="hover:underline">
                 About
