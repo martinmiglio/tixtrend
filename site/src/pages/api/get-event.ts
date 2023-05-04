@@ -30,7 +30,7 @@ export const getEventByID = async (
     id: data.id,
     name: data.name,
     location: data._embedded ? data._embedded.venues[0]?.name : "TBA",
-    date: new Date(data.dates.start.localDate),
+    date: new Date(Date.parse(data.dates.start.dateTime)),
     imageURL: data.images[0].url,
   };
 
