@@ -2,6 +2,7 @@
 /* This page displays the user's saved events. */
 
 import React, { useState, useEffect } from "react";
+import Link from "next/link";
 
 import { EventData } from "@utils/types/EventData";
 import EventInfoItem from "@components/event/EventInfoItem";
@@ -26,7 +27,7 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
       />
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
         <HeaderBar noTagline />
-        <div className="flex flex-col justify-center items-center w-screen">
+        <div className="w-full inline-flex flex-col justify-center items-center">
           <h1 className="text-4xl font-heading text-center pt-5 pb-10">
             Saved Events
           </h1>
@@ -37,12 +38,13 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
           ) : (
             <div className="flex flex-col justify-center items-center w-full">
               {savedEvents.map((event: EventData) => (
-                <div
+                <Link
                   className="w-full p-5 shadow-xl rounded-md my-5"
+                  href={`/event/${event.id}`}
                   key={event.id}
                 >
                   <EventInfoItem eventData={event} showSaveButton={true} />
-                </div>
+                </Link>
               ))}
             </div>
           )}
