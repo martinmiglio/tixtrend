@@ -15,6 +15,11 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
 
   useEffect(() => {
     const savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
+    const now = new Date();
+    const filteredSavedEvents = savedEvents.filter(
+      (event: EventData) => new Date(event.date) > now
+    );
+    localStorage.setItem("savedEvents", JSON.stringify(filteredSavedEvents));
     setSavedEvents(savedEvents);
   }, []);
 
