@@ -93,8 +93,8 @@ const getEventPrice = async (event_id) => {
   const { min, max, currency } = priceRanges[0];
 
   const timestamp = Date.now();
-  const event_start_date = new Date(data.dates.start.dateTime);
-  const ttl = Math.floor(event_start_date.getTime() / 1000) + 60 * 60 * 24;
+  const ttl =
+    Math.floor(Date.parse(data.dates.start.dateTime) / 1000) + 60 * 60 * 24;
 
   return {
     event_id,

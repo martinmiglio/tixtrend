@@ -107,8 +107,8 @@ const checkEventWatch = async (event_id) => {
   const data = await response.json();
 
   const timestamp = Date.now();
-  const event_start_date = new Date(data.dates.start.dateTime);
-  const ttl = Math.floor(event_start_date.getTime() / 1000) + 60 * 60 * 24;
+  const ttl =
+    Math.floor(Date.parse(data.dates.start.dateTime) / 1000) + 60 * 60 * 24;
 
   const params = {
     TableName: tableName,

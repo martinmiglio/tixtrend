@@ -47,8 +47,8 @@ const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
   // order by date
   uniqueEvents.sort((a: any, b: any) => {
     return (
-      new Date(a.dates.start.localDate).getTime() -
-      new Date(b.dates.start.localDate).getTime()
+      new Date(Date.parse(a.dates.start.dateTime)).getTime() -
+      new Date(Date.parse(b.dates.start.dateTime)).getTime()
     );
   });
 
@@ -58,7 +58,7 @@ const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
       id: event.id,
       name: event.name,
       location: event._embedded ? event._embedded.venues[0]?.name : "TBA",
-      date: new Date(event.dates.start.localDate),
+      date: new Date(Date.parse(event.dates.start.dateTime)),
       imageURL: event.images[0].url,
     };
   });

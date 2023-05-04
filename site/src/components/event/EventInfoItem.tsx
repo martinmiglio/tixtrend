@@ -13,7 +13,7 @@ const EventInfoItem = ({
   eventData: EventData;
   showSaveButton?: boolean;
 }) => {
-  const formattedDate = new Date(eventData.date).toLocaleDateString("en-us", {
+  const formattedDate = new Date(eventData.date).toLocaleDateString(undefined, {
     weekday: "long",
     year: "numeric",
     month: "short",
