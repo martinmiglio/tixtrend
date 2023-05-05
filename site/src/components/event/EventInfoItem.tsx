@@ -32,13 +32,15 @@ const EventInfoItem = ({
         />
       </div>
       <div className="flex-1">
-        <div className="flex justify-end">
-          {showSaveButton && <SaveEventButton event={eventData} />}
-        </div>
         <div className="flex flex-col justify-center items-center px-2 sm:px-0">
-          <h1 className="text-2xl font-semibold pb-2 whitespace-nowrap overflow-ellipsis">
-            {eventData.name}
-          </h1>
+          <div className="flex flex-row pb-2">
+            <h1 className="flex-1 text-2xl font-semibold">{eventData.name}</h1>
+            {showSaveButton && (
+              <div className="pl-5 flex items-center justify-center">
+                <SaveEventButton event={eventData} />
+              </div>
+            )}
+          </div>
           <h2 className="text-xl text-gray-300 whitespace-nowrap overflow-ellipsis">
             {formattedDate}
           </h2>

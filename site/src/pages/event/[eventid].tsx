@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 
 import { PriceData } from "@utils/types/PriceData/PriceData";
 import { EventData } from "@utils/types/EventData/EventData";
-import useWindowDimensions from "@components/helpers/WindowDimensions";
 import PriceChart from "@components/chart/PriceChart";
 import EventInfoItem from "@components/event/EventInfoItem";
 import HeaderBar from "@components/page/HeaderBar";
@@ -19,7 +18,6 @@ const Event = ({ baseURL }: { baseURL: string }) => {
   const [loadingPriceData, setLoadingPriceData] = useState(true);
   const [eventData, setEventData] = useState<EventData | null>(null);
   const [priceDataSet, setPriceDataSet] = useState<PriceData[]>([]);
-  const { height: windowHeight, width: windowWidth } = useWindowDimensions();
 
   const fetchPriceDataSet = () => {
     fetch(`/api/get-prices?event_id=${eventid}`).then((response) => {
@@ -80,9 +78,9 @@ const Event = ({ baseURL }: { baseURL: string }) => {
         description={`Price History for ${eventData.name}`}
         url={baseURL + `/event/${eventid}`}
       />
-      <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+      <div className="w-full inline-flex flex-col max-w-screen-xl mx-auto p-4 md:py-8 h-screen">
         <HeaderBar noTagline />
-        <div className="w-full inline-flex flex-col justify-center items-center">
+        <div className="flex-grow w-full inline-flex flex-col justify-center items-center ">
           <div className="w-full p-5 shadow-xl rounded-md">
             <EventInfoItem eventData={eventData} showSaveButton={true} />
           </div>
@@ -97,11 +95,9 @@ const Event = ({ baseURL }: { baseURL: string }) => {
                 </div>
               </div>
             ) : (
-              <PriceChart
-                priceDataSet={priceDataSet}
-                height={windowHeight * 0.5}
-                width={windowWidth}
-              />
+              <div className="flex-1 w-screen min-h-200">
+                <PriceChart priceDataSet={priceDataSet} />
+              </div>
             )
           ) : (
             <div className="flex justify-center items-center my-20">
@@ -109,7 +105,9 @@ const Event = ({ baseURL }: { baseURL: string }) => {
             </div>
           )}
         </div>
-        <FooterBar />
+        <div className="flex-2">
+          <FooterBar />
+        </div>
       </div>
     </>
   );
