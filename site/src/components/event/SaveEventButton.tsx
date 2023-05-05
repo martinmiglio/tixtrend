@@ -2,16 +2,16 @@
 /* a button which saves an event to the user's saved events list */
 /* currently functions with localStorage */
 
-import React, { useState, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faHeartCirclePlus,
   faHeartCircleCheck,
+  faHeartCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import React, { useEffect, useState } from "react";
 
+import PopupNotification from "@components/page/PopupNotification";
 import { event as analyticsEvent } from "@utils/analytics";
 import { EventData } from "@utils/types/EventData";
-import PopupNotification from "@components/page/PopupNotification";
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);

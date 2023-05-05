@@ -1,5 +1,5 @@
-import HeaderBar from "@components/page/HeaderBar";
 import FooterBar from "@components/page/FooterBar";
+import HeaderBar from "@components/page/HeaderBar";
 import PageHeader from "@components/page/PageHeader";
 import EventSearch from "@components/search/EventSearch";
 

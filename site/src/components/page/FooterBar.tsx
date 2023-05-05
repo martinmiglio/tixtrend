@@ -1,5 +1,3 @@
-import React from "react";
-
 const FooterBar = () => {
   return (
     <span className="block text-sm text-gray-500 text-center w-full pt-2">

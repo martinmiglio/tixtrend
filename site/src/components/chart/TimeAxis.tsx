@@ -1,5 +1,5 @@
-import { useMemo } from "react";
 import { ScaleTime } from "d3-scale";
+import { useMemo } from "react";
 
 type AxisBottomProps = {
   xScale: ScaleTime<number, number>;

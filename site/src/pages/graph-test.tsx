@@ -1,12 +1,12 @@
 //graph-test.tsx
 /* a test page for the graph component */
-import React, { useState } from "react";
-import { PriceData } from "@utils/types/PriceData/PriceData";
+import { useState } from "react";
 
-import Graph from "@components/chart/Graph";
-import useWindowDimensions from "@components/helpers/WindowDimensions";
 import { DataPoint } from "@components/chart/DataPoint";
+import Graph from "@components/chart/Graph";
 import PriceDisplay from "@components/chart/PriceDisplay";
+import useWindowDimensions from "@components/helpers/WindowDimensions";
+import { PriceData } from "@utils/types/PriceData/PriceData";
 
 const createFakeData = (n: number) => {
   const data: PriceData[] = [];

@@ -1,6 +1,6 @@
-import React, { useRef, useState, useEffect } from "react";
-import { useSpring, animated } from "@react-spring/web";
+import { animated, useSpring } from "@react-spring/web";
 import { Vector2, useGesture } from "@use-gesture/react";
+import React, { useEffect, useRef, useState } from "react";
 
 type CursorProps = {
   parentWidth: number;

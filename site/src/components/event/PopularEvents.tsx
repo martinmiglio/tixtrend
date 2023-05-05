@@ -1,8 +1,9 @@
 // PopularEvents.tsx
 // This component is used to display the most popular tracked events.
 
-import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+
 import { EventData } from "@utils/types/EventData";
 import EventInfoItem from "./EventInfoItem";
 

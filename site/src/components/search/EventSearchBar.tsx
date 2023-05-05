@@ -1,9 +1,9 @@
 // EventSearchBar.tsx
 /* This component is used to search for events by keywords.
 This will be used in the home page of the site to begin the flow. */
-import React, { useCallback, useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useCallback, useEffect, useState } from "react";
 
 const EventSearchBar = ({
   onSearch,
