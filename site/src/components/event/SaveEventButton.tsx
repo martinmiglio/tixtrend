@@ -56,8 +56,8 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
       >
         <FontAwesomeIcon
           icon={saved ? faHeartCircleCheck : faHeartCirclePlus}
-          height={25}
-          width={25}
+          height={22}
+          width={22}
         />
       </button>
       <PopupNotification
