@@ -78,9 +78,9 @@ const Event = ({ baseURL }: { baseURL: string }) => {
         description={`Price History for ${eventData.name}`}
         url={baseURL + `/event/${eventid}`}
       />
-      <div className="w-full inline-flex flex-col max-w-screen-xl mx-auto p-4 md:py-8 h-screen">
+      <div className="w-full flex flex-col max-w-screen-xl mx-auto p-4 md:py-8 h-screen">
         <HeaderBar noTagline />
-        <div className="flex-grow w-full inline-flex flex-col justify-center items-center ">
+        <div className="flex-1 w-full flex flex-col justify-center items-center ">
           <div className="w-full p-5 shadow-xl rounded-md">
             <EventInfoItem eventData={eventData} showSaveButton={true} />
           </div>
@@ -95,7 +95,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
                 </div>
               </div>
             ) : (
-              <div className="flex-1 w-screen min-h-200">
+              <div className="flex-1 w-screen">
                 <PriceChart priceDataSet={priceDataSet} />
               </div>
             )
@@ -105,7 +105,7 @@ const Event = ({ baseURL }: { baseURL: string }) => {
             </div>
           )}
         </div>
-        <div className="flex-2">
+        <div>
           <FooterBar />
         </div>
       </div>
