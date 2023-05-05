@@ -51,7 +51,7 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
     <>
       <button
         type="button"
-        className={`btn btn-primary btn-sm mt-5 sm:mt-0`}
+        className={`btn btn-primary btn-sm`}
         onClick={handleClick}
       >
         <FontAwesomeIcon
