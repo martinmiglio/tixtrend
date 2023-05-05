@@ -1,7 +1,5 @@
 // PriceDisplay.ts
 /* this component is responsible for displaying the price with the appropriate currency symbol*/
-import React from "react";
-
 import NumberScroller from "@components/page/NumberScroller";
 import { PriceData } from "@utils/types/PriceData/PriceData";
 

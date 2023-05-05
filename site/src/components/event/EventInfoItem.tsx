@@ -1,8 +1,8 @@
 // EventInfoItem.tsx
 /* This component is used to display information about an event.
 This will be used in the home page of the site to display the results of the search. */
-import React from "react";
 import Image from "next/image";
+
 import { EventData } from "@utils/types/EventData";
 import SaveEventButton from "./SaveEventButton";
 

@@ -1,5 +1,3 @@
-import React from "react";
-
 const BlankEventInfoItem = () => {
   const COLOR = "bg-gray-600";
 

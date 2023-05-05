@@ -1,10 +1,9 @@
-import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChartLine, faDatabase } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-import PageHeader from "@components/page/PageHeader";
-import HeaderBar from "@components/page/HeaderBar";
 import FooterBar from "@components/page/FooterBar";
+import HeaderBar from "@components/page/HeaderBar";
+import PageHeader from "@components/page/PageHeader";
 
 export default function About({ baseURL }: { baseURL: string }) {
   return (
