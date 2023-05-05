@@ -36,9 +36,15 @@ const EventInfoItem = ({
           {showSaveButton && <SaveEventButton event={eventData} />}
         </div>
         <div className="flex flex-col justify-center items-center px-2 sm:px-0">
-          <h1 className="text-2xl font-semibold pb-2">{eventData.name}</h1>
-          <h2 className="text-xl text-gray-300">{formattedDate}</h2>
-          <h2 className="text-xl/2 text-gray-300">{eventData.location}</h2>
+          <h1 className="text-2xl font-semibold pb-2 whitespace-nowrap overflow-ellipsis">
+            {eventData.name}
+          </h1>
+          <h2 className="text-xl text-gray-300 whitespace-nowrap overflow-ellipsis">
+            {formattedDate}
+          </h2>
+          <h2 className="text-xl/2 text-gray-300 whitespace-nowrap overflow-ellipsis">
+            {eventData.location}
+          </h2>
         </div>
       </div>
     </div>
