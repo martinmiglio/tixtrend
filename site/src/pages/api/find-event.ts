@@ -38,6 +38,14 @@ const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
     endpoints.map((endpoint) => fetch(endpoint))
   );
   const data = await Promise.all(responses.map((response) => response.json()));
+
+  // remove data has no ._embedded.events property
+  data.forEach((d: any, index: number) => {
+    if (!d._embedded || !d._embedded.events) {
+      data.splice(index, 1);
+    }
+  });
+
   const events = data.map((d: any) => d._embedded.events).flat();
   const uniqueEvents = events.filter(
     (event: any, index: number, self: any) =>
