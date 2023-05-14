@@ -1,7 +1,7 @@
 import { scaleLinear, scaleTime } from "d3-scale";
 import * as shape from "d3-shape";
 import dynamic from "next/dynamic";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useCallback, useState } from "react";
 
 import { DataPoint } from "./DataPoint";
 import { AxisBottom } from "./TimeAxis";
@@ -21,8 +21,31 @@ const STROKE_WIDTH = 4;
 const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
   const padding = STROKE_WIDTH / 2;
 
-  const graphPathRef = React.useRef<SVGPathElement>(null);
   const outerDivRef = useRef<HTMLDivElement>(null);
+
+  function useHookWithRefCallback() {
+    const graphPathRef = useRef(null);
+    const setRef = useCallback((node: any) => {
+      if (graphPathRef.current) {
+        // Make sure to cleanup any events/references added to the last instance
+        console.log(graphPathRef);
+      }
+
+      if (node) {
+        const pathElement = node.cloneNode(true) as SVGPathElement;
+        setGraphPathElement(pathElement);
+        console.log("pathElement", pathElement);
+      }
+
+      // Save a reference to the node
+      graphPathRef.current = node;
+    }, []);
+
+    return [setRef];
+  }
+
+  const [graphPathRef] = useHookWithRefCallback();
+
   const [graphHeight, setGraphHeight] = useState<number>(height ?? 0);
   const [graphWidth, setGraphWidth] = useState<number>(width ?? 0);
   const [graphPathElement, setGraphPathElement] =
@@ -44,17 +67,11 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
       setGraphHeight(outerDivRef.current.clientHeight);
       setGraphWidth(outerDivRef.current.clientWidth);
     }
-    if (graphPathRef.current) {
-      const pathElement = graphPathRef.current.cloneNode(
-        true
-      ) as SVGPathElement;
-      setGraphPathElement(pathElement);
-    }
   };
 
   useEffect(() => {
-    setGraphSize();
     window.addEventListener("resize", setGraphSize);
+    setGraphSize();
     return () => {
       window.removeEventListener("resize", setGraphSize);
     };
