@@ -132,8 +132,8 @@ const Cursor = ({
         <>
           <div
             style={{
-              width: CURSOR_RADIUS * 2,
-              height: CURSOR_RADIUS * 2,
+              width: CURSOR_RADIUS * 1.5,
+              height: CURSOR_RADIUS * 1.5,
               borderRadius: CURSOR_RADIUS,
               borderColor: "#1a202c",
               borderWidth: CURSOR_RADIUS / 3,
