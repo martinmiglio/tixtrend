@@ -28,11 +28,6 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
   const [graphPathElement, setGraphPathElement] =
     useState<SVGPathElement | null>(null);
 
-  const getDomain = (domain: number[]) => [
-    Math.min(...domain),
-    Math.max(...domain),
-  ];
-
   const handleMouseMove = (point: { x: number; y: number }) => {
     if (!onCurrentValueChange) {
       return;
@@ -64,6 +59,11 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
       window.removeEventListener("resize", setGraphSize);
     };
   }, []);
+
+  const getDomain = (domain: number[]) => [
+    Math.min(...domain),
+    Math.max(...domain),
+  ];
 
   const scaleX = scaleTime()
     .domain(getDomain(data.map((d) => d.date)))
