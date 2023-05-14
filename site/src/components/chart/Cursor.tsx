@@ -5,30 +5,20 @@ import React, { useEffect, useRef, useState } from "react";
 type CursorProps = {
   parentWidth: number;
   parentHeight: number;
-  graphPathRef: React.RefObject<SVGPathElement>;
+  pathElement: SVGPathElement | null;
   onMouseMove: (point: { x: number; y: number }) => void;
 };
 
 const Cursor = ({
   parentWidth,
   parentHeight,
-  graphPathRef,
+  pathElement,
   onMouseMove,
 }: CursorProps) => {
   const CURSOR_RADIUS = 7;
 
-  const [pathElement, setPathElement] = useState<SVGPathElement | null>(null);
   const cursorRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const graphPath = graphPathRef.current;
-    if (!graphPath) {
-      return;
-    }
-    const pathElement = graphPath.cloneNode(true) as SVGPathElement;
-    setPathElement(pathElement);
-  }, []);
 
   const [{ x, y }, api] = useSpring(() => ({
     x: 0,
