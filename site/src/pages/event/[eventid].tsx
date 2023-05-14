@@ -9,6 +9,7 @@ import HeaderBar from "@components/page/HeaderBar";
 import FooterBar from "@components/page/FooterBar";
 import PageHeader from "@components/page/PageHeader";
 import LoadingDots from "@components/page/LoadingDots";
+import BlankEventInfoItem from "@components/event/BlankEventInfoItem";
 
 const Event = ({ baseURL }: { baseURL: string }) => {
   const router = useRouter();
@@ -62,8 +63,8 @@ const Event = ({ baseURL }: { baseURL: string }) => {
       <>
         <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
           <HeaderBar noTagline />
-          <div className="h-screen flex justify-center items-center">
-            <LoadingDots dotSize={8} dotSeparation={6} />
+          <div className="w-full p-5 shadow-xl rounded-md">
+            <BlankEventInfoItem />
           </div>
           <FooterBar />
         </div>
@@ -84,26 +85,26 @@ const Event = ({ baseURL }: { baseURL: string }) => {
           <div className="w-full p-5 shadow-xl rounded-md">
             <EventInfoItem eventData={eventData} showSaveButton={true} />
           </div>
-          {!loadingPriceData ? (
-            priceDataSet.length === 0 ? (
-              <div>
-                <div className="text-center text-2xl mt-10">
-                  No price history yet, check back later!
-                </div>
-                <div className="text-center text-xl my-10 text-gray-400 font-thin">
-                  Data on new events is updated once a day.
-                </div>
-              </div>
-            ) : (
-              <div className="flex-1 w-screen">
+          <div className="flex-1 w-screen">
+            {!loadingPriceData ? (
+              priceDataSet.length === 0 ? (
+                <>
+                  <div className="text-center text-2xl mt-10">
+                    No price history yet, check back later!
+                  </div>
+                  <div className="text-center text-xl my-10 text-gray-400 font-thin">
+                    Data on new events is updated once a day.
+                  </div>
+                </>
+              ) : (
                 <PriceChart priceDataSet={priceDataSet} />
+              )
+            ) : (
+              <div className="flex justify-center items-center my-20">
+                <LoadingDots dotSize={8} dotSeparation={6} />
               </div>
-            )
-          ) : (
-            <div className="flex justify-center items-center my-20">
-              <LoadingDots dotSize={8} dotSeparation={6} />
-            </div>
-          )}
+            )}
+          </div>
         </div>
         <div>
           <FooterBar />
