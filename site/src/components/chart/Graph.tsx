@@ -25,11 +25,8 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
   const outerDivRef = useRef<HTMLDivElement>(null);
   const [graphHeight, setGraphHeight] = useState<number>(height ?? 0);
   const [graphWidth, setGraphWidth] = useState<number>(width ?? 0);
-
-  const getDomain = (domain: number[]) => [
-    Math.min(...domain),
-    Math.max(...domain),
-  ];
+  const [graphPathElement, setGraphPathElement] =
+    useState<SVGPathElement | null>(null);
 
   const handleMouseMove = (point: { x: number; y: number }) => {
     if (!onCurrentValueChange) {
@@ -56,6 +53,20 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
       window.removeEventListener("resize", setGraphSize);
     };
   }, []);
+
+  useEffect(() => {
+    if (graphPathRef.current) {
+      const pathElement = graphPathRef.current.cloneNode(
+        true
+      ) as SVGPathElement;
+      setGraphPathElement(pathElement);
+    }
+  }, [graphHeight, graphWidth]);
+
+  const getDomain = (domain: number[]) => [
+    Math.min(...domain),
+    Math.max(...domain),
+  ];
 
   const scaleX = scaleTime()
     .domain(getDomain(data.map((d) => d.date)))
@@ -117,7 +128,7 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
         <Cursor
           parentWidth={graphWidth}
           parentHeight={graphHeight}
-          graphPathRef={graphPathRef}
+          pathElement={graphPathElement}
           onMouseMove={handleMouseMove}
         />
       </div>
