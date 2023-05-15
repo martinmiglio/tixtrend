@@ -17,7 +17,7 @@ const PriceChart = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
   };
 
   return (
-    <div className="h-full w-full flex flex-col">
+    <div className="h-full min-h-[33vh] w-full flex flex-col">
       <PriceDisplay priceData={currentValue} />
       <Graph
         data={priceDataSet.map((priceData: PriceData): DataPoint => {
