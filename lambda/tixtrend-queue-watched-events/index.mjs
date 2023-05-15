@@ -4,6 +4,8 @@
 
 import AWS from "aws-sdk";
 
+const MAX_QUEUE_LENGTH = 500;
+
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const sqs = new AWS.SQS();
 
@@ -13,35 +15,13 @@ const pricePollQueueURL =
 
 export const handler = async (event) => {
   try {
-    const { Items } = await dynamo
-      .scan({
-        TableName: watchListTableName,
-        ProjectionExpression: "event_id",
-      })
-      .promise();
+    const watchListMessageData = await queueWatchList();
+    const numberOfFillerEvents = MAX_QUEUE_LENGTH - watchListMessageData.length;
+    const popularEventsMessageData = await queuePopularEvents(
+      numberOfFillerEvents
+    );
 
-    if (Items.length === 0) {
-      return {
-        statusCode: 200,
-        body: JSON.stringify({
-          message: "No events to poll.",
-        }),
-      };
-    }
-
-    const promises = Items.map(async (item) => {
-      const { event_id } = item;
-
-      const params = {
-        MessageGroupId: "1",
-        MessageBody: event_id,
-        QueueUrl: pricePollQueueURL,
-      };
-
-      return await sqs.sendMessage(params).promise();
-    });
-
-    const messageData = await Promise.all(promises);
+    const messageData = [...watchListMessageData, ...popularEventsMessageData];
 
     return {
       statusCode: 200,
@@ -56,4 +36,81 @@ export const handler = async (event) => {
       body: JSON.stringify(error, Object.getOwnPropertyNames(error)),
     };
   }
+};
+
+const queueWatchList = async () => {
+  const { Items } = await dynamo
+    .scan({
+      TableName: watchListTableName,
+      ProjectionExpression: "event_id",
+    })
+    .promise();
+
+  if (Items.length === 0) {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        message: "No events to poll.",
+      }),
+    };
+  }
+
+  const eventIds = Items.map((item) => item.event_id);
+
+  console.info("watch list eventIds", eventIds);
+
+  const promises = eventIds.map(async (event_id) => {
+    const params = {
+      MessageGroupId: "1",
+      MessageBody: event_id,
+      QueueUrl: pricePollQueueURL,
+    };
+
+    return await sqs.sendMessage(params).promise();
+  });
+
+  return Promise.all(promises);
+};
+
+const queuePopularEvents = async (numberOfEvents) => {
+  const EVENTS_PER_PAGE = 20;
+  const TIME_BETWEEN_REQUESTS = 2000; // in milliseconds
+
+  // get the most popular events from ticketmaster
+  const eventPromises = Array(Math.ceil(numberOfEvents / EVENTS_PER_PAGE))
+    .fill()
+    .map(async (_, index) => {
+      const page = index + 1;
+      const size = EVENTS_PER_PAGE;
+      const delay = page * TIME_BETWEEN_REQUESTS;
+
+      // sleep for a bit to avoid rate limiting
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      const response = await fetch(
+        `https://app.ticketmaster.com/discovery/v2/events?apikey=${process.env.TICKETMASTER_API_KEY}&size=${size}&page=${page}`
+      );
+
+      const { _embedded } = await response.json();
+
+      return _embedded.events.map((event) => event.id);
+    });
+
+  const eventIdsByPage = await Promise.all(eventPromises);
+
+  const eventIds = eventIdsByPage.flat().slice(0, numberOfEvents);
+
+  console.info("popular eventIds", eventIds);
+
+  const queuePromises = eventIds.map(async (event_id) => {
+    const params = {
+      MessageGroupId: "1",
+      MessageBody: event_id,
+      QueueUrl: pricePollQueueURL,
+    };
+
+    return await sqs.sendMessage(params).promise();
+  });
+
+  return Promise.all(queuePromises);
 };
