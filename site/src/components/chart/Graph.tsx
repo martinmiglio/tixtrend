@@ -44,12 +44,6 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
       setGraphHeight(outerDivRef.current.clientHeight);
       setGraphWidth(outerDivRef.current.clientWidth);
     }
-    if (graphPathRef.current) {
-      const pathElement = graphPathRef.current.cloneNode(
-        true
-      ) as SVGPathElement;
-      setGraphPathElement(pathElement);
-    }
   };
 
   useEffect(() => {
@@ -59,6 +53,15 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
       window.removeEventListener("resize", setGraphSize);
     };
   }, []);
+
+  useEffect(() => {
+    if (graphPathRef.current) {
+      const pathElement = graphPathRef.current.cloneNode(
+        true
+      ) as SVGPathElement;
+      setGraphPathElement(pathElement);
+    }
+  }, [graphHeight, graphWidth]);
 
   const getDomain = (domain: number[]) => [
     Math.min(...domain),
