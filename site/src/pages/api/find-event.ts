@@ -9,7 +9,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the keyword from the query string
-  const keyword = req.query.keyword;
+  const { keyword } = req.query;
 
   const events = await getSearchEvents(keyword as string);
 
@@ -34,17 +34,31 @@ const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
   ];
 
   // make requests to both endpoints, merging the results and removing duplicates by id
-  const responses = await Promise.all(
+  let responses = await Promise.all(
     endpoints.map((endpoint) => fetch(endpoint))
   );
-  const data = await Promise.all(responses.map((response) => response.json()));
 
-  // remove data has no ._embedded.events property
-  data.forEach((d: any, index: number) => {
-    if (!d._embedded || !d._embedded.events) {
-      data.splice(index, 1);
-    }
-  });
+  // filter out non-200
+  responses = responses.filter((response) => response.ok);
+
+  if (responses.length === 0) {
+    return [];
+  }
+
+  // parse responses into json
+  let data = await Promise.all(responses.map((response) => response.json()));
+
+  // remove data has no ._embedded, ._embedded.events properties or events length of 0
+  data = data.filter(
+    (d: any) =>
+      d._embedded && d._embedded.events && d._embedded.events.length > 0
+  );
+
+  // remove duplicates
+  data = data.filter(
+    (d: any, index: number, self: any) =>
+      index === self.findIndex((e: any) => e.id === d.id)
+  );
 
   const events = data.map((d: any) => d._embedded.events).flat();
   const uniqueEvents = events.filter(
