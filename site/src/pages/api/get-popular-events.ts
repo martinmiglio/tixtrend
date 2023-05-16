@@ -10,7 +10,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the event_id from the query string
-  const event_count = req.query.event_count;
+  const { event_count } = req.query;
 
   // make a request to TicketMaster's API
   const response = await fetch(

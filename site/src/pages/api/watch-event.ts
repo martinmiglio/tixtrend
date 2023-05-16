@@ -8,7 +8,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the event ID from the query string
-  const event_id = req.query.event_id;
+  const { event_id } = req.query;
 
   const response = await fetch(
     process.env.TIXTREND_API_URL + `/watch?event_id=${event_id}`
