@@ -31,7 +31,7 @@ export const getEventByID = async (
     name: data.name,
     location: data._embedded ? data._embedded.venues[0]?.name : "TBA",
     date: new Date(Date.parse(data.dates.start.dateTime)),
-    imageURL: data.images[0].url,
+    imageData: data.images,
   };
 
   return event;
@@ -42,7 +42,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the event_id from the query string
-  const event_id = req.query.event_id;
+  const { event_id } = req.query;
 
   const event = await getEventByID(event_id as string);
 

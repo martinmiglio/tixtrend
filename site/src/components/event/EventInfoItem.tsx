@@ -13,6 +13,19 @@ const EventInfoItem = ({
   eventData: EventData;
   showSaveButton?: boolean;
 }) => {
+  // filter out images that are not ratio=16_9
+  let images = eventData.imageData.filter((image) => image.ratio === "16_9");
+
+  // if there are no 16:9 images, use all images
+  if (images.length === 0) {
+    images = eventData.imageData;
+  }
+
+  // select the largest image
+  const imageURL = images.reduce((prev, current) => {
+    return prev.width > current.width ? prev : current;
+  }).url;
+
   const formattedDate = new Date(eventData.date).toLocaleDateString(undefined, {
     weekday: "long",
     year: "numeric",
@@ -24,7 +37,7 @@ const EventInfoItem = ({
     <div className="flex flex-col sm:flex-row justify-center items-center w-full">
       <div className="flex-initial px-0 sm:px-5">
         <Image
-          src={eventData.imageURL}
+          src={imageURL}
           alt={eventData.name}
           width={300}
           height={169}
