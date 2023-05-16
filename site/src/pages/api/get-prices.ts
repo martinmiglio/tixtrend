@@ -9,7 +9,7 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the event ID from the query string
-  const event_id = req.query.event_id;
+  const { event_id } = req.query;
 
   // make a request to the API
   const response = await fetch(
