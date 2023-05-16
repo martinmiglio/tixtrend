@@ -81,7 +81,7 @@ const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
       name: event.name,
       location: event._embedded ? event._embedded.venues[0]?.name : "TBA",
       date: new Date(Date.parse(event.dates.start.dateTime)),
-      imageURL: event.images[0].url,
+      imageData: event.images,
     };
   });
 };
