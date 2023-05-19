@@ -9,9 +9,23 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the keyword from the query string
-  const { keyword } = req.query;
+  const { keyword, page } = req.query;
 
-  const events = await getSearchEvents(keyword as string);
+  // if no keyword, return 400
+  if (!keyword) {
+    res.status(400).json({
+      message: "No keyword provided",
+    });
+    return;
+  }
+
+  // parse page into number, if not provided, default to 0
+  let pageNum = 0;
+  if (page) {
+    pageNum = parseInt(page as string);
+  }
+
+  const events = await getSearchEvents(keyword as string, pageNum);
 
   if (!events) {
     res.status(500).json({
@@ -27,11 +41,26 @@ export default async function handler(
   res.status(200).json(events);
 }
 
-const getSearchEvents = async (keyword: string): Promise<EventData[]> => {
+const getSearchEvents = async (
+  keyword: string,
+  page: number
+): Promise<EventData[]> => {
+  const PAGE_SIZE = 5;
+
   const endpoints = [
-    `https://app.ticketmaster.com/discovery/v2/events?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`,
-    `https://app.ticketmaster.com/discovery/v2/suggest?keyword=${keyword}&apikey=${process.env.TICKETMASTER_API_KEY}&includeSpellcheck=yes`,
+    `https://app.ticketmaster.com/discovery/v2/events`,
+    `https://app.ticketmaster.com/discovery/v2/suggest`,
   ];
+
+  endpoints.forEach((endpoint, index) => {
+    const url = new URL(endpoint);
+    url.searchParams.append("keyword", keyword);
+    url.searchParams.append("apikey", process.env.TICKETMASTER_API_KEY || "");
+    url.searchParams.append("includeSpellcheck", "yes");
+    url.searchParams.append("page", page.toString());
+    url.searchParams.append("size", PAGE_SIZE.toString());
+    endpoints[index] = url.toString();
+  });
 
   // make requests to both endpoints, merging the results and removing duplicates by id
   let responses = await Promise.all(
