@@ -3,14 +3,14 @@
 This will be used in the home page of the site to begin the flow.
 This component will display EventSearchBar and EventInfoItem components. */
 
-import React, { useEffect, useState } from "react";
-import Link from "next/link";
 import dynamic from "next/dynamic";
-import { v4 as uuidv4 } from "uuid";
+import Link from "next/link";
+import React, { useEffect, useState } from "react";
+import InfiniteScroll from "react-infinite-scroll-component";
 
-import { EventData } from "@utils/types/EventData";
-import * as analytics from "@utils/analytics";
 import BlankEventInfoItem from "@components/event/BlankEventInfoItem";
+import * as analytics from "@utils/analytics";
+import { EventData } from "@utils/types/EventData";
 
 const EventSearchBar = dynamic(
   () => import("@components/search/EventSearchBar")
@@ -18,85 +18,83 @@ const EventSearchBar = dynamic(
 const EventInfoItem = dynamic(() => import("@components/event/EventInfoItem"));
 
 const EventSearch = () => {
-  const SEARCH_TIMEOUT = 15; // seconds
-
-  const firstResultUUID = uuidv4();
-
   const [eventsData, setEventsData] = useState<EventData[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [displayLoading, setDisplayLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [searchPage, setSearchPage] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
 
-  const searchEvents = async (searchTerm: string) => {
-    if (!searchTerm || searchTerm.length <= 2) {
-      setEventsData([]);
-      return;
-    }
-    setLoading(true);
-    analytics.event({ action: "search", params: { searchTerm } });
-    searchTerm = encodeURIComponent(searchTerm);
-
-    const response = await fetch(`/api/find-event?keyword=${searchTerm}`);
-    if (!response.ok) {
-      console.error("Something went wrong fetching events");
-      setEventsData([]);
-      return;
-    }
-    const events = await response.json();
-    setEventsData(events);
-    setLoading(false);
+  const fetchEvents = async () => {
+    const encodedSearchTerm = encodeURIComponent(searchTerm);
+    const response = await fetch(
+      `/api/find-event?keyword=${encodedSearchTerm}&page=${searchPage}`
+    );
+    return response.json();
   };
 
   useEffect(() => {
-    return () => {
-      setEventsData([]);
-    };
-  }, []);
+    if (searchTerm.length > 0) {
+      analytics.searchEvent(searchTerm);
+    }
+  }, [searchTerm]);
 
   useEffect(() => {
-    if (loading) {
-      const timer = setTimeout(() => {
-        setDisplayLoading(true);
-      }, 300);
-      return () => clearTimeout(timer);
-    } else {
-      setDisplayLoading(false);
+    setSearchPage(0);
+    setEventsData([]);
+    if (searchTerm.length > 0) {
+      const events = fetchEvents();
+      events.then((data) => {
+        setEventsData(data);
+      });
     }
-  }, [loading]);
+  }, [searchTerm]);
 
   useEffect(() => {
-    if (loading) {
-      const timer = setTimeout(() => {
-        setLoading(false);
-      }, SEARCH_TIMEOUT * 1000);
-      return () => clearTimeout(timer);
+    if (searchPage > 0) {
+      const nextPageEvents = fetchEvents();
+      nextPageEvents.then((data) => {
+        if (data.length > 0) {
+          setHasMore(true);
+          // combine and remove duplicates
+          const merged = [...eventsData, ...data].filter(
+            (d: any, index: number, self: any) =>
+              index === self.findIndex((e: any) => e.id === d.id)
+          );
+          setEventsData(merged);
+        } else {
+          setHasMore(false);
+        }
+      });
     }
-  }, [loading]);
+  }, [searchPage]);
 
   return (
     <div className="w-full">
-      <EventSearchBar onSearch={searchEvents} />
-      {eventsData.length === 0 ? (
-        loading && displayLoading ? (
-          <div
-            className="my-2 shadow-lg rounded-md hover:shadow-xl sm:pb-4"
-            key={firstResultUUID}
-          >
-            <BlankEventInfoItem />
-          </div>
-        ) : (
-          <></>
-        )
-      ) : (
-        eventsData.map((eventData, index) => (
-          <div
-            className="my-2 shadow-lg rounded-md hover:shadow-xl sm:pb-4"
-            key={index == 0 ? firstResultUUID : eventData.id}
-          >
-            <Link href={`/event/${eventData.id}`} passHref>
-              <EventInfoItem eventData={eventData} />
-            </Link>
-          </div>
-        ))
+      <EventSearchBar onSearch={setSearchTerm} />
+      {searchTerm.length > 0 && (
+        <InfiniteScroll
+          dataLength={eventsData.length}
+          next={() => {
+            setSearchPage(searchPage + 1);
+          }}
+          hasMore={hasMore}
+          loader={
+            <div className="my-2 shadow-lg rounded-md hover:shadow-xl sm:pb-4">
+              <BlankEventInfoItem />
+            </div>
+          }
+          endMessage={<p className="text-center">No more events</p>}
+        >
+          {eventsData.map((eventData, index) => (
+            <div
+              className="my-2 shadow-lg rounded-md hover:shadow-xl sm:pb-4"
+              key={eventData.id}
+            >
+              <Link href={`/event/${eventData.id}`} passHref>
+                <EventInfoItem eventData={eventData} />
+              </Link>
+            </div>
+          ))}
+        </InfiniteScroll>
       )}
     </div>
   );
