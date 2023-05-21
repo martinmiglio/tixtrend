@@ -9,12 +9,24 @@ export default async function handler(
   res: NextApiResponse
 ) {
   // get the event ID from the query string
-  const { event_id } = req.query;
+  const { event_id, latest } = req.query;
 
-  // make a request to the API
-  const response = await fetch(
-    process.env.TIXTREND_API_URL + `/prices?event_id=${event_id}`
-  );
+  if (!event_id && !latest) {
+    res.status(400).json({
+      message: "Please provide an event ID or latest count",
+    });
+    return;
+  }
+
+  // make a request to the API depending on the query
+  const requestURL = new URL(`${process.env.TIXTREND_API_URL}/prices`);
+  if (event_id) {
+    requestURL.searchParams.append("event_id", event_id as string);
+  }
+  if (latest) {
+    requestURL.searchParams.append("latest", latest as string);
+  }
+  const response = await fetch(requestURL.toString());
 
   // check if status code is 200
   if (response.status !== 200) {
