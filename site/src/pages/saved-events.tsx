@@ -37,15 +37,17 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
         url={baseURL + `/saved-events}`}
       />
       <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
-        <HeaderBar noTagline />
+        <HeaderBar />
         <div className="w-full inline-flex flex-col justify-center items-center">
-          <h1 className="text-4xl font-heading text-center pt-5 pb-10">
-            Saved Events
-          </h1>
-          {savedEvents.length === 0 ? (
-            <h2 className="text-2xl text-center pb-20">
-              You have no saved events.
+          <div className="lg:text-center">
+            <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+              Saved Events
             </h2>
+          </div>
+          {savedEvents.length === 0 ? (
+            <p className="py-20 text-lg leading-6 font-medium opacity-50">
+              You have no saved events.
+            </p>
           ) : (
             <div className="flex flex-col justify-center items-center w-full">
               {savedEvents.map((event: EventData) => (
