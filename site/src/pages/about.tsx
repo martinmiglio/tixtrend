@@ -1,5 +1,6 @@
 import { faChartLine, faDatabase } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Link from "next/link";
 
 import FooterBar from "@components/page/FooterBar";
 import HeaderBar from "@components/page/HeaderBar";
@@ -36,7 +37,13 @@ export default function About({ baseURL }: { baseURL: string }) {
                   With TixTrend, you can easily track ticket prices for your
                   favorite events over time. Our powerful tool allows you to see
                   historical trends and make informed decisions about when to
-                  buy your tickets.
+                  buy your tickets. <br />
+                  <Link
+                    href="/"
+                    className="text-indigo-600 hover:text-indigo-500"
+                  >
+                    Search for an event now &rarr;
+                  </Link>
                 </dd>
               </div>
               <div className="relative">
@@ -52,7 +59,7 @@ export default function About({ baseURL }: { baseURL: string }) {
                   TixTrend collects its data from Ticketmaster's Discover API,
                   the premier source for event and ticket information. With this
                   reliable data, you can be sure that the information you're
-                  getting is accurate and up-to-date.{" "}
+                  getting is accurate and up-to-date. <br />
                   <a
                     href="https://developer.ticketmaster.com/explore/"
                     className="text-indigo-600 hover:text-indigo-500"
