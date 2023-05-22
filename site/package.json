@@ -15,7 +15,7 @@
     "@types/node": "20.1.4",
     "@types/react": "18.2.6",
     "@types/react-dom": "18.2.4",
-    "@use-gesture/react": "^10.2.26",
+    "@use-gesture/react": "^10.2.27",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
     "eslint": "8.40.0",
