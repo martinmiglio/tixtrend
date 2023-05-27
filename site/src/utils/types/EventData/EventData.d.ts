@@ -5,7 +5,7 @@ export type EventData = {
   name: string;
   location: string;
   date: Date;
-  // imageURL: string;
+  imageURL?: string;
   imageData: EventImageData[];
   priceHistory?: PriceData[];
 };
