@@ -4,7 +4,7 @@
 
 import AWS from "aws-sdk";
 
-const MAX_QUEUE_LENGTH = 500;
+const MAX_QUEUE_LENGTH = 4000;
 
 const dynamo = new AWS.DynamoDB.DocumentClient();
 const sqs = new AWS.SQS();
@@ -39,7 +39,7 @@ export const handler = async (event) => {
 };
 
 const queueWatchList = async () => {
-  const { Items } = await dynamo
+  let { Items } = await dynamo
     .scan({
       TableName: watchListTableName,
       ProjectionExpression: "event_id",
@@ -53,6 +53,17 @@ const queueWatchList = async () => {
         message: "No events to poll.",
       }),
     };
+  }
+
+  // console info count
+  console.info("watch list count", Items.length);
+
+  // if more than MAX_QUEUE_LENGTH events in watch list, only queue MAX_QUEUE_LENGTH and console warn
+  if (Items.length > MAX_QUEUE_LENGTH) {
+    Items = Items.slice(0, MAX_QUEUE_LENGTH);
+    console.warn(
+      `Watch list has ${Items.length} events. Only queuing ${MAX_QUEUE_LENGTH} events.`
+    );
   }
 
   const eventIds = Items.map((item) => item.event_id);
