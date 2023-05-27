@@ -14,19 +14,24 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
   const [savedEvents, setSavedEvents] = useState<EventData[]>([]);
 
   useEffect(() => {
-    const savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
-
-    if (process.env.NODE_ENV == "development") {
-      setSavedEvents(savedEvents);
-      return;
-    }
-
-    const now = new Date();
-    const filteredSavedEvents = savedEvents.filter(
-      (event: EventData) => new Date(event.date) > now
+    const localStorageSavedEvents = JSON.parse(
+      localStorage.getItem("savedEvents") ?? "[]"
     );
-    localStorage.setItem("savedEvents", JSON.stringify(filteredSavedEvents));
-    setSavedEvents(filteredSavedEvents);
+
+    Promise.all(
+      localStorageSavedEvents.map(async (event: EventData) => {
+        const { id } = event;
+        const res = await fetch(`/api/get-event?event_id=${id}`);
+        return await res.json();
+      })
+    )
+      .then((data) => {
+        setSavedEvents(data);
+        localStorage.setItem("savedEvents", JSON.stringify(data));
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }, []);
 
   return (
