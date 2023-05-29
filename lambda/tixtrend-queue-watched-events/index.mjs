@@ -16,12 +16,25 @@ const pricePollQueueURL =
 export const handler = async (event) => {
   try {
     const watchListMessageData = await queueWatchList();
+    
     const numberOfFillerEvents = MAX_QUEUE_LENGTH - watchListMessageData.length;
     const popularEventsMessageData = await queuePopularEvents(
       numberOfFillerEvents
     );
 
-    const messageData = [...watchListMessageData, ...popularEventsMessageData];
+    const numberOfSaleSoonEvents =
+      numberOfFillerEvents - popularEventsMessageData.length;
+    const saleSoonEventsMessageData = await queueSaleSoonEvents(
+      numberOfSaleSoonEvents
+    );
+
+    const messageData = [
+      ...watchListMessageData,
+      ...popularEventsMessageData,
+      ...saleSoonEventsMessageData,
+    ];
+
+    console.info("total events queued", messageData.length);
 
     return {
       statusCode: 200,
@@ -93,6 +106,12 @@ const queuePopularEvents = async (numberOfEvents) => {
     .map(async (_, index) => {
       const page = index + 1;
       const size = EVENTS_PER_PAGE;
+
+      if (page * size > 1000) {
+        // ticketmaster only allows 1000 results at most
+        return [];
+      }
+
       const delay = page * TIME_BETWEEN_REQUESTS;
 
       // sleep for a bit to avoid rate limiting
@@ -104,6 +123,10 @@ const queuePopularEvents = async (numberOfEvents) => {
 
       const { _embedded } = await response.json();
 
+      if (!_embedded?.events) {
+        return [];
+      }
+
       return _embedded.events.map((event) => event.id);
     });
 
@@ -111,7 +134,62 @@ const queuePopularEvents = async (numberOfEvents) => {
 
   const eventIds = eventIdsByPage.flat().slice(0, numberOfEvents);
 
+  console.info("popular events count", eventIds.length);
   console.info("popular eventIds", eventIds);
+
+  const queuePromises = eventIds.map(async (event_id) => {
+    const params = {
+      MessageGroupId: "1",
+      MessageBody: event_id,
+      QueueUrl: pricePollQueueURL,
+    };
+
+    return await sqs.sendMessage(params).promise();
+  });
+
+  return Promise.all(queuePromises);
+};
+
+const queueSaleSoonEvents = async (numberOfEvents) => {
+  const EVENTS_PER_PAGE = 20;
+  const TIME_BETWEEN_REQUESTS = 2000; // in milliseconds
+
+  // get the most popular events from ticketmaster
+  const eventPromises = Array(Math.ceil(numberOfEvents / EVENTS_PER_PAGE))
+    .fill()
+    .map(async (_, index) => {
+      const page = index + 1;
+      const size = EVENTS_PER_PAGE;
+
+      if (page * size > 1000) {
+        // ticketmaster only allows 1000 results at most
+        return [];
+      }
+
+      const delay = page * TIME_BETWEEN_REQUESTS;
+
+      // sleep for a bit to avoid rate limiting
+      await new Promise((resolve) => setTimeout(resolve, delay));
+
+      const response = await fetch(
+        `https://app.ticketmaster.com/discovery/v2/events?apikey=${process.env.TICKETMASTER_API_KEY}&size=${size}&page=${page}&sort=onSaleStartDate,asc`
+      );
+
+      const { _embedded } = await response.json();
+
+      if (!_embedded?.events) {
+        return [];
+      }
+
+      return _embedded.events.map((event) => event.id);
+    });
+
+  const eventIdsByPage = await Promise.all(eventPromises);
+
+  const eventIds = eventIdsByPage.flat().slice(0, numberOfEvents);
+
+  console.info("on sale soon events count", eventIds.length);
+  console.info("on sale soon eventIds", eventIds);
 
   const queuePromises = eventIds.map(async (event_id) => {
     const params = {
