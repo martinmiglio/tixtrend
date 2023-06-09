@@ -6,16 +6,18 @@ type AxisBottomProps = {
   pixelsPerTick: number;
 };
 
-// tick length
 const TICK_LENGTH = 6;
 const COLOR = "rgb(229 231 235)";
+const MAX_LABEL_WIDTH = 45;
 
 export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
   const range = xScale.range();
+  pixelsPerTick = Math.max(pixelsPerTick, MAX_LABEL_WIDTH);
 
   const ticks = useMemo(() => {
     const width = range[1] - range[0];
     const numberOfTicksTarget = Math.floor(width / pixelsPerTick);
+
     const ticks = xScale.ticks(numberOfTicksTarget);
 
     return ticks.map((value, index) => {
@@ -23,8 +25,7 @@ export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
       return {
         value,
         xOffset: offset,
-        fill:
-          index === 0 || index === ticks.length - 1 ? "rgba(0,0,0,0)" : COLOR,
+        fill: COLOR,
       };
     });
   }, [xScale]);
@@ -44,7 +45,7 @@ export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
             }}
           >
             {value.toLocaleDateString(undefined, {
-              month: "short",
+              month: "numeric",
               day: "numeric",
             })}
           </text>
