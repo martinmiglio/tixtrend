@@ -45,7 +45,7 @@ export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
             }}
           >
             {value.toLocaleDateString(undefined, {
-              month: "short",
+              month: "numeric",
               day: "numeric",
             })}
           </text>
