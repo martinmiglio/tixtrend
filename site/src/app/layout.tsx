@@ -19,12 +19,12 @@ export const metadata = {
   creator: "Martin Miglio",
   metadataBase: new URL("https://tixtrend.martinmiglio.dev/"),
   alternates: { canonical: "/" },
-  icons: { icon: "/icon?v1" },
+  icons: { icon: "/favicon.ico" },
   twitter: {
     card: "summary_large_image",
     title: "Tix Trend",
     description: "Track ticket prices over time and never miss a deal again.",
-    images: ["https://tixtrend.martinmiglio.dev/wide-1200x630.png"],
+    images: ["https://tixtrend.martinmiglio.dev/og?v1"],
   },
   openGraph: {
     type: "website",
@@ -33,7 +33,7 @@ export const metadata = {
     siteName: "Tix Trend",
     images: [
       {
-        url: "https://tixtrend.martinmiglio.dev/wide-1200x630.png",
+        url: "https://tixtrend.martinmiglio.dev/og?v1",
         width: 1200,
         height: 630,
       },
