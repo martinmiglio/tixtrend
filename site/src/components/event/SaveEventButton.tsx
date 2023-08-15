@@ -19,7 +19,7 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
   useEffect(() => {
     const savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
     setSaved(
-      savedEvents.some((savedEvent: EventData) => savedEvent.id === event.id)
+      savedEvents.some((savedEvent: EventData) => savedEvent.id === event.id),
     );
   }, []);
 
@@ -27,7 +27,7 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
     let savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
     if (saved) {
       savedEvents = savedEvents.filter(
-        (savedEvent: EventData) => savedEvent.id !== event.id
+        (savedEvent: EventData) => savedEvent.id !== event.id,
       );
     } else {
       savedEvents.push(event);

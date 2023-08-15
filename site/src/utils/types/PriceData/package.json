@@ -1,5 +1,5 @@
 {
-    "name": "types",
-    "version": "1.0.0",
-    "typings": "PriceData.d.ts"
+  "name": "types",
+  "version": "1.0.0",
+  "typings": "PriceData.d.ts"
 }

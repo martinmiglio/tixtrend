@@ -6,7 +6,7 @@ import { EventData } from "@utils/types/EventData";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   // get the keyword from the query string
   const { keyword, page } = req.query;
@@ -36,14 +36,14 @@ export default async function handler(
   // return the events with a cache header
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240"
+    "public, s-maxage=120, stale-while-revalidate=240",
   );
   res.status(200).json(events);
 }
 
 const getSearchEvents = async (
   keyword: string,
-  page: number
+  page: number,
 ): Promise<EventData[]> => {
   const PAGE_SIZE = 5;
 
@@ -64,7 +64,7 @@ const getSearchEvents = async (
 
   // make requests to both endpoints, merging the results and removing duplicates by id
   let responses = await Promise.all(
-    endpoints.map((endpoint) => fetch(endpoint))
+    endpoints.map((endpoint) => fetch(endpoint)),
   );
 
   // filter out non-200
@@ -80,19 +80,19 @@ const getSearchEvents = async (
   // remove data has no ._embedded, ._embedded.events properties or events length of 0
   data = data.filter(
     (d: any) =>
-      d._embedded && d._embedded.events && d._embedded.events.length > 0
+      d._embedded && d._embedded.events && d._embedded.events.length > 0,
   );
 
   // remove duplicates
   data = data.filter(
     (d: any, index: number, self: any) =>
-      index === self.findIndex((e: any) => e.id === d.id)
+      index === self.findIndex((e: any) => e.id === d.id),
   );
 
   const events = data.map((d: any) => d._embedded.events).flat();
   const uniqueEvents = events.filter(
     (event: any, index: number, self: any) =>
-      index === self.findIndex((e: any) => e.id === event.id)
+      index === self.findIndex((e: any) => e.id === event.id),
   );
 
   // order by date

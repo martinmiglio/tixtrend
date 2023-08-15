@@ -15,7 +15,7 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
 
   useEffect(() => {
     const localStorageSavedEvents = JSON.parse(
-      localStorage.getItem("savedEvents") ?? "[]"
+      localStorage.getItem("savedEvents") ?? "[]",
     );
 
     Promise.all(
@@ -23,7 +23,7 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
         const { id } = event;
         const res = await fetch(`/api/get-event?event_id=${id}`);
         return await res.json();
-      })
+      }),
     )
       .then((data) => {
         setSavedEvents(data);
@@ -41,23 +41,23 @@ const SavedEvents = ({ baseURL }: { baseURL: string }) => {
         description="Events you have saved on Tix Trend."
         url={baseURL + `/saved-events}`}
       />
-      <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+      <div className="mx-auto w-full max-w-screen-xl p-4 md:py-8">
         <HeaderBar />
-        <div className="w-full inline-flex flex-col justify-center items-center">
+        <div className="inline-flex w-full flex-col items-center justify-center">
           <div className="lg:text-center">
-            <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+            <h2 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
               Saved Events
             </h2>
           </div>
           {savedEvents.length === 0 ? (
-            <p className="py-20 text-lg leading-6 font-medium opacity-50">
+            <p className="py-20 text-lg font-medium leading-6 opacity-50">
               You have no saved events.
             </p>
           ) : (
-            <div className="flex flex-col justify-center items-center w-full">
+            <div className="flex w-full flex-col items-center justify-center">
               {savedEvents.map((event: EventData) => (
                 <Link
-                  className="w-full p-5 shadow-xl rounded-md my-5"
+                  className="my-5 w-full rounded-md p-5 shadow-xl"
                   href={`/event/${event.id}`}
                   key={event.id}
                 >

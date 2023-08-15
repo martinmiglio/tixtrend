@@ -53,7 +53,7 @@ const Event = ({ params }: { params: { eventid: string[] } }) => {
         (err) => {
           console.error(err);
           return [null, null];
-        }
+        },
       );
 
     if (priceHistory === null || eventData === null) {
@@ -73,18 +73,18 @@ const Event = ({ params }: { params: { eventid: string[] } }) => {
 
   if (!eventData) {
     return (
-      <div className="w-full p-5 shadow-xl rounded-md">
+      <div className="w-full rounded-md p-5 shadow-xl">
         <BlankEventInfoItem />
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col justify-center items-center">
-      <div className="w-full p-5 shadow-xl rounded-md">
+    <div className="flex w-full flex-col items-center justify-center">
+      <div className="w-full rounded-md p-5 shadow-xl">
         <EventInfoItem eventData={eventData} showSaveButton={true} />
       </div>
-      <div className="flex-1 w-screen">
+      <div className="w-screen flex-1">
         <EventPriceChart eventData={eventData} />
       </div>
     </div>
@@ -97,10 +97,10 @@ const EventPriceChart = ({ eventData }: { eventData: EventData }) => {
   if (eventData.date < new Date()) {
     return (
       <>
-        <div className="text-center text-2xl mt-10">
+        <div className="mt-10 text-center text-2xl">
           Event has already passed.
         </div>
-        <div className="text-center my-10 text-xl text-gray-400 font-thin">
+        <div className="my-10 text-center text-xl font-thin text-gray-400">
           <Link className="underline hover:no-underline" href="/">
             Look for other events
           </Link>
@@ -112,10 +112,10 @@ const EventPriceChart = ({ eventData }: { eventData: EventData }) => {
   if (!eventData.priceHistory || eventData.priceHistory?.length === 0) {
     return (
       <>
-        <div className="text-center text-2xl mt-10">
+        <div className="mt-10 text-center text-2xl">
           No price history yet, check back later!
         </div>
-        <div className="text-center text-xl my-10 text-gray-400 font-thin">
+        <div className="my-10 text-center text-xl font-thin text-gray-400">
           Data on new events is updated once a day.
         </div>
       </>

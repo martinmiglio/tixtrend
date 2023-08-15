@@ -24,7 +24,7 @@ const PopularEvents = ({ eventCount }: { eventCount?: number }) => {
         } else {
           console.error("Something went wrong getting popular events");
         }
-      }
+      },
     );
   }, [eventCount]);
 
@@ -33,7 +33,7 @@ const PopularEvents = ({ eventCount }: { eventCount?: number }) => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center w-full">
+    <div className="flex w-full flex-col items-center justify-center">
       <h1 className="text-3xl font-semibold">Popular Events</h1>
       {eventsData.map((eventData) => {
         return (

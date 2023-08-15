@@ -34,30 +34,30 @@ const EventInfoItem = ({
   });
 
   return (
-    <div className="flex flex-col sm:flex-row justify-center items-center w-full">
+    <div className="flex w-full flex-col items-center justify-center sm:flex-row">
       <div className="flex-initial px-0 sm:px-5">
         <Image
           src={imageURL}
           alt={eventData.name}
           width={300}
           height={169}
-          className="rounded-lg shadow-lg h-auto"
+          className="h-auto rounded-lg shadow-lg"
         />
       </div>
       <div className="flex-1">
-        <div className="flex flex-col justify-center items-center px-2 sm:px-0">
+        <div className="flex flex-col items-center justify-center px-2 sm:px-0">
           <div className="flex flex-row pb-2">
             <h1 className="flex-1 text-2xl font-semibold">{eventData.name}</h1>
             {showSaveButton && (
-              <div className="pl-5 flex items-center justify-center">
+              <div className="flex items-center justify-center pl-5">
                 <SaveEventButton event={eventData} />
               </div>
             )}
           </div>
-          <h2 className="text-xl text-gray-300 whitespace-nowrap overflow-ellipsis">
+          <h2 className="overflow-ellipsis whitespace-nowrap text-xl text-gray-300">
             {formattedDate}
           </h2>
-          <h2 className="text-xl/2 text-gray-300 whitespace-nowrap overflow-ellipsis">
+          <h2 className="text-xl/2 overflow-ellipsis whitespace-nowrap text-gray-300">
             {eventData.location}
           </h2>
         </div>

@@ -10,22 +10,22 @@ export default function About() {
   return (
     <>
       <div className="lg:text-center">
-        <h2 className="text-base text-indigo-600 font-semibold tracking-wide uppercase">
+        <h2 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
           About TixTrend
         </h2>
       </div>
-      <div className="mt-10 mb-5">
-        <dl className="space-y-10 md:space-y-0 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10">
+      <div className="mb-5 mt-10">
+        <dl className="space-y-10 md:grid md:grid-cols-2 md:gap-x-8 md:gap-y-10 md:space-y-0">
           <div className="relative">
             <dt>
-              <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+              <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
                 <FontAwesomeIcon className="h-5 w-5" icon={faChartLine} />
               </div>
-              <p className="ml-16 text-lg leading-6 font-medium">
+              <p className="ml-16 text-lg font-medium leading-6">
                 Track Ticket Prices Over Time
               </p>
             </dt>
-            <dd className="mt-2 ml-16 text-base text-gray-400">
+            <dd className="ml-16 mt-2 text-base text-gray-400">
               With TixTrend, you can easily track ticket prices for your
               favorite events over time. Our powerful tool allows you to see
               historical trends and make informed decisions about when to buy
@@ -37,14 +37,14 @@ export default function About() {
           </div>
           <div className="relative">
             <dt>
-              <div className="absolute flex items-center justify-center h-12 w-12 rounded-md bg-indigo-500 text-white">
+              <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
                 <FontAwesomeIcon className="h-5 w-5" icon={faDatabase} />
               </div>
-              <p className="ml-16 text-lg leading-6 font-medium">
+              <p className="ml-16 text-lg font-medium leading-6">
                 Data from Ticketmaster's Discover API
               </p>
             </dt>
-            <dd className="mt-2 ml-16 text-base text-gray-400">
+            <dd className="ml-16 mt-2 text-base text-gray-400">
               TixTrend collects its data from Ticketmaster's Discover API, the
               premier source for event and ticket information. With this
               reliable data, you can be sure that the information you're getting

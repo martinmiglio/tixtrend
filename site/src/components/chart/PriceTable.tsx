@@ -29,7 +29,7 @@ const PriceTable = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
   }, [priceDataSet]);
 
   return (
-    <div className="w-full inline-flex center-items justify-center">
+    <div className="center-items inline-flex w-full justify-center">
       <table className="table-auto">
         <thead>
           <tr>

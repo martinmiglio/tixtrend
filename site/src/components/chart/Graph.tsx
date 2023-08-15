@@ -57,7 +57,7 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
   useEffect(() => {
     if (graphPathRef.current) {
       const pathElement = graphPathRef.current.cloneNode(
-        true
+        true,
       ) as SVGPathElement;
       setGraphPathElement(pathElement);
     }

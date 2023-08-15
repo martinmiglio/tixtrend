@@ -7,14 +7,14 @@ import { getEventByID } from "./get-event";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   // get the event_id from the query string
   const { event_count } = req.query;
 
   // make a request to TicketMaster's API
   const response = await fetch(
-    process.env.TIXTREND_API_URL + `/watch?list=${event_count}`
+    process.env.TIXTREND_API_URL + `/watch?list=${event_count}`,
   );
 
   // check if status code is 200
@@ -32,7 +32,7 @@ export default async function handler(
   const events: EventData[] = await Promise.all(
     data.events.map(async (event: any) => {
       return (await getEventByID(event.event_id)) as EventData;
-    })
+    }),
   );
 
   data.events = events;
@@ -40,7 +40,7 @@ export default async function handler(
   // return the events with a cache header
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240"
+    "public, s-maxage=120, stale-while-revalidate=240",
   );
 
   res.status(200).json(data);

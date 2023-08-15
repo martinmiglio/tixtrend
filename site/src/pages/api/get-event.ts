@@ -5,11 +5,11 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { EventData } from "@utils/types/EventData";
 
 export const getEventByID = async (
-  event_id: string
+  event_id: string,
 ): Promise<EventData | null> => {
   // make a request to TicketMaster's API
   const response = await fetch(
-    `https://app.ticketmaster.com/discovery/v2/events/${event_id}?apikey=${process.env.TICKETMASTER_API_KEY}`
+    `https://app.ticketmaster.com/discovery/v2/events/${event_id}?apikey=${process.env.TICKETMASTER_API_KEY}`,
   );
 
   // handle errors
@@ -39,7 +39,7 @@ export const getEventByID = async (
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   // get the event_id from the query string
   const { event_id } = req.query;
@@ -56,7 +56,7 @@ export default async function handler(
   // return the events with a cache header
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=86400, stale-while-revalidate=172800"
+    "public, s-maxage=86400, stale-while-revalidate=172800",
   );
 
   res.status(200).json(event);

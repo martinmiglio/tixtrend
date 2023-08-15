@@ -5,11 +5,11 @@ export const runtime = "edge";
 export async function GET() {
   try {
     const fontDataBold = await fetch(
-      new URL("../../assets/Averta Extra Bold Italic.ttf", import.meta.url)
+      new URL("../../assets/Averta Extra Bold Italic.ttf", import.meta.url),
     ).then((res) => res.arrayBuffer());
 
     const fontDataRegular = await fetch(
-      new URL("../../assets/Averta.ttf", import.meta.url)
+      new URL("../../assets/Averta.ttf", import.meta.url),
     ).then((res) => res.arrayBuffer());
 
     return new ImageResponse(
@@ -51,7 +51,7 @@ export async function GET() {
             style: "normal",
           },
         ],
-      }
+      },
     );
   } catch (e: any) {
     console.log(`${e.message}`);

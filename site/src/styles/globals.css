@@ -1,24 +1,31 @@
 @font-face {
-  font-family: 'Averta-Regular';
+  font-family: "Averta-Regular";
   font-style: normal;
   font-weight: 400;
-  src: local('Averta-Regular'), url('https://fonts.cdnfonts.com/s/14933/Averta.woff') format('woff');
+  src:
+    local("Averta-Regular"),
+    url("https://fonts.cdnfonts.com/s/14933/Averta.woff") format("woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Averta-ExtraBoldItalic';
+  font-family: "Averta-ExtraBoldItalic";
   font-style: italic;
   font-weight: 400;
-  src: local('Averta-ExtraBoldItalic'), url('https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff') format('woff');
+  src:
+    local("Averta-ExtraBoldItalic"),
+    url("https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff")
+      format("woff");
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Averta-Bold';
+  font-family: "Averta-Bold";
   font-style: normal;
   font-weight: 400;
-  src: local('Averta-Bold'), url('https://fonts.cdnfonts.com/s/14933/Averta Bold.woff') format('woff');
+  src:
+    local("Averta-Bold"),
+    url("https://fonts.cdnfonts.com/s/14933/Averta Bold.woff") format("woff");
   font-display: swap;
 }
 

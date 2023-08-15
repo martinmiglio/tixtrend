@@ -12,7 +12,7 @@ import BlankEventInfoItem from "@components/event/BlankEventInfoItem";
 import { EventData } from "@utils/types/EventData";
 
 const EventSearchBar = dynamic(
-  () => import("@components/search/EventSearchBar")
+  () => import("@components/search/EventSearchBar"),
 );
 const EventInfoItem = dynamic(() => import("@components/event/EventInfoItem"));
 
@@ -25,7 +25,7 @@ const EventSearch = () => {
   const fetchEvents = async () => {
     const encodedSearchTerm = encodeURIComponent(searchTerm);
     const response = await fetch(
-      `/api/find-event?keyword=${encodedSearchTerm}&page=${searchPage}`
+      `/api/find-event?keyword=${encodedSearchTerm}&page=${searchPage}`,
     );
     return response.json();
   };
@@ -50,7 +50,7 @@ const EventSearch = () => {
           // combine and remove duplicates
           const merged = [...eventsData, ...data].filter(
             (d: any, index: number, self: any) =>
-              index === self.findIndex((e: any) => e.id === d.id)
+              index === self.findIndex((e: any) => e.id === d.id),
           );
           setEventsData(merged);
         } else {
@@ -71,7 +71,7 @@ const EventSearch = () => {
           }}
           hasMore={hasMore}
           loader={
-            <div className="my-2 shadow-lg rounded-md hover:shadow-xl sm:pb-4">
+            <div className="my-2 rounded-md shadow-lg hover:shadow-xl sm:pb-4">
               <BlankEventInfoItem />
             </div>
           }
@@ -79,7 +79,7 @@ const EventSearch = () => {
         >
           {eventsData.map((eventData, index) => (
             <div
-              className="my-2 shadow-lg rounded-md hover:shadow-xl sm:pb-4"
+              className="my-2 rounded-md shadow-lg hover:shadow-xl sm:pb-4"
               key={eventData.id}
             >
               <Link href={`/event/${eventData.id}`} passHref>

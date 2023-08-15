@@ -52,7 +52,7 @@ export default function RootLayout({
         <GTagScript measurementId={env.GA_MEASUREMENT_ID} />
       </head>
       <body>
-        <div className="w-full max-w-screen-xl mx-auto p-4 md:py-8">
+        <div className="mx-auto w-full max-w-screen-xl p-4 md:py-8">
           <HeaderBar />
           {children}
           <FooterBar />

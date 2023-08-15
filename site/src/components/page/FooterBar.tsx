@@ -1,6 +1,6 @@
 const FooterBar = () => {
   return (
-    <span className="block text-sm text-gray-500 text-center w-full pt-2">
+    <span className="block w-full pt-2 text-center text-sm text-gray-500">
       This site uses data from{" "}
       <a href="https://ticketmaster.com/" className="hover:underline">
         TicketMaster

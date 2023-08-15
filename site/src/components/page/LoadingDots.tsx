@@ -13,7 +13,7 @@ const uuids = Array.from({ length: DOT_COUNT }, () => uuidv4());
 
 const LoadingDots = ({ dotSize, dotSeparation }: LoadingDotsProps) => {
   const [opacityValues, setOpacityValues] = useState(
-    Array.from({ length: DOT_COUNT - 1 }, () => 1).concat([0])
+    Array.from({ length: DOT_COUNT - 1 }, () => 1).concat([0]),
   );
 
   useEffect(() => {

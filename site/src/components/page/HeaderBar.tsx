@@ -4,9 +4,9 @@ import Link from "next/link";
 const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
   return (
     <>
-      <div className="border-b border-gray-700 mb-3">
-        <div className="sm:flex sm:items-center sm:justify-between pb-2">
-          <Link href="/" className="flex items-center mb-4 sm:mb-0">
+      <div className="mb-3 border-b border-gray-700">
+        <div className="pb-2 sm:flex sm:items-center sm:justify-between">
+          <Link href="/" className="mb-4 flex items-center sm:mb-0">
             <Image
               src="/logo-gray.svg"
               alt="TixTrend Logo"
@@ -17,7 +17,7 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
             />
             <h1 className="text-4xl">TixTrend</h1>
           </Link>
-          <ul className="flex flex-wrap items-center mb-6 text-sm font-medium text-gray-500 sm:mb-0 dark:text-gray-400 space-x-8 mr-4">
+          <ul className="mb-6 mr-4 flex flex-wrap items-center space-x-8 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mb-0">
             <li>
               <Link href="/" className="hover:underline">
                 Search
@@ -37,11 +37,11 @@ const HeaderBar = ({ noTagline }: { noTagline?: boolean }) => {
         </div>
       </div>
       {!noTagline && (
-        <div className="w-full flex flex-col justify-center items-center pb-5">
-          <h2 className="mt-2 text-3xl leading-10 md:tracking-normal tracking-tighter sm:text-4xl  italic font-extrabold font-tagline ">
+        <div className="flex w-full flex-col items-center justify-center pb-5">
+          <h2 className="mt-2 font-tagline text-3xl font-extrabold italic leading-10  tracking-tighter sm:text-4xl md:tracking-normal ">
             Stay Ahead of the Game
           </h2>
-          <h3 className="text-xl my-2 leading-6 tracking-tight">
+          <h3 className="my-2 text-xl leading-6 tracking-tight">
             Track ticket prices over time and never miss a deal again.
           </h3>
         </div>

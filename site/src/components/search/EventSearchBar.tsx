@@ -41,11 +41,11 @@ const EventSearchBar = ({
   }, []);
 
   return (
-    <div className="flex justify-center items-center pb-4">
-      <div className="w-full max-w-screen-sm flex items-center py-2 rounded-full bg-white">
+    <div className="flex items-center justify-center pb-4">
+      <div className="flex w-full max-w-screen-sm items-center rounded-full bg-white py-2">
         <input
           ref={searchInput}
-          className="appearance-none bg-transparent border-none w-full text-slate-800 py-1 px-5 leading-tight focus:outline-none"
+          className="w-full appearance-none border-none bg-transparent px-5 py-1 leading-tight text-slate-800 focus:outline-none"
           type="text"
           placeholder="Search for an event"
           aria-label="Search for an event"
@@ -59,7 +59,7 @@ const EventSearchBar = ({
         />
         {searchTerm.length > 0 && (
           <button
-            className="flex-shrink-0 bg-transparent text-slate-800 hover:text-slate-700 text-sm py-1 px-5 rounded-full"
+            className="flex-shrink-0 rounded-full bg-transparent px-5 py-1 text-sm text-slate-800 hover:text-slate-700"
             type="button"
             onClick={clearSearch}
           >

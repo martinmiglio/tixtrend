@@ -5,13 +5,13 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   // get the event ID from the query string
   const { event_id } = req.query;
 
   const response = await fetch(
-    process.env.TIXTREND_API_URL + `/watch?event_id=${event_id}`
+    process.env.TIXTREND_API_URL + `/watch?event_id=${event_id}`,
   );
 
   // check if status code is 200

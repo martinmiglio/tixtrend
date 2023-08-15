@@ -6,7 +6,7 @@ import { PriceData } from "@utils/types/PriceData";
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   // get the event ID from the query string
   const { event_id, latest } = req.query;
@@ -53,7 +53,7 @@ export default async function handler(
   // return the prices with a cache header
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240"
+    "public, s-maxage=120, stale-while-revalidate=240",
   );
   res.status(200).json(prices);
 }

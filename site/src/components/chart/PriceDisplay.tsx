@@ -24,7 +24,7 @@ const PriceDisplay = ({ priceData }: { priceData: PriceData | null }) => {
 
   return (
     <div className="flex items-center pt-4">
-      <div className="text-3xl font-bold ml-1 flex">
+      <div className="ml-1 flex text-3xl font-bold">
         {currency}
         <NumberScroller value={priceData ? priceData.min : 0.0} />
       </div>
