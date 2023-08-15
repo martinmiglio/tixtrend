@@ -17,7 +17,9 @@ const Event = ({ params }: { params: { eventid: string[] } }) => {
   const [priceDataSet, setPriceDataSet] = useState<PriceData[]>([]);
 
   const fetchPriceDataSet = () => {
-    fetch(`/api/get-prices?event_id=${eventid}`).then((response) => {
+    fetch(`/api/get-prices?event_id=${eventid}`, {
+      next: { revalidate: 43200 },
+    }).then((response) => {
       if (response.status === 200) {
         response.json().then((data) => {
           for (const element of data) {
@@ -34,7 +36,9 @@ const Event = ({ params }: { params: { eventid: string[] } }) => {
 
   useEffect(() => {
     if (eventid) {
-      fetch(`/api/get-event?event_id=${eventid}`).then((response) => {
+      fetch(`/api/get-event?event_id=${eventid}`, {
+        next: { revalidate: 3600 },
+      }).then((response) => {
         if (response.status === 200) {
           response.json().then((data) => {
             setEventData(data);
