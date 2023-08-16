@@ -1,45 +1,8 @@
-// find-event.ts
+// find-event
 /* this is the API endpoint that will be called by the site to find events by keyword */
 
-import type { NextApiRequest, NextApiResponse } from "next";
 import { EventData } from "@utils/types/EventData";
-
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  // get the keyword from the query string
-  const { keyword, page } = req.query;
-
-  // if no keyword, return 400
-  if (!keyword) {
-    res.status(400).json({
-      message: "No keyword provided",
-    });
-    return;
-  }
-
-  // parse page into number, if not provided, default to 0
-  let pageNum = 0;
-  if (page) {
-    pageNum = parseInt(page as string);
-  }
-
-  const events = await getSearchEvents(keyword as string, pageNum);
-
-  if (!events) {
-    res.status(500).json({
-      message: `No events found for keyword ${keyword}`,
-    });
-    return;
-  }
-  // return the events with a cache header
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240",
-  );
-  res.status(200).json(events);
-}
+import { NextRequest, NextResponse } from "next/server";
 
 const getSearchEvents = async (
   keyword: string,
@@ -78,10 +41,7 @@ const getSearchEvents = async (
   let data = await Promise.all(responses.map((response) => response.json()));
 
   // remove data has no ._embedded, ._embedded.events properties or events length of 0
-  data = data.filter(
-    (d: any) =>
-      d._embedded && d._embedded.events && d._embedded.events.length > 0,
-  );
+  data = data.filter((d: any) => d._embedded?.events?.length > 0);
 
   // remove duplicates
   data = data.filter(
@@ -114,3 +74,28 @@ const getSearchEvents = async (
     };
   });
 };
+
+export async function GET(req: NextRequest) {
+  const hasKeyword = req.nextUrl.searchParams.has("keyword");
+
+  if (!hasKeyword) {
+    return NextResponse.error();
+  }
+
+  const keyword = hasKeyword
+    ? req.nextUrl.searchParams.get("keyword")
+    : undefined;
+
+  const hasPage = req.nextUrl.searchParams.has("page");
+  const page = hasPage
+    ? parseInt(req.nextUrl.searchParams.get("page") ?? "0")
+    : 0;
+
+  const events = await getSearchEvents(keyword as string, page);
+
+  if (!events) {
+    return NextResponse.error();
+  }
+
+  return NextResponse.json(events);
+}

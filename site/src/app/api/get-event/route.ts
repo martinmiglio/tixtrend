@@ -1,8 +1,8 @@
-// get-event.ts
+// get-event
 /* this is the API endpoint that will be called by the site to find events by id */
 
-import type { NextApiRequest, NextApiResponse } from "next";
 import { EventData } from "@utils/types/EventData";
+import { NextRequest, NextResponse } from "next/server";
 
 export const getEventByID = async (
   event_id: string,
@@ -37,27 +37,20 @@ export const getEventByID = async (
   return event;
 };
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  // get the event_id from the query string
-  const { event_id } = req.query;
+export async function GET(req: NextRequest) {
+  const hasEventId = req.nextUrl.searchParams.has("event_id");
 
-  const event = await getEventByID(event_id as string);
-
-  if (!event) {
-    res.status(500).json({
-      message: `An error occurred while fetching the data.`,
-    });
-    return;
+  if (!hasEventId) {
+    return NextResponse.error();
   }
 
-  // return the events with a cache header
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=86400, stale-while-revalidate=172800",
-  );
+  const eventId = req.nextUrl.searchParams.get("event_id");
 
-  res.status(200).json(event);
+  const event = await getEventByID(eventId as string);
+
+  if (!event) {
+    return NextResponse.error();
+  }
+
+  return NextResponse.json(event);
 }

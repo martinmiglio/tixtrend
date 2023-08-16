@@ -1,14 +1,14 @@
-// watch-event.ts
+// watch-event
 /* this is the API endpoint that will be called by the site to add an event to the watch list */
 
-import type { NextApiRequest, NextApiResponse } from "next";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  // get the event ID from the query string
-  const { event_id } = req.query;
+export async function GET(req: NextRequest) {
+  const hasEventId = req.nextUrl.searchParams.has("event_id");
+  if (!hasEventId) {
+    return NextResponse.error();
+  }
+  const event_id = req.nextUrl.searchParams.get("event_id");
 
   const response = await fetch(
     process.env.TIXTREND_API_URL + `/watch?event_id=${event_id}`,
@@ -16,14 +16,11 @@ export default async function handler(
 
   // check if status code is 200
   if (response.status !== 200) {
-    res.status(500).json({
-      message: `An error occurred while fetching the data. ${response.status}`,
-    });
-    return;
+    return NextResponse.error();
   }
 
   // parse the response as JSON
   const data = await response.json();
 
-  res.status(200).json(data);
+  return NextResponse.json(data);
 }

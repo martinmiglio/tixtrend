@@ -1,34 +1,29 @@
-// get-event.ts
+// get-popular-events
 /* this is the API endpoint that will be called by the site to find events by id */
 
-import type { NextApiRequest, NextApiResponse } from "next";
 import { EventData } from "@utils/types/EventData";
-import { getEventByID } from "./get-event";
+import { getEventByID } from "../get-event/route";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  // get the event_id from the query string
-  const { event_count } = req.query;
+export async function GET(req: NextRequest) {
+  const hasEventCount = req.nextUrl.searchParams.has("event_count");
+  const eventCount = hasEventCount
+    ? req.nextUrl.searchParams.get("event_count")
+    : undefined;
 
-  // make a request to TicketMaster's API
   const response = await fetch(
-    process.env.TIXTREND_API_URL + `/watch?list=${event_count}`,
+    process.env.TIXTREND_API_URL + `/watch?list=${eventCount}`,
   );
 
-  // check if status code is 200
   if (response.status !== 200) {
-    res.status(500).json({
-      message: `An error occurred while fetching the data. ${response.status}`,
-    });
-    return;
+    console.error(
+      `An error occurred while fetching the data. ${response.status}`,
+    );
+    return NextResponse.error();
   }
 
-  // parse the response as JSON
   const data = await response.json();
 
-  // for eveny event in the list, get the event data
   const events: EventData[] = await Promise.all(
     data.events.map(async (event: any) => {
       return (await getEventByID(event.event_id)) as EventData;
@@ -37,11 +32,5 @@ export default async function handler(
 
   data.events = events;
 
-  // return the events with a cache header
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240",
-  );
-
-  res.status(200).json(data);
+  return NextResponse.json(data);
 }

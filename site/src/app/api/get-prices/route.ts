@@ -1,39 +1,35 @@
-// get-prices.ts
+// get-prices
 /* this is the API endpoint that will be called by the site to get the prices of an event */
 
-import type { NextApiRequest, NextApiResponse } from "next";
 import { PriceData } from "@utils/types/PriceData";
+import { NextRequest, NextResponse } from "next/server";
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse,
-) {
-  // get the event ID from the query string
-  const { event_id, latest } = req.query;
-
-  if (!event_id && !latest) {
-    res.status(400).json({
-      message: "Please provide an event ID or latest count",
-    });
-    return;
+export async function GET(req: NextRequest) {
+  const hasEventId = req.nextUrl.searchParams.has("event_id");
+  const hasLatest = req.nextUrl.searchParams.has("latest");
+  if (!hasEventId && !hasLatest) {
+    return NextResponse.error();
   }
 
-  // make a request to the API depending on the query
+  const eventId = req.nextUrl.searchParams.get("event_id");
+  const latest = req.nextUrl.searchParams.get("latest");
+
   const requestURL = new URL(`${process.env.TIXTREND_API_URL}/prices`);
-  if (event_id) {
-    requestURL.searchParams.append("event_id", event_id as string);
+  if (hasEventId) {
+    requestURL.searchParams.append("event_id", eventId as string);
   }
-  if (latest) {
+  if (hasLatest) {
     requestURL.searchParams.append("latest", latest as string);
   }
+
   const response = await fetch(requestURL.toString());
 
   // check if status code is 200
   if (response.status !== 200) {
-    res.status(500).json({
-      message: `An error occurred while fetching the data. ${response.status}`,
-    });
-    return;
+    console.error(
+      `An error occurred while fetching the data. ${response.status}`,
+    );
+    return NextResponse.error();
   }
 
   // parse the response as JSON
@@ -50,10 +46,5 @@ export default async function handler(
     };
   });
 
-  // return the prices with a cache header
-  res.setHeader(
-    "Cache-Control",
-    "public, s-maxage=120, stale-while-revalidate=240",
-  );
-  res.status(200).json(prices);
+  return NextResponse.json(prices);
 }
