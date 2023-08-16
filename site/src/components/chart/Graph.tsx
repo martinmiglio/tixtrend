@@ -1,3 +1,5 @@
+"use client";
+
 import { scaleLinear, scaleTime } from "d3-scale";
 import * as shape from "d3-shape";
 import dynamic from "next/dynamic";
@@ -10,21 +12,19 @@ const Cursor = dynamic(() => import("./Cursor"), { ssr: false });
 
 interface GraphProps {
   data: DataPoint[];
-  height?: number;
-  width?: number;
   onCurrentValueChange?: (index: number) => void;
 }
 
 const TIME_AXIS_HEIGHT = 25;
 const STROKE_WIDTH = 4;
 
-const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
+const Graph = ({ data, onCurrentValueChange }: GraphProps) => {
   const padding = STROKE_WIDTH / 2;
 
   const graphPathRef = React.useRef<SVGPathElement>(null);
   const outerDivRef = useRef<HTMLDivElement>(null);
-  const [graphHeight, setGraphHeight] = useState<number>(height ?? 0);
-  const [graphWidth, setGraphWidth] = useState<number>(width ?? 0);
+  const [graphHeight, setGraphHeight] = useState<number>(0);
+  const [graphWidth, setGraphWidth] = useState<number>(0);
   const [graphPathElement, setGraphPathElement] =
     useState<SVGPathElement | null>(null);
 
@@ -85,7 +85,7 @@ const Graph = ({ data, height, width, onCurrentValueChange }: GraphProps) => {
   // issues with path: https://github.com/facebook/react/issues/15187
   // Warning: Prop `d` did not match. Server:
   return (
-    <div className="h-full w-full" ref={outerDivRef}>
+    <div className="h-full w-full flex-grow" ref={outerDivRef}>
       <div
         style={{
           width: graphWidth,

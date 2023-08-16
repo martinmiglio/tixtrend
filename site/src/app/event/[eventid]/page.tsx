@@ -80,11 +80,11 @@ const Event = ({ params }: { params: { eventid: string[] } }) => {
   }
 
   return (
-    <div className="flex w-full flex-col items-center justify-center">
+    <div className="flex h-full w-full flex-col items-center justify-center">
       <div className="w-full rounded-md p-5 shadow-xl">
         <EventInfoItem eventData={eventData} showSaveButton={true} />
       </div>
-      <div className="w-screen flex-1">
+      <div className="w-screen flex-grow">
         <EventPriceChart eventData={eventData} />
       </div>
     </div>
