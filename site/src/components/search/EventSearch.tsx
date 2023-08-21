@@ -1,8 +1,3 @@
-// EventSearch.tsx
-
-/* this component is used to search for events by keywords.
-This will be used in the home page of the site to begin the flow.
-This component will display EventSearchBar and EventInfoItem components. */
 "use client";
 
 import { EventData } from "@/api/get-event";
@@ -12,6 +7,11 @@ import Link from "next/link";
 import React, { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
+// EventSearch.tsx
+
+/* this component is used to search for events by keywords.
+This will be used in the home page of the site to begin the flow.
+This component will display EventSearchBar and EventInfoItem components. */
 
 const EventSearchBar = dynamic(
   () => import("@/components/search/EventSearchBar"),

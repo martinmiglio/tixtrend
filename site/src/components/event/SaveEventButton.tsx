@@ -1,8 +1,3 @@
-// SaveEventButton.tsx
-
-/* a button which saves an event to the user's saved events list */
-
-/* currently functions with localStorage */
 "use client";
 
 import { EventData } from "@/api/get-event";
@@ -14,6 +9,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 
+// SaveEventButton.tsx
+
+/* a button which saves an event to the user's saved events list */
+
+/* currently functions with localStorage */
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);

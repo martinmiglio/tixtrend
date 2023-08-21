@@ -45,10 +45,10 @@ export default function About() {
               </p>
             </dt>
             <dd className="ml-16 mt-2 text-base text-gray-400">
-              TixTrend collects its data from Ticketmaster&apos;s Discover API, the
-              premier source for event and ticket information. With this
-              reliable data, you can be sure that the information you&apos;re getting
-              is accurate and up-to-date. <br />
+              TixTrend collects its data from Ticketmaster&apos;s Discover API,
+              the premier source for event and ticket information. With this
+              reliable data, you can be sure that the information you&apos;re
+              getting is accurate and up-to-date. <br />
               <a
                 href="https://developer.ticketmaster.com/explore/"
                 className="text-indigo-600 hover:text-indigo-500"
