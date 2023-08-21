@@ -28,7 +28,7 @@ const EventSearchBar = ({
 
   useEffect(() => {
     onSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm]);
+  }, [debouncedSearchTerm, onSearch]);
 
   const clearSearch = () => {
     setSearchTerm("");

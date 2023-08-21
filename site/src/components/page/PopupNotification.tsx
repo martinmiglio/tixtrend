@@ -23,7 +23,7 @@ const PopupNotification = ({
         setIsActiveCallback?.(false);
       }, 0.8 * popupDuration);
     }
-  }, [isActive]);
+  }, [isActive, setIsActiveCallback]);
 
   return (
     <>

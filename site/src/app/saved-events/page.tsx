@@ -10,7 +10,7 @@ import { useEffect, useState } from "react";
 
 
 
-export default async function SavedEvents() {
+export default function SavedEvents() {
   const [savedEvents, setSavedEvents] = useState<EventData[]>([]);
 
   useEffect(() => {

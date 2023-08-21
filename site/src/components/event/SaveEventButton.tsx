@@ -24,7 +24,7 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
     setSaved(
       savedEvents.some((savedEvent: EventData) => savedEvent.id === event.id),
     );
-  }, []);
+  }, [event.id]);
 
   const saveEvent = () => {
     let savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");

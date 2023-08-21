@@ -41,19 +41,19 @@ export default function About() {
                 <FontAwesomeIcon className="h-5 w-5" icon={faDatabase} />
               </div>
               <p className="ml-16 text-lg font-medium leading-6">
-                Data from Ticketmaster's Discover API
+                Data from Ticketmaster&apos;s Discover API
               </p>
             </dt>
             <dd className="ml-16 mt-2 text-base text-gray-400">
-              TixTrend collects its data from Ticketmaster's Discover API, the
+              TixTrend collects its data from Ticketmaster&apos;s Discover API, the
               premier source for event and ticket information. With this
-              reliable data, you can be sure that the information you're getting
+              reliable data, you can be sure that the information you&apos;re getting
               is accurate and up-to-date. <br />
               <a
                 href="https://developer.ticketmaster.com/explore/"
                 className="text-indigo-600 hover:text-indigo-500"
               >
-                Learn more about Ticketmaster's Discover API &rarr;
+                Learn more about Ticketmaster&apos;s Discover API &rarr;
               </a>
             </dd>
           </div>

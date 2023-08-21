@@ -38,7 +38,7 @@ const Cursor = ({
         y: pathPoint.y - parentHeight * 2,
       });
     }
-  }, [pathElement]);
+  }, [api, onMouseMove, parentHeight, parentWidth, pathElement]);
 
   const cursorAnimation = (xy: Vector2) => {
     if (cursorRef.current) {

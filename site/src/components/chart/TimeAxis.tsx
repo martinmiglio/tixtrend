@@ -28,7 +28,7 @@ export const AxisBottom = ({ xScale, pixelsPerTick }: AxisBottomProps) => {
         fill: COLOR,
       };
     });
-  }, [xScale]);
+  }, [pixelsPerTick, range, xScale]);
 
   return (
     <>

@@ -18,7 +18,7 @@ const getSearchEvents = async (
   endpoints.forEach((endpoint, index) => {
     const url = new URL(endpoint);
     url.searchParams.append("keyword", keyword);
-    url.searchParams.append("apikey", process.env.TICKETMASTER_API_KEY || "");
+    url.searchParams.append("apikey", process.env.TICKETMASTER_API_KEY ?? "");
     url.searchParams.append("includeSpellcheck", "yes");
     url.searchParams.append("page", page.toString());
     url.searchParams.append("size", PAGE_SIZE.toString());

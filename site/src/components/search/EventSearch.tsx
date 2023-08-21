@@ -9,7 +9,7 @@ import { EventData } from "@/api/get-event";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 
@@ -24,13 +24,13 @@ const EventSearch = () => {
   const [searchPage, setSearchPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
 
-  const fetchEvents = async () => {
+  const fetchEvents = useCallback(async () => {
     const encodedSearchTerm = encodeURIComponent(searchTerm);
     const response = await fetch(
       `/api/find-event?keyword=${encodedSearchTerm}&page=${searchPage}`,
     );
     return response.json();
-  };
+  }, [searchTerm, searchPage]);
 
   useEffect(() => {
     setSearchPage(0);
@@ -41,7 +41,7 @@ const EventSearch = () => {
         setEventsData(data);
       });
     }
-  }, [searchTerm]);
+  }, [fetchEvents, searchTerm]);
 
   useEffect(() => {
     if (searchPage > 0) {
@@ -60,7 +60,7 @@ const EventSearch = () => {
         }
       });
     }
-  }, [searchPage]);
+  }, [eventsData, fetchEvents, searchPage]);
 
   return (
     <div className="w-full">
