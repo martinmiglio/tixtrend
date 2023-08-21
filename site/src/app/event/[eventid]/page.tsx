@@ -1,4 +1,4 @@
-import { getEventByID, EventData } from "@/api/event";
+import { getEventByID, EventData, watchEvent } from "@/api/event";
 import { PriceData, getPricesByEventId } from "@/api/price";
 import PriceChart from "@/components/chart/PriceChart";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
@@ -9,7 +9,7 @@ import Link from "next/link";
 const Event = async ({ params }: { params: { eventid: string } }) => {
   const { eventid } = params;
 
-  fetch(process.env.TIXTREND_API_URL + `/watch?event_id=${eventid}`);
+  watchEvent(eventid);
   const eventDataPromise = getEventByID(eventid);
   const priceHistoryPromise = getPricesByEventId(eventid);
   const [eventData, priceHistory]: [EventData | null, PriceData[] | null] =

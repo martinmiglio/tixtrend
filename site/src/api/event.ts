@@ -1,4 +1,13 @@
 import { PriceData } from "@/api/price";
+import "server-only";
+import { z } from "zod";
+
+const schema = z.object({
+  TICKETMASTER_API_KEY: z.string(),
+  TIXTREND_API_URL: z.string(),
+});
+
+const env = schema.parse(process.env);
 
 export type EventData = {
   id: string;
@@ -24,7 +33,7 @@ export const getEventByID = async (
 ): Promise<EventData | null> => {
   // make a request to TicketMaster's API
   const response = await fetch(
-    `https://app.ticketmaster.com/discovery/v2/events/${event_id}?apikey=${process.env.TICKETMASTER_API_KEY}`,
+    `https://app.ticketmaster.com/discovery/v2/events/${event_id}?apikey=${env.TICKETMASTER_API_KEY}`,
   );
 
   // handle errors
@@ -66,7 +75,7 @@ export const getEventByKeyword = async (
   endpoints.forEach((endpoint, index) => {
     const url = new URL(endpoint);
     url.searchParams.append("keyword", keyword);
-    url.searchParams.append("apikey", process.env.TICKETMASTER_API_KEY ?? "");
+    url.searchParams.append("apikey", env.TICKETMASTER_API_KEY ?? "");
     url.searchParams.append("includeSpellcheck", "yes");
     url.searchParams.append("page", page.toString());
     url.searchParams.append("size", PAGE_SIZE.toString());
@@ -121,4 +130,11 @@ export const getEventByKeyword = async (
       imageData: event.images,
     };
   });
+};
+
+export const watchEvent = async (event_id: string) => {
+  const response = await fetch(
+    env.TIXTREND_API_URL + `/watch?event_id=${event_id}`,
+  );
+  return response.status === 200;
 };
