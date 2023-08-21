@@ -1,7 +1,7 @@
 // PriceDisplay.ts
 
 /* this component is responsible for displaying the price with the appropriate currency symbol*/
-import { PriceData } from "@/api/get-prices";
+import { PriceData } from "@/api/price";
 import NumberScroller from "@/components/page/NumberScroller";
 
 const CURRENCY_SYMBOLS = {

@@ -1,5 +1,5 @@
-import { getEventByID, EventData } from "@/api/get-event";
-import { PriceData, getPricesByEventId } from "@/api/get-prices";
+import { getEventByID, EventData } from "@/api/event";
+import { PriceData, getPricesByEventId } from "@/api/price";
 import PriceChart from "@/components/chart/PriceChart";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import EventInfoItem from "@/components/event/EventInfoItem";

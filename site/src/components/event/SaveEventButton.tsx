@@ -1,6 +1,6 @@
 "use client";
 
-import { EventData } from "@/api/get-event";
+import { EventData } from "@/api/event";
 import PopupNotification from "@/components/page/PopupNotification";
 import {
   faHeartCircleCheck,

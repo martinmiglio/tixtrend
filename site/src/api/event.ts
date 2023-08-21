@@ -1,4 +1,4 @@
-import { PriceData } from "@/api/get-prices";
+import { PriceData } from "@/api/price";
 
 export type EventData = {
   id: string;
