@@ -1,7 +1,7 @@
 // find-event
 
 /* this is the API endpoint that will be called by the site to find events by keyword */
-import { EventData } from "@utils/types/EventData";
+import { EventData } from "@/api/get-event";
 import { NextRequest, NextResponse } from "next/server";
 
 const getSearchEvents = async (
