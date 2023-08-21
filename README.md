@@ -37,4 +37,4 @@ TixTrend is released under the [MIT License](LICENSE).
 
 ---
 
-For more information, visit the [TixTrend website](https://tixtrend.martinmiglio.dev/) or contact us at <contact@tixtrend.com>.
+For more information, visit the [TixTrend website](https://tixtrend.martinmiglio.dev/) or contact us at <tixtrend@martinmiglio.dev>.
