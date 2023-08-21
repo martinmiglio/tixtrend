@@ -1,6 +1,14 @@
 import FooterBar from "@/components/page/FooterBar";
 import HeaderBar from "@/components/page/HeaderBar";
 import "@/styles/globals.css";
+import Script from "next/script";
+import { z } from "zod";
+
+const schema = z.object({
+  ANALYTICS_ID: z.string(),
+});
+
+const env = schema.parse(process.env);
 
 export const metadata = {
   title: {
@@ -41,6 +49,13 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <Script
+          async
+          src="https://analytics.martinmiglio.dev/script.js"
+          data-website-id={env.ANALYTICS_ID}
+        />
+      </head>
       <body>
         <div className="mx-auto flex h-[100dvh] min-h-screen w-full max-w-screen-xl flex-col p-4 md:py-8">
           <HeaderBar />
