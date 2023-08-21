@@ -1,7 +1,12 @@
 // SaveEventButton.tsx
-/* a button which saves an event to the user's saved events list */
-/* currently functions with localStorage */
 
+/* a button which saves an event to the user's saved events list */
+
+/* currently functions with localStorage */
+"use client";
+
+import { EventData } from "@/api/get-event";
+import PopupNotification from "@/components/page/PopupNotification";
 import {
   faHeartCircleCheck,
   faHeartCirclePlus,
@@ -9,22 +14,20 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 
-import PopupNotification from "@components/page/PopupNotification";
-import { EventData } from "@utils/types/EventData";
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    const savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
+    const savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");
     setSaved(
       savedEvents.some((savedEvent: EventData) => savedEvent.id === event.id),
     );
   }, []);
 
   const saveEvent = () => {
-    let savedEvents = JSON.parse(localStorage.getItem("savedEvents") || "[]");
+    let savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");
     if (saved) {
       savedEvents = savedEvents.filter(
         (savedEvent: EventData) => savedEvent.id !== event.id,

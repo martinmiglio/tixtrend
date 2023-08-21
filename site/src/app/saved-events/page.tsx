@@ -1,14 +1,25 @@
 // saved-events.tsx
-/* This page displays the user's saved events. */
 
+/* This page displays the user's saved events. */
 "use client";
 
-import React, { useState, useEffect } from "react";
-import Link from "next/link";
-import { EventData } from "@/utils/types/EventData";
+import { EventData } from "@/api/get-event";
 import EventInfoItem from "@/components/event/EventInfoItem";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
-const SavedEvents = () => {
+// saved-events.tsx
+
+/* This page displays the user's saved events. */
+
+// saved-events.tsx
+/* This page displays the user's saved events. */
+
+export const metadata = {
+  title: "Saved Events",
+};
+
+export default async function SavedEvents() {
   const [savedEvents, setSavedEvents] = useState<EventData[]>([]);
 
   useEffect(() => {
@@ -58,6 +69,4 @@ const SavedEvents = () => {
       )}
     </div>
   );
-};
-
-export default SavedEvents;
+}

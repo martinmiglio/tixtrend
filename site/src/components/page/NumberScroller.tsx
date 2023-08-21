@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
 import { useSpring, animated, Interpolation } from "@react-spring/web";
+import React, { useState, useEffect } from "react";
 
 const NumberScroller = ({ value }: { value: number }) => {
   const { number } = useSpring({

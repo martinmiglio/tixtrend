@@ -1,6 +1,6 @@
 // watch-event
-/* this is the API endpoint that will be called by the site to add an event to the watch list */
 
+/* this is the API endpoint that will be called by the site to add an event to the watch list */
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

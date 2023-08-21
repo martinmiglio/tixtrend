@@ -1,6 +1,6 @@
 // PopupNotification.tsx
-/* a popup notificaiton which appears in the botttom middle of the screen */
 
+/* a popup notificaiton which appears in the botttom middle of the screen */
 import React, { useState, useEffect } from "react";
 
 const PopupNotification = ({
@@ -20,7 +20,7 @@ const PopupNotification = ({
       setPopupOpacity(1);
       setTimeout(() => {
         setPopupOpacity(0);
-        setIsActiveCallback && setIsActiveCallback(false);
+        setIsActiveCallback?.(false);
       }, 0.8 * popupDuration);
     }
   }, [isActive]);

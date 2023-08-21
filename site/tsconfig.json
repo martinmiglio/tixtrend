@@ -16,11 +16,7 @@
     "incremental": true,
     "typeRoots": ["./types"],
     "paths": {
-      "@/*": ["./src/*"],
-      "@components/*": ["./src/components/*"],
-      "@styles/*": ["./src/styles/*"],
-      "@api/*": ["./src/api/*"],
-      "@utils/*": ["./src/utils/*"]
+      "@/*": ["./src/*"]
     },
     "plugins": [
       {

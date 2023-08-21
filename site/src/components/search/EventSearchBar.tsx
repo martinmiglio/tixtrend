@@ -1,4 +1,5 @@
 // EventSearchBar.tsx
+
 /* This component is used to search for events by keywords.
 This will be used in the home page of the site to begin the flow. */
 import { faTimes } from "@fortawesome/free-solid-svg-icons";

@@ -1,75 +1,26 @@
-"use client";
-
-import React, { useEffect, useState } from "react";
-import { PriceData } from "@/utils/types/PriceData/PriceData";
-import { EventData } from "@/utils/types/EventData/EventData";
+import { getEventByID, EventData } from "@/api/get-event";
+import { PriceData, getPricesByEventId } from "@/api/get-prices";
 import PriceChart from "@/components/chart/PriceChart";
-import EventInfoItem from "@/components/event/EventInfoItem";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
+import EventInfoItem from "@/components/event/EventInfoItem";
+import { Metadata } from "next";
 import Link from "next/link";
 
-const Event = ({ params }: { params: { eventid: string[] } }) => {
+const Event = async ({ params }: { params: { eventid: string } }) => {
   const { eventid } = params;
 
-  const [eventData, setEventData] = useState<EventData | null>(null);
-
-  const watchEvent = async () => {
-    await fetch(`/api/watch-event?event_id=${eventid}`);
-  };
-
-  const getEventData = async () => {
-    const eventDataPromise = fetch(`/api/get-event?event_id=${eventid}`, {
-      next: { revalidate: 3600 },
-    }).then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          data.date = new Date(data.date);
-          return data;
-        });
-      } else {
-        console.warn("Something went wrong getting event data");
-        return null;
-      }
+  fetch(process.env.TIXTREND_API_URL + `/watch?event_id=${eventid}`);
+  const eventDataPromise = getEventByID(eventid);
+  const priceHistoryPromise = getPricesByEventId(eventid);
+  const [eventData, priceHistory]: [EventData | null, PriceData[] | null] =
+    await Promise.all([eventDataPromise, priceHistoryPromise]).catch((err) => {
+      console.error(err);
+      return [null, null];
     });
 
-    const priceHistoryPromise = fetch(`/api/get-prices?event_id=${eventid}`, {
-      next: { revalidate: 43200 },
-    }).then((response) => {
-      if (response.status === 200) {
-        return response.json().then((data) => {
-          for (const element of data) {
-            element.timestamp = new Date(element.timestamp);
-          }
-          return data;
-        });
-      } else {
-        console.warn("Something went wrong getting price data");
-        return null;
-      }
-    });
-
-    const [eventData, priceHistory]: [EventData | null, PriceData[] | null] =
-      await Promise.all([eventDataPromise, priceHistoryPromise]).catch(
-        (err) => {
-          console.error(err);
-          return [null, null];
-        },
-      );
-
-    if (priceHistory === null || eventData === null) {
-      return eventData;
-    }
-    return { ...eventData, priceHistory: priceHistory };
-  };
-
-  useEffect(() => {
-    if (eventid) {
-      getEventData().then((data) => {
-        setEventData(data);
-      });
-      watchEvent();
-    }
-  }, [eventid]);
+  if (eventData && priceHistory) {
+    eventData.priceHistory = priceHistory;
+  }
 
   if (!eventData) {
     return (
@@ -124,3 +75,16 @@ const EventPriceChart = ({ eventData }: { eventData: EventData }) => {
 
   return <PriceChart priceDataSet={eventData.priceHistory} />;
 };
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { eventid: string };
+}): Promise<Metadata> {
+  const { eventid } = params;
+  const eventData: EventData | null = await getEventByID(eventid);
+  if (!eventData) {
+    return {};
+  }
+  return { title: eventData.name };
+}

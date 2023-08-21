@@ -1,13 +1,6 @@
-import { GTagScript } from "@/components/scripts/GTag";
-import { z } from "zod";
-import "@/styles/globals.css";
-import HeaderBar from "@/components/page/HeaderBar";
 import FooterBar from "@/components/page/FooterBar";
-
-const schema = z.object({
-  GA_MEASUREMENT_ID: z.string(),
-});
-const env = schema.parse(process.env);
+import HeaderBar from "@/components/page/HeaderBar";
+import "@/styles/globals.css";
 
 export const metadata = {
   title: {
@@ -48,9 +41,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <GTagScript measurementId={env.GA_MEASUREMENT_ID} />
-      </head>
       <body>
         <div className="mx-auto flex h-[100dvh] min-h-screen w-full max-w-screen-xl flex-col p-4 md:py-8">
           <HeaderBar />

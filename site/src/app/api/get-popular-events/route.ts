@@ -1,8 +1,7 @@
 // get-popular-events
-/* this is the API endpoint that will be called by the site to find events by id */
 
-import { EventData } from "@utils/types/EventData";
-import { getEventByID } from "../get-event/route";
+/* this is the API endpoint that will be called by the site to find events by id */
+import { getEventByID, EventData } from "@/api/get-event";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

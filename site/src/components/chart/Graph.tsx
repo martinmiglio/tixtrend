@@ -1,12 +1,11 @@
 "use client";
 
+import { DataPoint } from "./DataPoint";
+import { AxisBottom } from "./TimeAxis";
 import { scaleLinear, scaleTime } from "d3-scale";
 import * as shape from "d3-shape";
 import dynamic from "next/dynamic";
 import React, { useEffect, useRef, useState } from "react";
-
-import { DataPoint } from "./DataPoint";
-import { AxisBottom } from "./TimeAxis";
 
 const Cursor = dynamic(() => import("./Cursor"), { ssr: false });
 
