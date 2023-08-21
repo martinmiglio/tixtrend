@@ -8,16 +8,7 @@ import EventInfoItem from "@/components/event/EventInfoItem";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-// saved-events.tsx
 
-/* This page displays the user's saved events. */
-
-// saved-events.tsx
-/* This page displays the user's saved events. */
-
-export const metadata = {
-  title: "Saved Events",
-};
 
 export default async function SavedEvents() {
   const [savedEvents, setSavedEvents] = useState<EventData[]>([]);
