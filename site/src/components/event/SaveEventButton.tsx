@@ -10,7 +10,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
 
 import PopupNotification from "@components/page/PopupNotification";
-import { event as analyticsEvent } from "@utils/analytics";
 import { EventData } from "@utils/types/EventData";
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
@@ -34,10 +33,6 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
       savedEvents.push(event);
     }
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
-    analyticsEvent({
-      action: saved ? "unsave" : "save",
-      params: { savedEventData: event },
-    });
     setSaved(!saved);
     setShowPopup(true);
   };
@@ -53,6 +48,9 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
         type="button"
         className={`btn btn-primary btn-sm`}
         onClick={handleClick}
+        data-umami-event="save-event-button"
+        data-umami-event-action={saved ? "remove" : "add"}
+        data-umami-event-id={event.id}
       >
         <FontAwesomeIcon
           icon={saved ? faHeartCircleCheck : faHeartCirclePlus}

@@ -9,7 +9,6 @@ import React, { useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import BlankEventInfoItem from "@components/event/BlankEventInfoItem";
-import * as analytics from "@utils/analytics";
 import { EventData } from "@utils/types/EventData";
 
 const EventSearchBar = dynamic(
@@ -30,12 +29,6 @@ const EventSearch = () => {
     );
     return response.json();
   };
-
-  useEffect(() => {
-    if (searchTerm.length > 0) {
-      analytics.searchEvent(searchTerm);
-    }
-  }, [searchTerm]);
 
   useEffect(() => {
     setSearchPage(0);
