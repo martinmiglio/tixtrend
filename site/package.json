@@ -15,7 +15,7 @@
     "@react-spring/web": "^9.7.3",
     "@types/node": "20.8.0",
     "@types/react": "18.2.22",
-    "@types/react-dom": "18.2.7",
+    "@types/react-dom": "18.2.8",
     "@use-gesture/react": "^10.3.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
