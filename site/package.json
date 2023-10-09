@@ -29,7 +29,7 @@
     "server-only": "^0.0.1",
     "typescript": "5.2.2",
     "uuid": "^9.0.1",
-    "zod": "^3.22.3"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^4.2.0",
