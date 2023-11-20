@@ -19,7 +19,7 @@
     "@use-gesture/react": "^10.3.0",
     "d3-scale": "^4.0.2",
     "d3-shape": "^3.2.0",
-    "eslint": "8.53.0",
+    "eslint": "8.54.0",
     "eslint-config-next": "14.0.2",
     "next": "14.0.2",
     "next-axiom": "^1.1.1",
