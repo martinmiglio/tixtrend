@@ -1,4 +1,5 @@
 import { PriceData } from "@/api/price";
+import TicketMasterClient from "@/lib/tm/client";
 import "server-only";
 import { z } from "zod";
 
@@ -31,34 +32,22 @@ export type EventImageData = {
 export const getEventByID = async (
   event_id: string,
 ): Promise<EventData | null> => {
-  // make a request to TicketMaster's API
-  const response = await fetch(
-    `https://app.ticketmaster.com/discovery/v2/events/${event_id}?apikey=${env.TICKETMASTER_API_KEY}`,
-  );
+  try {
+    const data = await TicketMasterClient.fetch(`events/${event_id}`);
 
-  // handle errors
-  if (response.status !== 200) {
-    if (response.status === 429) {
-      // if we get a 429 error, wait 2 seconds and try again
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return await getEventByID(event_id);
-    }
+    // parse into EventData type
+    const event: EventData = {
+      id: data.id,
+      name: data.name,
+      location: data._embedded ? data._embedded.venues[0]?.name : "TBA",
+      date: new Date(Date.parse(data.dates.start.dateTime)),
+      imageData: data.images,
+    };
+
+    return event;
+  } catch (e) {
     return null;
   }
-
-  // parse the response as JSON
-  const data = await response.json();
-
-  // parse into EventData type
-  const event: EventData = {
-    id: data.id,
-    name: data.name,
-    location: data._embedded ? data._embedded.venues[0]?.name : "TBA",
-    date: new Date(Date.parse(data.dates.start.dateTime)),
-    imageData: data.images,
-  };
-
-  return event;
 };
 
 export const getEventByKeyword = async (
@@ -67,35 +56,19 @@ export const getEventByKeyword = async (
 ): Promise<EventData[]> => {
   const PAGE_SIZE = 5;
 
-  const endpoints = [
-    `https://app.ticketmaster.com/discovery/v2/events`,
-    `https://app.ticketmaster.com/discovery/v2/suggest`,
+  const query = {
+    keyword,
+    page: page.toString(),
+    size: PAGE_SIZE.toString(),
+    includeSpellcheck: "yes",
+  };
+
+  const requests = [
+    TicketMasterClient.fetch(`events`, query),
+    TicketMasterClient.fetch(`suggest`, query),
   ];
 
-  endpoints.forEach((endpoint, index) => {
-    const url = new URL(endpoint);
-    url.searchParams.append("keyword", keyword);
-    url.searchParams.append("apikey", env.TICKETMASTER_API_KEY ?? "");
-    url.searchParams.append("includeSpellcheck", "yes");
-    url.searchParams.append("page", page.toString());
-    url.searchParams.append("size", PAGE_SIZE.toString());
-    endpoints[index] = url.toString();
-  });
-
-  // make requests to both endpoints, merging the results and removing duplicates by id
-  let responses = await Promise.all(
-    endpoints.map((endpoint) => fetch(endpoint)),
-  );
-
-  // filter out non-200
-  responses = responses.filter((response) => response.ok);
-
-  if (responses.length === 0) {
-    return [];
-  }
-
-  // parse responses into json
-  let data = await Promise.all(responses.map((response) => response.json()));
+  let data = await Promise.all(requests);
 
   // remove data has no ._embedded, ._embedded.events properties or events length of 0
   data = data.filter((d: any) => d._embedded?.events?.length > 0);
