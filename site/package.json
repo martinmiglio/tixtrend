@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.485.0",
+    "@aws-sdk/client-sqs": "^3.485.0",
+    "@aws-sdk/credential-providers": "^3.485.0",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-spring/web": "^9.7.3",

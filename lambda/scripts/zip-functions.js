@@ -2,12 +2,7 @@ const archiver = require("archiver");
 const fs = require("fs");
 const path = require("path");
 
-const directories = [
-  "../tixtrend-event-pricing",
-  "../tixtrend-event-watch",
-  "../tixtrend-poll-prices",
-  "../tixtrend-queue-watched-events",
-];
+const directories = ["../tixtrend-poll-prices"];
 
 const out_dir = path.join(__dirname, "/../temp/archives/");
 

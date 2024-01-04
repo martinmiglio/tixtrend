@@ -1,6 +1,9 @@
 import { PriceData } from "@/lib/aws/prices";
 import TicketMasterClient from "@/lib/tm/client";
 
+const EVENTS_PER_PAGE = 20;
+const TIME_BETWEEN_REQUESTS = 2000; // in milliseconds
+
 export type EventData = {
   id: string;
   name: string;
@@ -94,4 +97,62 @@ export const getEventByKeyword = async (
       imageData: event.images,
     };
   });
+};
+
+export const getPopularEvents = async (numberOfEvents: number) => {
+  // get the most popular events from ticketmaster
+  const events = await getPaginatedEventsBySort();
+  return events.slice(0, numberOfEvents);
+};
+
+export const getSaleSoonEvents = async (
+  numberOfEvents: number,
+): Promise<string[]> => {
+  // get on sale soon events from ticketmaster
+  const events = await getPaginatedEventsBySort("onSaleStartDate,asc");
+  return events.slice(0, numberOfEvents);
+};
+
+const getPaginatedEventsBySort = async (
+  sort?: "onSaleStartDate,asc",
+): Promise<string[]> => {
+  const eventPromises = Array(Math.ceil(1000 / EVENTS_PER_PAGE)).map(
+    async (_, index) => {
+      const page = index + 1;
+      const size = EVENTS_PER_PAGE;
+
+      if (page * size > 1000) {
+        // ticketmaster only allows 1000 results at most
+        return [];
+      }
+
+      // sleep for a bit to avoid rate limiting
+      await new Promise((resolve) =>
+        setTimeout(resolve, page * TIME_BETWEEN_REQUESTS),
+      );
+
+      const query: {
+        [key: string]: string;
+      } = {
+        size: size.toString(),
+        page: page.toString(),
+      };
+
+      if (sort) {
+        query.sort = sort;
+      }
+
+      const { _embedded } = await TicketMasterClient.fetch("events", query);
+
+      if (!_embedded?.events) {
+        return [];
+      }
+
+      return _embedded.events.map((event: { id: string }) => event.id);
+    },
+  );
+
+  const eventIdsByPage = await Promise.all(eventPromises);
+
+  return eventIdsByPage.flat();
 };

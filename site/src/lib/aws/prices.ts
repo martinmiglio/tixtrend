@@ -1,8 +1,10 @@
+import { dynamoClient } from "@/lib/aws/client";
+import { PutItemCommand, QueryCommand } from "@aws-sdk/client-dynamodb";
 import "server-only";
 import { z } from "zod";
 
 const schema = z.object({
-  TIXTREND_API_URL: z.string(),
+  EVENT_PRICES_TABLE_NAME: z.string(),
 });
 
 const env = schema.parse(process.env);
@@ -17,22 +19,46 @@ export type PriceData = {
 };
 
 export const getPricesByEventId = async (event_id: string) => {
-  const requestURL = new URL(`${env.TIXTREND_API_URL}/prices`);
-  requestURL.searchParams.append("event_id", event_id);
-  const response = await fetch(requestURL.toString());
+  const params = {
+    TableName: env.EVENT_PRICES_TABLE_NAME,
+    KeyConditionExpression: "event_id = :event_id",
+    ExpressionAttributeValues: {
+      ":event_id": { S: event_id },
+    },
+  };
 
-  // parse the response as JSON
-  const data = await response.json();
+  const command = new QueryCommand(params);
+  const { Items } = await dynamoClient.send(command);
+
+  if (!Items) {
+    return [];
+  }
 
   // parse into PriceData type
-  const prices: PriceData[] = data.map((price: any) => {
+  const prices: PriceData[] = Items.map((price: any) => {
     return {
-      id: price.id,
-      timestamp: new Date(price.timestamp),
-      max: price.max,
-      min: price.min,
-      currency: price.currency,
+      id: price.S.id,
+      timestamp: new Date(price.N.timestamp),
+      max: price.N.max,
+      min: price.N.min,
+      currency: price.S.currency,
     };
   });
   return prices;
+};
+
+export const putPrice = async (price: PriceData) => {
+  const params = {
+    TableName: env.EVENT_PRICES_TABLE_NAME,
+    Item: {
+      event_id: { S: price.id },
+      timestamp: { N: price.timestamp.getTime().toString() },
+      max: { N: price.max.toString() },
+      min: { N: price.min.toString() },
+      currency: { S: price.currency },
+    },
+  };
+
+  const command = new PutItemCommand(params);
+  await dynamoClient.send(command);
 };
