@@ -1,19 +1,13 @@
 "use client";
 
-import { EventData } from "@/api/event";
 import PopupNotification from "@/components/page/PopupNotification";
+import { EventData } from "@/lib/tm/events";
 import {
   faHeartCircleCheck,
   faHeartCirclePlus,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from "react";
-
-// SaveEventButton.tsx
-
-/* a button which saves an event to the user's saved events list */
-
-/* currently functions with localStorage */
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);

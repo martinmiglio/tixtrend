@@ -1,8 +1,8 @@
 // PriceDisplay.ts
 
 /* this component is responsible for displaying the price with the appropriate currency symbol*/
-import { PriceData } from "@/api/price";
 import NumberScroller from "@/components/page/NumberScroller";
+import { PriceData } from "@/lib/aws/prices";
 
 const CURRENCY_SYMBOLS = {
   USD: "$", // US Dollar

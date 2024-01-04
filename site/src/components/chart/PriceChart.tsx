@@ -3,7 +3,7 @@
 import { DataPoint } from "./DataPoint";
 import Graph from "./Graph";
 import PriceDisplay from "./PriceDisplay";
-import { PriceData } from "@/api/price";
+import { PriceData } from "@/lib/aws/prices";
 import { useState } from "react";
 
 // PriceChart.tsx

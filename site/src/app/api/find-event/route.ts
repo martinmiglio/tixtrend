@@ -1,4 +1,4 @@
-import { getEventByKeyword } from "@/api/event";
+import { getEventByKeyword } from "@/lib/tm/events";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest) {

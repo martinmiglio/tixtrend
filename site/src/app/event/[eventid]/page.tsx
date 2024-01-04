@@ -1,8 +1,9 @@
-import { getEventByID, EventData, watchEvent } from "@/api/event";
-import { PriceData, getPricesByEventId } from "@/api/price";
 import PriceChart from "@/components/chart/PriceChart";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import EventInfoItem from "@/components/event/EventInfoItem";
+import { watchEvent } from "@/lib/aws/events";
+import { PriceData, getPricesByEventId } from "@/lib/aws/prices";
+import { EventData, getEventByID } from "@/lib/tm/events";
 import { Metadata } from "next";
 import Link from "next/link";
 
