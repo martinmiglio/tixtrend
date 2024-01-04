@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/alt-text */
 
 /* eslint-disable @next/next/no-img-element */
+import { baseURL } from "@/consts";
 import { ImageResponse } from "next/og";
 
 export const runtime = "edge";
@@ -15,6 +16,7 @@ export async function GET() {
       new URL("../../assets/Averta.ttf", import.meta.url),
     ).then((res) => res.arrayBuffer());
 
+    const logo = new URL("/logo-gray.svg?v1", baseURL).toString();
     return new ImageResponse(
       (
         <div
@@ -25,7 +27,7 @@ export async function GET() {
           tw="text-[#E5E7EB] w-full h-full flex flex-col justify-center items-center"
         >
           <img
-            src="https://tixtrend.martinmiglio.dev/logo-gray.svg"
+            src={logo}
             height={400}
             width={400}
           />
@@ -36,7 +38,7 @@ export async function GET() {
           >
             TixTrend
           </h1>
-          <h2 tw="opacity-30 text-5xl">tixtrend.martinmiglio.dev</h2>
+          <h2 tw="opacity-30 text-5xl">{baseURL.hostname}</h2>
         </div>
       ),
       {

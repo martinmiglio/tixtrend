@@ -1,5 +1,6 @@
 import FooterBar from "@/components/page/FooterBar";
 import HeaderBar from "@/components/page/HeaderBar";
+import { baseURL } from "@/consts";
 import "@/styles/globals.css";
 import Script from "next/script";
 import { z } from "zod";
@@ -10,6 +11,10 @@ const schema = z.object({
 
 const env = schema.parse(process.env);
 
+const metadataBase = baseURL;
+const iconURL = new URL("/favicon.ico", metadataBase);
+const ogURL = new URL("/og?v1", metadataBase);
+
 export const metadata = {
   title: {
     template: "%s | Tix Trend",
@@ -18,14 +23,14 @@ export const metadata = {
   description: "Track ticket prices over time and never miss a deal again.",
   keywords: "Ticket, Price, Tracker, Concert, Sports, Theater, Music, Event",
   creator: "Martin Miglio",
-  metadataBase: new URL("https://tixtrend.martinmiglio.dev/"),
+  metadataBase,
   alternates: { canonical: "/" },
-  icons: { icon: "/favicon.ico" },
+  icons: { icon: iconURL.toString() },
   twitter: {
     card: "summary_large_image",
     title: "Tix Trend",
     description: "Track ticket prices over time and never miss a deal again.",
-    images: ["https://tixtrend.martinmiglio.dev/og?v1"],
+    images: [ogURL.toString()],
   },
   openGraph: {
     type: "website",
@@ -34,7 +39,7 @@ export const metadata = {
     siteName: "Tix Trend",
     images: [
       {
-        url: "https://tixtrend.martinmiglio.dev/og?v1",
+        url: ogURL.toString(),
         width: 1200,
         height: 630,
       },
