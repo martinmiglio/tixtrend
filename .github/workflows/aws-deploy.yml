@@ -1,0 +1,33 @@
+name: Deploy AWS Stack
+
+on:
+  push:
+    paths:
+      - stack/**
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ${{ secrets.AWS_REGION }}
+          role-to-assume: ${{ secrets.OIDCROLE }}
+          role-session-name: CloudFormationDeploy
+      - name: Deploy to AWS CloudFormation
+        uses: aws-actions/aws-cloudformation-github-deploy@v1
+        with:
+          name: tixtrend
+          template: stack/formation.yml
+          no-fail-on-empty-changeset: "1"
+          capabilities: CAPABILITY_IAM, CAPABILITY_NAMED_IAM
+          parameter-overrides: "ResourcePrefix=${{ secrets.RESOURCEPREFIX }}"

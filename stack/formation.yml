@@ -1,0 +1,139 @@
+AWSTemplateFormatVersion: "2010-09-09"
+
+Description: "Formation template for the blog"
+
+Parameters:
+  ResourcePrefix:
+    Description: prefix for all resources, can include lowercase letters (a-z), numbers (0-9), and dashes (-). must be unique within an aws region
+    Type: String
+  CDNDomain:
+    Description: domain name for the cdn
+    Type: String
+
+Resources:
+  EventPricesDB:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: !Sub "${ResourcePrefix}-event-prices"
+      AttributeDefinitions:
+        - AttributeName: "event_id"
+          AttributeType: "S"
+        - AttributeName: "timestamp"
+          AttributeType: "N"
+      KeySchema:
+        - AttributeName: "event_id"
+          KeyType: "HASH"
+        - AttributeName: "timestamp"
+          KeyType: "RANGE"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      Tags:
+        - Key: !Ref ResourcePrefix
+          Value: ""
+      SSESpecification:
+        SSEEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: "ttl"
+        Enabled: true
+
+  WatchedEventsDB:
+    Type: "AWS::DynamoDB::Table"
+    Properties:
+      TableName: !Sub "${ResourcePrefix}-watched-events"
+      AttributeDefinitions:
+        - AttributeName: "event_id"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "event_id"
+          KeyType: "HASH"
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+      Tags:
+        - Key: !Ref ResourcePrefix
+          Value: ""
+      SSESpecification:
+        SSEEnabled: true
+      TimeToLiveSpecification:
+        AttributeName: "ttl"
+        Enabled: true
+
+  DBPolicy:
+    Type: "AWS::IAM::ManagedPolicy"
+    Properties:
+      ManagedPolicyName: !Sub "${ResourcePrefix}-db-policy"
+      Path: "/"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "DynamoDBAccess"
+            Effect: "Allow"
+            Action:
+              - "dynamodb:BatchGetItem"
+              - "dynamodb:BatchWriteItem"
+              - "dynamodb:DeleteItem"
+              - "dynamodb:GetItem"
+              - "dynamodb:PutItem"
+              - "dynamodb:Query"
+              - "dynamodb:Scan"
+              - "dynamodb:UpdateItem"
+            Resource:
+              - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PostsDB}"
+              - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${PostsDB}/index/*"
+              - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UsersDB}"
+              - !Sub "arn:aws:dynamodb:${AWS::Region}:${AWS::AccountId}:table/${UsersDB}/index/*"
+
+  SQSQueue:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      ContentBasedDeduplication: "true"
+      DelaySeconds: "2"
+      FifoQueue: "true"
+      MaximumMessageSize: "1024"
+      MessageRetentionPeriod: "21600"
+      ReceiveMessageWaitTimeSeconds: "20"
+      VisibilityTimeout: "30"
+      QueueName: !Sub "${ResourcePrefix}-price-poll-queue.fifo"
+
+  SQSQueuePolicy:
+    Type: "AWS::SQS::QueuePolicy"
+    Properties:
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "Allow-SendMessage"
+            Effect: "Allow"
+            Principal:
+              AWS: "*"
+            Action: "SQS:SendMessage"
+            Resource: !Sub "arn:aws:sqs:${AWS::Region}:${AWS::AccountId}:${SQSQueue}"
+            Condition:
+              ArnEquals:
+                aws:SourceArn: !Sub "arn:aws:sns:${AWS::Region}:${AWS::AccountId}:${PricePollTopic}"
+      Queues:
+        - !Sub "https://sqs.${AWS::Region}.amazonaws.com/${AWS::AccountId}/${SQSQueue.QueueName}"
+
+  IAMUser:
+    Type: "AWS::IAM::User"
+    Properties:
+      Path: "/"
+      UserName: !Sub "${ResourcePrefix}-user"
+      Tags:
+        - Key: !Ref ResourcePrefix
+          Value: "true"
+      ManagedPolicyArns:
+        - !Ref S3AccessPolicy
+        - !Ref DBPolicy
+
+  AccessKey:
+    Type: AWS::IAM::AccessKey
+    Properties:
+      Status: Active
+      UserName: !Ref IAMUser
+
+  AccessKeySecret:
+    Type: AWS::SecretsManager::Secret
+    Properties:
+      Name: !Sub /${AWS::StackName}/credentials/${IAMUser}
+      SecretString: !Sub '{"AccessKeyId":"${AccessKey}","SecretAccessKey":"${AccessKey.SecretAccessKey}"}'
