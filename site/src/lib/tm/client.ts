@@ -1,3 +1,4 @@
+import p from "path";
 import { z } from "zod";
 
 const schema = z.object({
@@ -11,12 +12,15 @@ class TicketMasterClient {
   private apiKey: string;
 
   constructor(api_key: string) {
-    this.base_url = new URL("https://app.ticketmaster.com/discovery/v2");
+    this.base_url = new URL("https://app.ticketmaster.com/discovery/v2/");
     this.apiKey = api_key;
   }
 
   async fetch(path: string, params?: { [key: string]: string }): Promise<any> {
-    const url = new URL(path, this.base_url);
+    const url = new URL(
+      p.join(this.base_url.pathname, path),
+      this.base_url.origin,
+    );
     url.searchParams.set("apikey", this.apiKey);
     for (const [key, value] of Object.entries(params ?? {})) {
       url.searchParams.set(key, value);
