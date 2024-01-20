@@ -14,8 +14,7 @@
   font-weight: 400;
   src:
     local("Averta-ExtraBoldItalic"),
-    url("https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff")
-      format("woff");
+    url("https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff") format("woff");
   font-display: swap;
 }
 
@@ -33,7 +32,16 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #1a202c;
-  color: rgb(229 231 235);
+@layer base {
+  :root {
+    --color-primary: 229 231 235;
+    --color-secondary: 107 114 128;
+    --color-background: 26 32 44;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-background text-primary;
+  }
 }
