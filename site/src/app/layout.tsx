@@ -61,7 +61,7 @@ export default function RootLayout({
           data-website-id={env.ANALYTICS_ID}
         />
       </head>
-      <body className="bg-background text-primary">
+      <body className="bg-background text-primary overflow-x-clip">
         <div className="mx-auto flex h-[100dvh] min-h-screen w-full max-w-screen-xl flex-col p-4 md:py-8">
           <HeaderBar />
           <div className="flex-grow">{children}</div>
