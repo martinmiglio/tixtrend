@@ -13,7 +13,7 @@
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@react-spring/web": "^9.7.3",
     "@types/node": "20.11.16",
-    "@types/react": "18.2.53",
+    "@types/react": "18.2.55",
     "@types/react-dom": "18.2.18",
     "apexcharts": "^3.45.2",
     "eslint": "8.56.0",
