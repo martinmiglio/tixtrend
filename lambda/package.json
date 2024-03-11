@@ -16,6 +16,6 @@
         "aws-sdk": "^2.1574.0"
     },
     "devDependencies": {
-        "archiver": "^6.0.1"
+        "archiver": "^7.0.1"
     }
 }
