@@ -14,10 +14,6 @@ This will be used in the event page of the site to display the price chart. */
 const PriceChart = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
   const [currentValue, setCurrentValue] = useState<PriceData | null>(null);
 
-  const handleCurrentValueChange = (index: number) => {
-    setCurrentValue(priceDataSet[index]);
-  };
-
   return (
     <div className="flex h-full min-h-[33vh] w-full flex-col">
       <PriceDisplay priceData={currentValue} />
@@ -28,7 +24,9 @@ const PriceChart = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
             value: priceData.min,
           };
         })}
-        onCurrentValueChange={handleCurrentValueChange}
+        handleCurrentIndexChange={(index: number) =>
+          setCurrentValue(priceDataSet[index])
+        }
       />
     </div>
   );

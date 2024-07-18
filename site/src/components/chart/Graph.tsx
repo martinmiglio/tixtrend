@@ -6,20 +6,18 @@ import { useState, useEffect } from "react";
 
 interface GraphProps {
   data: DataPoint[];
-  onCurrentValueChange?: (index: number) => void;
+  handleCurrentIndexChange?: (index: number) => void;
 }
 
-const Graph = ({ data, onCurrentValueChange }: GraphProps) => {
+const Graph = ({ data, handleCurrentIndexChange }: GraphProps) => {
   const [Chart, setChart] = useState<any>(); //NOSONAR
 
   useEffect(() => {
-    if (onCurrentValueChange) {
-      onCurrentValueChange(data[0].value);
-    }
+    handleCurrentIndexChange?.(0);
     import("react-apexcharts").then((mod) => {
       setChart(() => mod.default);
     });
-  }, [onCurrentValueChange, data]);
+  }, [handleCurrentIndexChange, data]);
 
   const options: ApexOptions = {
     chart: {
@@ -32,12 +30,12 @@ const Graph = ({ data, onCurrentValueChange }: GraphProps) => {
       events: {
         mouseMove: (event, chartContext, config) => {
           if (
-            onCurrentValueChange &&
+            handleCurrentIndexChange &&
             config.dataPointIndex !== undefined &&
             data.length > config.dataPointIndex &&
             config.dataPointIndex >= 0
           ) {
-            onCurrentValueChange(data[config.dataPointIndex].value);
+            handleCurrentIndexChange(config.dataPointIndex);
           }
         },
       },
