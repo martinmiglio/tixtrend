@@ -42,6 +42,13 @@ const Graph = ({ data, handleCurrentIndexChange }: GraphProps) => {
     },
     tooltip: {
       custom: (options: any) => null,
+      fixed: {
+        enabled: true,
+        position: "topRight",
+        offsetX: 20,
+        offsetY: 0,
+      },
+      theme: "light",
     },
     fill: {
       type: "gradient",
