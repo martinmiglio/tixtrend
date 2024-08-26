@@ -13,7 +13,7 @@
     },
     "author": "Martin Miglio",
     "dependencies": {
-        "aws-sdk": "^2.1673.0"
+        "aws-sdk": "^2.1683.0"
     },
     "devDependencies": {
         "archiver": "^7.0.1"
