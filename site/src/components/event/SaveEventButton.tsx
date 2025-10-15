@@ -1,13 +1,8 @@
-"use client";
-
 import PopupNotification from "@/components/page/PopupNotification";
-import { EventData } from "@/lib/tm/events";
-import {
-  faHeartCircleCheck,
-  faHeartCirclePlus,
-} from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useEffect, useState } from "react";
+import type { EventData } from "@/lib/tm/events";
+import { HeartPlus, HeartIcon } from "lucide-react";
+import type React from "react";
+import { useEffect, useState } from "react";
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);
@@ -49,11 +44,11 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
         data-umami-event-action={saved ? "remove" : "add"}
         data-umami-event-id={event.id}
       >
-        <FontAwesomeIcon
-          icon={saved ? faHeartCircleCheck : faHeartCirclePlus}
-          height={22}
-          width={22}
-        />
+        {saved ? (
+          <HeartIcon className="h-5 w-5 text-red-500" />
+        ) : (
+          <HeartPlus className="h-5 w-5 text-gray-500" />
+        )}
       </button>
       <PopupNotification
         isActive={showPopup}

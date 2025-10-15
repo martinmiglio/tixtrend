@@ -1,7 +1,8 @@
 // PopupNotification.tsx
 
 /* a popup notificaiton which appears in the botttom middle of the screen */
-import React, { useState, useEffect } from "react";
+import type React from "react";
+import { useState, useEffect } from "react";
 
 const PopupNotification = ({
   isActive,

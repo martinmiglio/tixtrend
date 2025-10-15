@@ -1,11 +1,14 @@
-"use client";
-
 import EventInfoItem from "@/components/event/EventInfoItem";
-import { EventData } from "@/lib/tm/events";
-import Link from "next/link";
+import { getEvent } from "@/domain/events/get-event";
+import type { EventData } from "@/lib/tm/events";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
-export default function SavedEvents() {
+export const Route = createFileRoute("/saved-events/")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
   const [savedEvents, setSavedEvents] = useState<EventData[]>([]);
 
   useEffect(() => {
@@ -16,8 +19,7 @@ export default function SavedEvents() {
     Promise.all(
       localStorageSavedEvents.map(async (event: EventData) => {
         const { id } = event;
-        const res = await fetch(`/api/get-event?event_id=${id}`);
-        return await res.json();
+        return await getEvent({ data: { event_id: id } });
       }),
     )
       .then((data) => {
@@ -45,7 +47,8 @@ export default function SavedEvents() {
           {savedEvents.map((event: EventData) => (
             <Link
               className="my-5 w-full rounded-md p-5 shadow-xl"
-              href={`/event/${event.id}`}
+              to="/event/$eventid"
+              params={{ eventid: event.id }}
               key={event.id}
             >
               <EventInfoItem eventData={event} showSaveButton={true} />

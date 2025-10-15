@@ -1,6 +1,5 @@
 import SaveEventButton from "./SaveEventButton";
-import { EventData } from "@/lib/tm/events";
-import Image from "next/image";
+import type { EventData } from "@/lib/tm/events";
 
 const EventInfoItem = ({
   eventData,
@@ -32,7 +31,7 @@ const EventInfoItem = ({
   return (
     <div className="flex w-full flex-col items-center justify-center sm:flex-row">
       <div className="flex-initial px-0 sm:px-5">
-        <Image
+        <img
           src={imageURL}
           alt={eventData.name}
           width={300}

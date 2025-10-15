@@ -1,27 +1,22 @@
-import p from "path";
-import { z } from "zod";
-
-const schema = z.object({
-  TICKETMASTER_API_KEY: z.string(),
-});
-
-const env = schema.parse(process.env);
-
 class TicketMasterClient {
-  private base_url: URL;
-  private apiKey: string;
+  private baseUrl: URL;
 
-  constructor(api_key: string) {
-    this.base_url = new URL("https://app.ticketmaster.com/discovery/v2/");
-    this.apiKey = api_key;
+  constructor() {
+    this.baseUrl = new URL("https://app.ticketmaster.com/discovery/v2/");
   }
 
-  async fetch(path: string, params?: { [key: string]: string }): Promise<any> {
-    const url = new URL(
-      p.join(this.base_url.pathname, path),
-      this.base_url.origin,
-    );
-    url.searchParams.set("apikey", this.apiKey);
+  async fetch(
+    path: string,
+    params?: { [key: string]: string },
+  ): Promise<unknown> {
+    const apiKey = process.env.TICKETMASTER_API_KEY;
+
+    if (!apiKey) {
+      throw new Error("TICKETMASTER_API_KEY is not defined");
+    }
+
+    const url = new URL(path, this.baseUrl);
+    url.searchParams.set("apikey", apiKey);
     for (const [key, value] of Object.entries(params ?? {})) {
       url.searchParams.set(key, value);
     }
@@ -37,6 +32,4 @@ class TicketMasterClient {
   }
 }
 
-export default new TicketMasterClient(
-  env.TICKETMASTER_API_KEY,
-) as TicketMasterClient;
+export default new TicketMasterClient();

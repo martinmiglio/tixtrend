@@ -1,12 +1,3 @@
-import "server-only";
-import { z } from "zod";
-
-const schema = z.object({
-  TIXTREND_API_URL: z.string(),
-});
-
-const env = schema.parse(process.env);
-
 export type PriceData = {
   id: string;
   timestamp: Date;
@@ -17,7 +8,13 @@ export type PriceData = {
 };
 
 export const getPricesByEventId = async (event_id: string) => {
-  const requestURL = new URL(`${env.TIXTREND_API_URL}/prices`);
+  const apiUrl = process.env.TIXTREND_API_URL;
+
+  if (!apiUrl) {
+    throw new Error("TIXTREND_API_URL is not defined");
+  }
+
+  const requestURL = new URL(`${apiUrl}/prices`);
   requestURL.searchParams.append("event_id", event_id);
   const response = await fetch(requestURL.toString());
 
@@ -25,6 +22,7 @@ export const getPricesByEventId = async (event_id: string) => {
   const data = await response.json();
 
   // parse into PriceData type
+  // biome-ignore lint/suspicious/noExplicitAny: <TODO, replace with proper type>
   const prices: PriceData[] = data.map((price: any) => {
     return {
       id: price.id,
