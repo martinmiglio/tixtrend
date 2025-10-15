@@ -1,6 +1,6 @@
 import FooterBar from "@/components/page/FooterBar";
 import HeaderBar from "@/components/page/HeaderBar";
-// import { baseURL } from "@/consts";
+import { baseURL } from "@/consts";
 import appCss from "@/styles/globals.css?url";
 import {
   Outlet,
@@ -14,48 +14,51 @@ const schema = z.object({
   ANALYTICS_ID: z.string().optional(),
 });
 
-// const env = schema.parse(import.meta.env);
+const env = schema.parse(import.meta.env);
 
-// const metadataBase = baseURL;
-// const iconURL = new URL("/favicon.ico", metadataBase);
-// const ogURL = new URL("/og?v1", metadataBase);
+const metadataBase = baseURL;
+const iconURL = new URL("/favicon.ico", metadataBase);
+const ogURL = new URL("/og?v1", metadataBase);
 
 export const Route = createRootRoute({
   head: () => ({
     meta: [
-      // export const metadata = {
-      //   title: {
-      //     template: "%s | Tix Trend",
-      //     default: "Tix Trend",
-      //   },
-      //   description: "Track ticket prices over time and never miss a deal again.",
-      //   keywords: "Ticket, Price, Tracker, Concert, Sports, Theater, Music, Event",
-      //   creator: "Martin Miglio",
-      //   metadataBase,
-      //   alternates: { canonical: "/" },
-      //   icons: { icon: iconURL.toString() },
-      //   twitter: {
-      //     card: "summary_large_image",
-      //     title: "Tix Trend",
-      //     description: "Track ticket prices over time and never miss a deal again.",
-      //     images: [ogURL.toString()],
-      //   },
-      //   openGraph: {
-      //     type: "website",
-      //     title: "Tix Trend",
-      //     description: "Track ticket prices over time and never miss a deal again.",
-      //     siteName: "Tix Trend",
-      //     images: [
-      //       {
-      //         url: ogURL.toString(),
-      //         width: 1200,
-      //         height: 630,
-      //       },
-      //     ],
-      //   },
-      // };
+      { charSet: "utf-8" },
+      { name: "viewport", content: "width=device-width, initial-scale=1" },
+      { title: "Tix Trend" },
+      {
+        name: "description",
+        content: "Track ticket prices over time and never miss a deal again.",
+      },
+      {
+        name: "keywords",
+        content:
+          "Ticket, Price, Tracker, Concert, Sports, Theater, Music, Event",
+      },
+      { name: "creator", content: "Martin Miglio" },
+      // OpenGraph
+      { property: "og:type", content: "website" },
+      { property: "og:title", content: "Tix Trend" },
+      {
+        property: "og:description",
+        content: "Track ticket prices over time and never miss a deal again.",
+      },
+      { property: "og:site_name", content: "Tix Trend" },
+      { property: "og:image", content: ogURL.toString() },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      // Twitter
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Tix Trend" },
+      {
+        name: "twitter:description",
+        content: "Track ticket prices over time and never miss a deal again.",
+      },
+      { name: "twitter:image", content: ogURL.toString() },
     ],
     links: [
+      { rel: "canonical", href: metadataBase.toString() },
+      { rel: "icon", href: iconURL.toString() },
       {
         rel: "stylesheet",
         href: appCss,
@@ -71,11 +74,13 @@ function RootLayout() {
     <html lang="en">
       <head>
         <HeadContent />
-        {/* <script
-          async
-          src="https://analytics.martinmiglio.dev/script.js"
-          data-website-id={env.ANALYTICS_ID}
-        /> */}
+        {env.ANALYTICS_ID && (
+          <script
+            async
+            src="https://analytics.martinmiglio.dev/script.js"
+            data-website-id={env.ANALYTICS_ID}
+          />
+        )}
       </head>
       <body className="bg-background text-primary overflow-x-clip">
         <div className="mx-auto flex h-[100dvh] min-h-screen w-full max-w-screen-xl flex-col p-4 md:py-8">

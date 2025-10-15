@@ -5,6 +5,15 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/saved-events/")({
+  head: () => ({
+    meta: [
+      { title: "Saved Events" },
+      {
+        name: "description",
+        content: "View and track your saved events and ticket prices",
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

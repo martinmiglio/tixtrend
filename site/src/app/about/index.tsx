@@ -2,6 +2,16 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { Database, ChartSpline } from "lucide-react";
 
 export const Route = createFileRoute("/about/")({
+  head: () => ({
+    meta: [
+      { title: "About" },
+      {
+        name: "description",
+        content:
+          "Learn about TixTrend's ticket price tracking powered by Ticketmaster's Discover API",
+      },
+    ],
+  }),
   component: RouteComponent,
 });
 

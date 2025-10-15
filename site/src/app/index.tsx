@@ -4,6 +4,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Tix Trend" },
+      {
+        name: "description",
+        content: "Track ticket prices over time and never miss a deal again.",
+      },
+    ],
+  }),
   component: Home,
 });
 
