@@ -36,7 +36,7 @@ export const getEventByID = async (
     };
 
     return event;
-  } catch (e) {
+  } catch {
     return null;
   }
 };
