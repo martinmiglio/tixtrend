@@ -2,8 +2,7 @@
 
 /* This component is used to search for events by keywords.
 This will be used in the home page of the site to begin the flow. */
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 const EventSearchBar = ({
@@ -64,7 +63,7 @@ const EventSearchBar = ({
             type="button"
             onClick={clearSearch}
           >
-            <FontAwesomeIcon icon={faTimes} />
+            <X />
           </button>
         )}
       </div>

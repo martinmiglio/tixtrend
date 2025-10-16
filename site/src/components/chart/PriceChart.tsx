@@ -1,9 +1,7 @@
-"use client";
-
-import { DataPoint } from "./DataPoint";
+import type { DataPoint } from "./DataPoint";
 import Graph from "./Graph";
 import PriceDisplay from "./PriceDisplay";
-import { PriceData } from "@/lib/aws/prices";
+import type { PriceData } from "@/lib/aws/prices";
 import { useState } from "react";
 
 // PriceChart.tsx
@@ -25,7 +23,7 @@ const PriceChart = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
           };
         })}
         handleCurrentIndexChange={(index: number) =>
-          setCurrentValue(priceDataSet[index])
+          setCurrentValue(priceDataSet[index] ?? null)
         }
       />
     </div>

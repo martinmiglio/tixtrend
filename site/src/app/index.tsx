@@ -1,11 +1,22 @@
-"use client";
-
 import EventSearch from "@/components/search/EventSearch";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
-import Link from "next/link";
 import { useState } from "react";
 
-export default function SearchPage() {
+export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Tix Trend" },
+      {
+        name: "description",
+        content: "Track ticket prices over time and never miss a deal again.",
+      },
+    ],
+  }),
+  component: Home,
+});
+
+function Home() {
   const [view, setView] = useState(0);
 
   const handleButtonClick = () => {
@@ -18,6 +29,7 @@ export default function SearchPage() {
       key="buttonView"
     >
       <button
+        type="button"
         onClick={handleButtonClick}
         className="inline-flex justify-center items-center py-3 px-5 text-base font-medium text-center rounded-full text-background hover:text-primary bg-primary hover:bg-secondary focus:ring-4 focus:ring-primary group"
       >
@@ -39,7 +51,7 @@ export default function SearchPage() {
         </svg>
       </button>
       <Link
-        href="about"
+        to="/about"
         className="inline-flex justify-center items-center py-3 px-5 sm:ms-4 text-base font-medium text-center rounded-full border border-primary hover:border-secondary hover:bg-secondary focus:ring-4 focus:ring-secondary"
       >
         Learn more

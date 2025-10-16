@@ -1,16 +1,11 @@
-"use client";
-
+import EventInfoItem from "../event/EventInfoItem";
+import EventSearchBar from "./EventSearchBar";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
-import { EventData } from "@/lib/tm/events";
-import dynamic from "next/dynamic";
-import Link from "next/link";
-import React, { useCallback, useEffect, useState } from "react";
+import { findEvent } from "@/domain/events/find-event";
+import type { EventData } from "@/lib/tm/events";
+import { Link } from "@tanstack/react-router";
+import { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-
-const EventSearchBar = dynamic(
-  () => import("@/components/search/EventSearchBar"),
-);
-const EventInfoItem = dynamic(() => import("@/components/event/EventInfoItem"));
 
 const EventSearch = () => {
   const [eventsData, setEventsData] = useState<EventData[]>([]);
@@ -19,11 +14,9 @@ const EventSearch = () => {
   const [hasMore, setHasMore] = useState(true);
 
   const fetchEvents = useCallback(async () => {
-    const encodedSearchTerm = encodeURIComponent(searchTerm);
-    const response = await fetch(
-      `/api/find-event?keyword=${encodedSearchTerm}&page=${searchPage}`,
-    );
-    return response.json();
+    return await findEvent({
+      data: { keyword: searchTerm, page: searchPage },
+    });
   }, [searchTerm, searchPage]);
 
   useEffect(() => {
@@ -45,8 +38,8 @@ const EventSearch = () => {
           setHasMore(true);
           // combine and remove duplicates
           const merged = [...eventsData, ...data].filter(
-            (d: any, index: number, self: any) =>
-              index === self.findIndex((e: any) => e.id === d.id),
+            (d, index: number, self) =>
+              index === self.findIndex((e) => e.id === d.id),
           );
           setEventsData(merged);
         } else {
@@ -73,12 +66,12 @@ const EventSearch = () => {
           }
           endMessage={<p className="text-center">No more events</p>}
         >
-          {eventsData.map((eventData, index) => (
+          {eventsData.map((eventData) => (
             <div
               className="my-2 rounded-md shadow-lg hover:shadow-xl sm:pb-4"
               key={eventData.id}
             >
-              <Link href={`/event/${eventData.id}`} passHref>
+              <Link to={`/event/$eventid`} params={{ eventid: eventData.id }}>
                 <EventInfoItem eventData={eventData} />
               </Link>
             </div>

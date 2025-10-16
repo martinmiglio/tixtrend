@@ -1,0 +1,17 @@
+{
+  // "extends": "@vitable/typescript-config/react.json",
+  "extends": "./tsconfig.base.json",
+  "include": ["src"],
+  "exclude": ["**/*.test.tsx", "**/*.test.ts", "**/__tests__/**"],
+  "compilerOptions": {
+    "composite": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    },
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "moduleResolution": "bundler",
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "types": ["vite/client", "node"]
+  }
+}

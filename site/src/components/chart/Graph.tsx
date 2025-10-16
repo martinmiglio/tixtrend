@@ -10,8 +10,10 @@ interface GraphProps {
 }
 
 const Graph = ({ data, handleCurrentIndexChange }: GraphProps) => {
-  const [Chart, setChart] = useState<any>(); //NOSONAR
+  // biome-ignore lint/suspicious/noExplicitAny: <TODO, replace with proper type>
+  const [Chart, setChart] = useState<any>();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: <TODO, replace with proper deps>
   useEffect(() => {
     handleCurrentIndexChange?.(0);
     import("react-apexcharts").then((mod) => {
@@ -28,7 +30,7 @@ const Graph = ({ data, handleCurrentIndexChange }: GraphProps) => {
         show: false,
       },
       events: {
-        mouseMove: (event, chartContext, config) => {
+        mouseMove: (_event, _chartContext, config) => {
           if (
             handleCurrentIndexChange &&
             config.dataPointIndex !== undefined &&
@@ -41,7 +43,7 @@ const Graph = ({ data, handleCurrentIndexChange }: GraphProps) => {
       },
     },
     tooltip: {
-      custom: (options: any) => null,
+      custom: () => null,
       fixed: {
         enabled: true,
         position: "topRight",

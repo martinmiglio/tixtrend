@@ -1,12 +1,21 @@
-import { faChartLine, faDatabase } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import Link from "next/link";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Database, ChartSpline } from "lucide-react";
 
-export const metadata = {
-  title: "About",
-};
+export const Route = createFileRoute("/about/")({
+  head: () => ({
+    meta: [
+      { title: "About" },
+      {
+        name: "description",
+        content:
+          "Learn about TixTrend's ticket price tracking powered by Ticketmaster's Discover API",
+      },
+    ],
+  }),
+  component: RouteComponent,
+});
 
-export default function About() {
+function RouteComponent() {
   return (
     <>
       <div className="lg:text-center">
@@ -19,7 +28,7 @@ export default function About() {
           <div className="relative">
             <dt>
               <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
-                <FontAwesomeIcon className="h-5 w-5" icon={faChartLine} />
+                <ChartSpline className="h-5 w-5" />
               </div>
               <p className="ml-16 text-lg font-medium leading-6">
                 Track Ticket Prices Over Time
@@ -30,7 +39,7 @@ export default function About() {
               favorite events over time. Our powerful tool allows you to see
               historical trends and make informed decisions about when to buy
               your tickets. <br />
-              <Link href="/" className="text-indigo-600 hover:text-indigo-500">
+              <Link to="/" className="text-indigo-600 hover:text-indigo-500">
                 Search for an event now &rarr;
               </Link>
             </dd>
@@ -38,7 +47,7 @@ export default function About() {
           <div className="relative">
             <dt>
               <div className="absolute flex h-12 w-12 items-center justify-center rounded-md bg-indigo-500 text-white">
-                <FontAwesomeIcon className="h-5 w-5" icon={faDatabase} />
+                <Database className="h-5 w-5" />
               </div>
               <p className="ml-16 text-lg font-medium leading-6">
                 Data from Ticketmaster&apos;s Discover API
