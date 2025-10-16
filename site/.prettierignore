@@ -1,0 +1,29 @@
+# Build outputs
+dist/
+.output/
+.nitro/
+.sst/
+.tanstack/
+.vinxi/
+build/
+coverage/
+
+# Generated files
+src/routeTree.gen.ts
+
+# Dependencies
+node_modules/
+
+# Config files that should maintain their format
+package-lock.json
+pnpm-lock.yaml
+*.min.js
+*.min.css
+sst-env.d.ts
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/

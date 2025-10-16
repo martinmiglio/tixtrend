@@ -1,8 +1,8 @@
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import EventInfoItem from "@/components/event/EventInfoItem";
 import { EventPriceChart } from "@/components/event/PriceChart";
-import { watchEvent } from "@/lib/aws/events";
-import { getPricesByEventId } from "@/lib/aws/prices";
+import { watchEvent } from "@/domain/events/watch-event";
+import { getPrices } from "@/domain/prices/get-prices";
 import { getEventByID } from "@/lib/tm/events";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -10,9 +10,12 @@ export const Route = createFileRoute("/event/$eventid")({
   ssr: "data-only",
   loader: async ({ params }) => {
     const { eventid } = params;
-    watchEvent(eventid);
+
+    // Call server functions - these run on the server
+    watchEvent({ data: { event_id: eventid } });
     const eventDataPromise = getEventByID(eventid);
-    const priceHistoryPromise = getPricesByEventId(eventid);
+    const priceHistoryPromise = getPrices({ data: { event_id: eventid } });
+
     const [eventData, priceHistory] = await Promise.all([
       eventDataPromise,
       priceHistoryPromise,

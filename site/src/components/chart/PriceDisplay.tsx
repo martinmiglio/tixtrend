@@ -2,7 +2,7 @@
 
 /* this component is responsible for displaying the price with the appropriate currency symbol*/
 import NumberScroller from "@/components/page/NumberScroller";
-import type { PriceData } from "@/lib/aws/prices";
+import type { PriceData } from "@/domain/prices/types";
 
 const CURRENCY_SYMBOLS = {
   USD: "$", // US Dollar
