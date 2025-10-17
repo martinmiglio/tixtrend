@@ -1,9 +1,9 @@
-import { scanWatchedEvents } from "@/lib/aws/dynamo";
-import { sendEventToQueue } from "@/lib/aws/sqs";
+import { scanWatchedEvents } from "../../lib/aws/dynamo";
+import { sendEventToQueue } from "../../lib/aws/sqs";
 import {
   fetchEventIdsByPage,
   fetchEventIdsByPageSorted,
-} from "@/lib/ticketmaster/events";
+} from "../../lib/ticketmaster/events";
 
 const MAX_QUEUE_LENGTH = 4000;
 
@@ -15,14 +15,25 @@ export type QueueEventsForPollingResult = {
 };
 
 /**
- * Queue events for polling use case.
+ * Queue events for automated price polling
  *
  * Orchestrates queueing events in priority order:
- * 1. Watched events (highest priority)
- * 2. Popular events (filler)
- * 3. On-sale-soon events (remaining filler)
+ * 1. Watched events (highest priority) - events users are tracking
+ * 2. Popular events (filler) - trending events to fill remaining capacity
+ * 3. On-sale-soon events (remaining filler) - events going on sale soon
  *
- * @returns Statistics about queued events
+ * Limits queue to MAX_QUEUE_LENGTH (4000) events to prevent overload.
+ * This function is typically called by a cron trigger (daily at 10am UTC).
+ *
+ * @returns Statistics about queued events by category
+ *
+ * @example
+ * ```typescript
+ * // Called by EventBridge cron handler
+ * const result = await queueEventsForPolling();
+ * console.log(`Queued ${result.total} events`);
+ * // Output: { watchList: 150, popular: 1800, saleSoon: 2050, total: 4000 }
+ * ```
  */
 export const queueEventsForPolling =
   async (): Promise<QueueEventsForPollingResult> => {

@@ -1,4 +1,4 @@
-import type { EventPriceData } from "@/modules/prices/types";
+import type { EventPriceData } from "../../modules/prices/types";
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
