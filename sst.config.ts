@@ -1,5 +1,4 @@
 /// <reference path="./.sst/platform/config.d.ts" />
-import { randomBytes } from "node:crypto";
 
 export default $config({
   app(input) {
@@ -17,6 +16,8 @@ export default $config({
     };
   },
   async run() {
+    const { randomBytes } = await import("node:crypto");
+
     const TICKETMASTER_API_KEY = process.env.TICKETMASTER_API_KEY;
 
     if (!TICKETMASTER_API_KEY) {
