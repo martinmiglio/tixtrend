@@ -1,7 +1,7 @@
 import type { DataPoint } from "./DataPoint";
 import Graph from "./Graph";
 import PriceDisplay from "./PriceDisplay";
-import type { PriceData } from "@/modules/prices/types";
+import type { PriceData } from "@tixtrend/core";
 import { useState } from "react";
 
 // PriceChart.tsx

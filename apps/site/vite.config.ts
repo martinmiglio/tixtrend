@@ -6,7 +6,11 @@ import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
   optimizeDeps: {
+    include: ["@tixtrend/core"],
     exclude: ["@resvg/resvg-js"],
+  },
+  ssr: {
+    noExternal: ["@tixtrend/core"],
   },
   server: {
     port: 3000,

@@ -86,7 +86,7 @@ export default $config({
     });
 
     const site = new sst.aws.TanStackStart("Site", {
-      path: "site",
+      path: "apps/site",
       router: {
         instance: router,
         domain: baseDomain,
@@ -107,6 +107,9 @@ export default $config({
         environment: {
           TICKETMASTER_API_KEY,
         },
+        nodejs: {
+          install: ["@tixtrend/core"],
+        },
       },
     });
 
@@ -116,6 +119,9 @@ export default $config({
         link: [...Object.values(tables)],
         environment: {
           TICKETMASTER_API_KEY,
+        },
+        nodejs: {
+          install: ["@tixtrend/core"],
         },
       },
       {

@@ -1,8 +1,14 @@
 import EventInfoItem from "@/components/event/EventInfoItem";
-import type { EventData } from "@/lib/ticketmaster/events";
-import { getEvent } from "@/modules/events/get-event";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import type { EventData } from "@tixtrend/core";
+import { getEventHandler } from "@tixtrend/core";
 import { useEffect, useState } from "react";
+
+// Create TanStack Start server function as thin wrapper
+const getEvent = createServerFn({ method: "GET" })
+  .inputValidator((data: { event_id: string }) => data)
+  .handler(({ data }) => getEventHandler(data.event_id));
 
 export const Route = createFileRoute("/saved-events/")({
   head: () => ({

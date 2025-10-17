@@ -1,5 +1,5 @@
 {
-  "name": "tixtrend-site",
+  "name": "@tixtrend/site",
   "version": "1.0.0",
   "type": "module",
   "scripts": {
@@ -13,9 +13,7 @@
     "typecheck": "tsc --build --force --verbose --noEmit"
   },
   "dependencies": {
-    "@aws-sdk/client-dynamodb": "^3.911.0",
-    "@aws-sdk/client-sqs": "^3.911.0",
-    "@aws-sdk/lib-dynamodb": "^3.911.0",
+    "@tixtrend/core": "workspace:*",
     "@resvg/resvg-js": "^2.6.2",
     "@tanstack/react-router": "^1.133.3",
     "@tanstack/react-start": "^1.133.3",

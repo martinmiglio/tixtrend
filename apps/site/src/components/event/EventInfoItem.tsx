@@ -1,5 +1,5 @@
 import SaveEventButton from "./SaveEventButton";
-import type { EventData } from "@/lib/ticketmaster/events";
+import type { EventData } from "@tixtrend/core";
 
 const EventInfoItem = ({
   eventData,

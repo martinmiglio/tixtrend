@@ -1,20 +1,22 @@
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import EventInfoItem from "@/components/event/EventInfoItem";
 import { EventPriceChart } from "@/components/event/PriceChart";
-import { getEventByID } from "@/lib/ticketmaster/events";
-import { watchEvent } from "@/modules/events/watch-event";
-import { getPrices } from "@/modules/prices/get-prices";
 import { createFileRoute } from "@tanstack/react-router";
+import {
+  getEventHandler,
+  getPricesHandler,
+  watchEventHandler,
+} from "@tixtrend/core";
 
 export const Route = createFileRoute("/event/$eventid")({
   ssr: "data-only",
   loader: async ({ params }) => {
     const { eventid } = params;
 
-    // Call server functions - these run on the server
-    watchEvent({ data: { event_id: eventid } });
-    const eventDataPromise = getEventByID(eventid);
-    const priceHistoryPromise = getPrices({ data: { event_id: eventid } });
+    // Call handlers directly - loader runs on server
+    watchEventHandler(eventid);
+    const eventDataPromise = getEventHandler(eventid);
+    const priceHistoryPromise = getPricesHandler(eventid);
 
     const [eventData, priceHistory] = await Promise.all([
       eventDataPromise,

@@ -37,6 +37,13 @@ export type {
   EventImageData,
 } from './lib/ticketmaster/types';
 
+/**
+ * Transformed event data type (returned by handlers)
+ */
+export type {
+  EventData,
+} from './lib/ticketmaster/events';
+
 // =============================================================================
 // PUBLIC API - Auth
 // =============================================================================

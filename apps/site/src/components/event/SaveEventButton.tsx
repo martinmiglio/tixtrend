@@ -1,5 +1,5 @@
 import PopupNotification from "@/components/page/PopupNotification";
-import type { EventData } from "@/lib/ticketmaster/events";
+import type { EventData } from "@tixtrend/core";
 import { HeartPlus, HeartIcon } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
