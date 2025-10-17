@@ -14,8 +14,6 @@ import { Route as SavedEventsIndexRouteImport } from './app/saved-events/index'
 import { Route as OgIndexRouteImport } from './app/og/index'
 import { Route as AboutIndexRouteImport } from './app/about/index'
 import { Route as EventEventidRouteImport } from './app/event/$eventid'
-import { Route as ApiQueueWatchedEventsRouteImport } from './app/api/queue-watched-events'
-import { Route as ApiPollEventRouteImport } from './app/api/poll-event'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -42,21 +40,9 @@ const EventEventidRoute = EventEventidRouteImport.update({
   path: '/event/$eventid',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ApiQueueWatchedEventsRoute = ApiQueueWatchedEventsRouteImport.update({
-  id: '/api/queue-watched-events',
-  path: '/api/queue-watched-events',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ApiPollEventRoute = ApiPollEventRouteImport.update({
-  id: '/api/poll-event',
-  path: '/api/poll-event',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/api/poll-event': typeof ApiPollEventRoute
-  '/api/queue-watched-events': typeof ApiQueueWatchedEventsRoute
   '/event/$eventid': typeof EventEventidRoute
   '/about': typeof AboutIndexRoute
   '/og': typeof OgIndexRoute
@@ -64,8 +50,6 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/api/poll-event': typeof ApiPollEventRoute
-  '/api/queue-watched-events': typeof ApiQueueWatchedEventsRoute
   '/event/$eventid': typeof EventEventidRoute
   '/about': typeof AboutIndexRoute
   '/og': typeof OgIndexRoute
@@ -74,8 +58,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/api/poll-event': typeof ApiPollEventRoute
-  '/api/queue-watched-events': typeof ApiQueueWatchedEventsRoute
   '/event/$eventid': typeof EventEventidRoute
   '/about/': typeof AboutIndexRoute
   '/og/': typeof OgIndexRoute
@@ -83,28 +65,12 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/api/poll-event'
-    | '/api/queue-watched-events'
-    | '/event/$eventid'
-    | '/about'
-    | '/og'
-    | '/saved-events'
+  fullPaths: '/' | '/event/$eventid' | '/about' | '/og' | '/saved-events'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/api/poll-event'
-    | '/api/queue-watched-events'
-    | '/event/$eventid'
-    | '/about'
-    | '/og'
-    | '/saved-events'
+  to: '/' | '/event/$eventid' | '/about' | '/og' | '/saved-events'
   id:
     | '__root__'
     | '/'
-    | '/api/poll-event'
-    | '/api/queue-watched-events'
     | '/event/$eventid'
     | '/about/'
     | '/og/'
@@ -113,8 +79,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ApiPollEventRoute: typeof ApiPollEventRoute
-  ApiQueueWatchedEventsRoute: typeof ApiQueueWatchedEventsRoute
   EventEventidRoute: typeof EventEventidRoute
   AboutIndexRoute: typeof AboutIndexRoute
   OgIndexRoute: typeof OgIndexRoute
@@ -158,27 +122,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventEventidRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/queue-watched-events': {
-      id: '/api/queue-watched-events'
-      path: '/api/queue-watched-events'
-      fullPath: '/api/queue-watched-events'
-      preLoaderRoute: typeof ApiQueueWatchedEventsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/api/poll-event': {
-      id: '/api/poll-event'
-      path: '/api/poll-event'
-      fullPath: '/api/poll-event'
-      preLoaderRoute: typeof ApiPollEventRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ApiPollEventRoute: ApiPollEventRoute,
-  ApiQueueWatchedEventsRoute: ApiQueueWatchedEventsRoute,
   EventEventidRoute: EventEventidRoute,
   AboutIndexRoute: AboutIndexRoute,
   OgIndexRoute: OgIndexRoute,

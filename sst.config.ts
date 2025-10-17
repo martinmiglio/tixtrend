@@ -16,8 +16,6 @@ export default $config({
     };
   },
   async run() {
-    const { randomBytes } = await import("node:crypto");
-
     const TICKETMASTER_API_KEY = process.env.TICKETMASTER_API_KEY;
 
     if (!TICKETMASTER_API_KEY) {
@@ -26,8 +24,6 @@ export default $config({
 
     const stage = $app.stage;
     const isProduction = stage === "production";
-
-    const INTERNAL_API_KEY = randomBytes(32).toString("hex");
 
     const tables: Record<string, sst.aws.Dynamo> = isProduction
       ? {
@@ -85,7 +81,7 @@ export default $config({
       },
     });
 
-    const site = new sst.aws.TanStackStart("Site", {
+    new sst.aws.TanStackStart("Site", {
       path: "apps/site",
       router: {
         instance: router,
@@ -95,7 +91,6 @@ export default $config({
 
       environment: {
         TICKETMASTER_API_KEY,
-        INTERNAL_API_KEY,
       },
     });
 

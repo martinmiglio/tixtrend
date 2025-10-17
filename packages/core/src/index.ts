@@ -44,14 +44,6 @@ export type {
   EventData,
 } from './lib/ticketmaster/events';
 
-// =============================================================================
-// PUBLIC API - Auth
-// =============================================================================
-
-/**
- * API key validation (used by site API middleware)
- */
-export { validateApiKey } from './lib/auth/validate-api-key';
 
 // =============================================================================
 // INTERNAL ONLY - Not exported

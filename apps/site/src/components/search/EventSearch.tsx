@@ -1,17 +1,11 @@
 import EventInfoItem from "../event/EventInfoItem";
 import EventSearchBar from "./EventSearchBar";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
+import { findEvent } from "@/server/event-functions";
 import { Link } from "@tanstack/react-router";
-import { createServerFn } from "@tanstack/react-start";
 import type { EventData } from "@tixtrend/core";
-import { findEventHandler } from "@tixtrend/core";
 import { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-
-// Create TanStack Start server function as thin wrapper
-const findEvent = createServerFn({ method: "GET" })
-  .inputValidator((data: { keyword: string; page: number }) => data)
-  .handler(({ data }) => findEventHandler(data.keyword, data.page));
 
 const EventSearch = () => {
   const [eventsData, setEventsData] = useState<EventData[]>([]);
