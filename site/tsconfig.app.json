@@ -1,7 +1,7 @@
 {
   // "extends": "@vitable/typescript-config/react.json",
   "extends": "./tsconfig.base.json",
-  "include": ["src"],
+  "include": ["src", "sst-env.d.ts"],
   "exclude": ["**/*.test.tsx", "**/*.test.ts", "**/__tests__/**"],
   "compilerOptions": {
     "composite": true,

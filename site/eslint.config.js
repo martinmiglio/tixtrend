@@ -58,6 +58,18 @@ export default [
     },
   },
   {
-    ignores: ["dist/**"],
+    ignores: [
+      "dist/**",
+      "**/.tanstack/**",
+      ".vinxi/**",
+      "build/**",
+      "coverage/**",
+      ".output/**",
+      ".nitro/**",
+      ".sst/**",
+      "src/routeTree.gen.ts",
+      "sst-env.d.ts",
+      "sst.config.ts",
+    ],
   },
 ];

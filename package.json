@@ -1,7 +1,14 @@
 {
-    "name": "tixtrend",
-    "scripts": {
-        "dev:site": "cd site && npm run dev",
-        "upload:lambda": "cd lambda && npm run upload"
-    }
+  "name": "tixtrend",
+  "scripts": {
+    "sst": "sst",
+    "dev:site": "cd site && npm run dev",
+    "upload:lambda": "cd lambda && npm run upload"
+  },
+  "dependencies": {
+    "sst": "3.17.19"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.156"
+  }
 }
