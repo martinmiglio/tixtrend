@@ -1,6 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { queueEventsForPolling } from "@/modules/events/queue-events-for-polling";
 import { validateApiKey } from "@/lib/auth/validate-api-key";
+import { queueEventsForPolling } from "@/modules/events/queue-events-for-polling";
+import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/queue-watched-events")({
   server: {

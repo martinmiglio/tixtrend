@@ -29,8 +29,7 @@ export const queueEventsForPolling =
     const watchListResults = await queueWatchList();
 
     const numberOfFillerEvents = MAX_QUEUE_LENGTH - watchListResults.length;
-    const popularEventsResults =
-      await queuePopularEvents(numberOfFillerEvents);
+    const popularEventsResults = await queuePopularEvents(numberOfFillerEvents);
 
     const numberOfSaleSoonEvents =
       numberOfFillerEvents - popularEventsResults.length;

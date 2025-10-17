@@ -1,6 +1,6 @@
 import EventInfoItem from "@/components/event/EventInfoItem";
-import { getEvent } from "@/modules/events/get-event";
 import type { EventData } from "@/lib/ticketmaster/events";
+import { getEvent } from "@/modules/events/get-event";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
