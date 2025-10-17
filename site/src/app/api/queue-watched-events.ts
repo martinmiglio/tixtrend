@@ -15,49 +15,38 @@ export const Route = createFileRoute("/api/queue-watched-events")({
           return authError;
         }
 
-        try {
-          const watchListResults = await queueWatchList();
+        const watchListResults = await queueWatchList();
 
-          const numberOfFillerEvents =
-            MAX_QUEUE_LENGTH - watchListResults.length;
-          const popularEventsResults =
-            await queuePopularEvents(numberOfFillerEvents);
+        const numberOfFillerEvents = MAX_QUEUE_LENGTH - watchListResults.length;
+        const popularEventsResults =
+          await queuePopularEvents(numberOfFillerEvents);
 
-          const numberOfSaleSoonEvents =
-            numberOfFillerEvents - popularEventsResults.length;
-          const saleSoonEventsResults = await queueSaleSoonEvents(
-            numberOfSaleSoonEvents,
-          );
+        const numberOfSaleSoonEvents =
+          numberOfFillerEvents - popularEventsResults.length;
+        const saleSoonEventsResults = await queueSaleSoonEvents(
+          numberOfSaleSoonEvents,
+        );
 
-          const totalProcessed =
-            watchListResults.length +
-            popularEventsResults.length +
-            saleSoonEventsResults.length;
+        const totalProcessed =
+          watchListResults.length +
+          popularEventsResults.length +
+          saleSoonEventsResults.length;
 
-          console.info("total events queued", totalProcessed);
+        console.info("total events queued", totalProcessed);
 
-          return new Response(
-            JSON.stringify({
-              message: "Successfully polled events.",
-              watchList: watchListResults.length,
-              popular: popularEventsResults.length,
-              saleSoon: saleSoonEventsResults.length,
-              total: totalProcessed,
-            }),
-            {
-              status: 200,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
-        } catch (error) {
-          return new Response(
-            JSON.stringify(error, Object.getOwnPropertyNames(error as object)),
-            {
-              status: 500,
-              headers: { "Content-Type": "application/json" },
-            },
-          );
-        }
+        return new Response(
+          JSON.stringify({
+            message: "Successfully polled events.",
+            watchList: watchListResults.length,
+            popular: popularEventsResults.length,
+            saleSoon: saleSoonEventsResults.length,
+            total: totalProcessed,
+          }),
+          {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+          },
+        );
       },
     },
   },
