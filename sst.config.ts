@@ -102,21 +102,20 @@ export default $config({
     new sst.aws.Cron("PricePollerCron", {
       schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
       job: {
-        handler: "lambda/cron-trigger.handler",
-        link: [site],
+        handler: "apps/workers/src/cron-trigger.handler",
+        link: [...Object.values(tables), pricePollQueue],
         environment: {
-          SITE_URL: site.url,
-          INTERNAL_API_KEY,
+          TICKETMASTER_API_KEY,
         },
       },
     });
 
     pricePollQueue.subscribe(
       {
-        handler: "lambda/poll-prices-consumer.handler",
+        handler: "apps/workers/src/poll-prices-consumer.handler",
+        link: [...Object.values(tables)],
         environment: {
-          SITE_URL: site.url,
-          INTERNAL_API_KEY,
+          TICKETMASTER_API_KEY,
         },
       },
       {
