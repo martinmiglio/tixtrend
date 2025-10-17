@@ -1,9 +1,9 @@
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import EventInfoItem from "@/components/event/EventInfoItem";
 import { EventPriceChart } from "@/components/event/PriceChart";
-import { watchEvent } from "@/domain/events/watch-event";
-import { getPrices } from "@/domain/prices/get-prices";
-import { getEventByID } from "@/lib/tm/events";
+import { getEventByID } from "@/lib/ticketmaster/events";
+import { watchEvent } from "@/modules/events/watch-event";
+import { getPrices } from "@/modules/prices/get-prices";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/event/$eventid")({

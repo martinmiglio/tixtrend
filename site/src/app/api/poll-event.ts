@@ -1,5 +1,5 @@
-import { pollEvent } from "@/domain/prices/poll-event";
 import { validateApiKey } from "@/lib/auth/validate-api-key";
+import { pollEvent } from "@/modules/prices/poll-event";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/api/poll-event")({

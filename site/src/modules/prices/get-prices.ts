@@ -1,4 +1,4 @@
-import type { PriceData } from "./types";
+import type { EventPriceData, PriceData } from "./types";
 import { queryEventPrices } from "@/lib/aws/dynamo";
 import { createServerFn } from "@tanstack/react-start";
 
@@ -14,7 +14,7 @@ export const getPrices = createServerFn({ method: "GET" })
     }
 
     // Parse into PriceData type
-    const prices: PriceData[] = Items.map((price: any) => ({
+    const prices: PriceData[] = (Items as EventPriceData[]).map((price) => ({
       id: price.event_id,
       timestamp: new Date(price.timestamp),
       max: price.max,

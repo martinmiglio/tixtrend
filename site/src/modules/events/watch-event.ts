@@ -3,9 +3,8 @@ import {
   getWatchedEvent,
   incrementWatchCount,
 } from "@/lib/aws/dynamo";
+import { getEventByID } from "@/lib/ticketmaster/events";
 import { createServerFn } from "@tanstack/react-start";
-
-const API_URL = "https://app.ticketmaster.com/discovery/v2/events";
 
 export const watchEvent = createServerFn({ method: "GET" })
   .inputValidator((data: { event_id: string }) => data)
@@ -26,19 +25,14 @@ export const watchEvent = createServerFn({ method: "GET" })
     }
 
     // Fetch event from Ticketmaster to validate it exists
-    const apiUrl = `${API_URL}/${event_id}?apikey=${process.env.TICKETMASTER_API_KEY}`;
-    const response = await fetch(apiUrl);
+    const eventData = await getEventByID(event_id);
 
-    if (!response.ok) {
+    if (!eventData) {
       throw new Error("Event not found");
     }
 
-    const eventData = await response.json();
-
     const timestamp = Date.now();
-    const ttl =
-      Math.floor(Date.parse(eventData.dates.start.dateTime) / 1000) +
-      60 * 60 * 24;
+    const ttl = Math.floor(eventData.date.getTime() / 1000) + 60 * 60 * 24;
 
     // Add event to watch list
     await addWatchedEvent({

@@ -1,8 +1,8 @@
 import EventInfoItem from "../event/EventInfoItem";
 import EventSearchBar from "./EventSearchBar";
 import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
-import { findEvent } from "@/domain/events/find-event";
-import type { EventData } from "@/lib/tm/events";
+import type { EventData } from "@/lib/ticketmaster/events";
+import { findEvent } from "@/modules/events/find-event";
 import { Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
