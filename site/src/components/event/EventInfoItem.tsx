@@ -1,5 +1,5 @@
 import SaveEventButton from "./SaveEventButton";
-import type { EventData } from "@/lib/tm/events";
+import type { EventData } from "@/lib/ticketmaster/events";
 
 const EventInfoItem = ({
   eventData,

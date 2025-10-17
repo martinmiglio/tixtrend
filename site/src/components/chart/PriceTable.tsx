@@ -1,6 +1,6 @@
 // PriceTable.tsx
 // This component is used to display a price table for a given event.
-import type { PriceData } from "@/domain/prices/types";
+import type { PriceData } from "@/modules/prices/types";
 import { useEffect, useState } from "react";
 
 const PriceTable = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {

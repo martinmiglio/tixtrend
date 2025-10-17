@@ -1,4 +1,4 @@
-import { getEventByKeyword } from "@/lib/tm/events";
+import { getEventByKeyword } from "@/lib/ticketmaster/events";
 import { createServerFn } from "@tanstack/react-start";
 
 export const findEvent = createServerFn({ method: "GET" })

@@ -1,25 +1,10 @@
-import type { PriceData } from "@/domain/prices/types";
-import TicketMasterClient from "@/lib/tm/client";
-
-type TicketMasterEventResponse = {
-  id: string;
-  name: string;
-  dates: {
-    start: {
-      dateTime: string;
-    };
-  };
-  images: EventImageData[];
-  _embedded?: {
-    venues: Array<{ name: string }>;
-  };
-};
-
-type TicketMasterSearchResponse = {
-  _embedded?: {
-    events?: TicketMasterEventResponse[];
-  };
-};
+import type { PriceData } from "@/modules/prices/types";
+import TicketMasterClient from "@/lib/ticketmaster/client";
+import type {
+  EventImageData,
+  TicketMasterEventResponse,
+  TicketMasterSearchResponse,
+} from "@/lib/ticketmaster/types";
 
 export type EventData = {
   id: string;
@@ -31,14 +16,7 @@ export type EventData = {
   priceHistory?: PriceData[];
 };
 
-export type EventImageData = {
-  url: string;
-  ratio: string; // ratio is string enum (16_9, 3_2, or 4_3)
-  width: number;
-  height: number;
-  fallback: boolean;
-  attribution?: string;
-};
+export type { EventImageData };
 
 export const getEventByID = async (
   event_id: string,
@@ -114,4 +92,53 @@ export const getEventByKeyword = async (
       imageData: event.images,
     };
   });
+};
+
+/**
+ * Fetch event IDs from Ticketmaster API by page
+ *
+ * @param page - Page number (1-indexed)
+ * @param size - Number of events per page
+ * @returns Array of event IDs
+ */
+export const fetchEventIdsByPage = async (
+  page: number,
+  size: number,
+): Promise<string[]> => {
+  const data = (await TicketMasterClient.fetch("events", {
+    page: page.toString(),
+    size: size.toString(),
+  })) as TicketMasterSearchResponse;
+
+  if (!data._embedded?.events) {
+    return [];
+  }
+
+  return data._embedded.events.map((event) => event.id);
+};
+
+/**
+ * Fetch event IDs from Ticketmaster API by page with sorting
+ *
+ * @param page - Page number (1-indexed)
+ * @param size - Number of events per page
+ * @param sort - Sort parameter (e.g., "onSaleStartDate,asc")
+ * @returns Array of event IDs
+ */
+export const fetchEventIdsByPageSorted = async (
+  page: number,
+  size: number,
+  sort: string,
+): Promise<string[]> => {
+  const data = (await TicketMasterClient.fetch("events", {
+    page: page.toString(),
+    size: size.toString(),
+    sort,
+  })) as TicketMasterSearchResponse;
+
+  if (!data._embedded?.events) {
+    return [];
+  }
+
+  return data._embedded.events.map((event) => event.id);
 };

@@ -1,0 +1,32 @@
+/**
+ * Ticketmaster Discovery API v2 types
+ */
+
+export type EventImageData = {
+  url: string;
+  ratio: string; // ratio is string enum (16_9, 3_2, or 4_3)
+  width: number;
+  height: number;
+  fallback: boolean;
+  attribution?: string;
+};
+
+export type TicketMasterEventResponse = {
+  id: string;
+  name: string;
+  dates: {
+    start: {
+      dateTime: string;
+    };
+  };
+  images: EventImageData[];
+  _embedded?: {
+    venues: Array<{ name: string }>;
+  };
+};
+
+export type TicketMasterSearchResponse = {
+  _embedded?: {
+    events?: TicketMasterEventResponse[];
+  };
+};

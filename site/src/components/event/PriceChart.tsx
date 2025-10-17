@@ -1,5 +1,5 @@
 import PriceChart from "../chart/PriceChart";
-import type { EventData } from "@/lib/tm/events";
+import type { EventData } from "@/lib/ticketmaster/events";
 import { Link } from "@tanstack/react-router";
 
 export const EventPriceChart = ({ eventData }: { eventData: EventData }) => {

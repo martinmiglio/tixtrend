@@ -1,4 +1,4 @@
-import { pollEvent } from "@/domain/prices/poll-event";
+import { pollEvent } from "@/modules/prices/poll-event";
 import { validateApiKey } from "@/lib/auth/validate-api-key";
 import { createFileRoute } from "@tanstack/react-router";
 
