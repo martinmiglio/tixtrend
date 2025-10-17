@@ -20,6 +20,11 @@ export type TicketMasterEventResponse = {
     };
   };
   images: EventImageData[];
+  priceRanges?: Array<{
+    min: number;
+    max: number;
+    currency: string;
+  }>;
   _embedded?: {
     venues: Array<{ name: string }>;
   };

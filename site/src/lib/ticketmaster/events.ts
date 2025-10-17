@@ -1,10 +1,10 @@
-import type { PriceData } from "@/modules/prices/types";
 import TicketMasterClient from "@/lib/ticketmaster/client";
 import type {
   EventImageData,
   TicketMasterEventResponse,
   TicketMasterSearchResponse,
 } from "@/lib/ticketmaster/types";
+import type { EventPriceData, PriceData } from "@/modules/prices/types";
 
 export type EventData = {
   id: string;
@@ -141,4 +141,38 @@ export const fetchEventIdsByPageSorted = async (
   }
 
   return data._embedded.events.map((event) => event.id);
+};
+
+/**
+ * Fetch event price data from Ticketmaster API
+ *
+ * @param event_id - Event ID to fetch price data for
+ * @returns Event price data or null if not found or no price data available
+ */
+export const fetchEventPriceData = async (
+  event_id: string,
+): Promise<EventPriceData | null> => {
+  const data = (await TicketMasterClient.fetch(
+    `events/${event_id}`,
+  )) as TicketMasterEventResponse;
+
+  const { priceRanges } = data;
+  if (!priceRanges || priceRanges.length === 0 || !priceRanges[0]) {
+    // This event doesn't have a price range yet
+    return null;
+  }
+
+  const priceRange = priceRanges[0];
+  const timestamp = Date.now();
+  const ttl =
+    Math.floor(Date.parse(data.dates.start.dateTime) / 1000) + 60 * 60 * 24;
+
+  return {
+    event_id,
+    timestamp,
+    currency: priceRange.currency,
+    min: priceRange.min,
+    max: priceRange.max,
+    ttl,
+  };
 };
