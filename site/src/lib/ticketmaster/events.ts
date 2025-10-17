@@ -1,9 +1,9 @@
 import TicketMasterClient from "@/lib/ticketmaster/client";
-import type {
-  EventImageData,
-  TicketMasterEventResponse,
-  TicketMasterSearchResponse,
-} from "@/lib/ticketmaster/types";
+import {
+  TicketMasterEventResponseSchema,
+  TicketMasterSearchResponseSchema,
+} from "@/lib/ticketmaster/schemas";
+import type { EventImageData } from "@/lib/ticketmaster/types";
 import type { EventPriceData, PriceData } from "@/modules/prices/types";
 
 export type EventData = {
@@ -22,9 +22,10 @@ export const getEventByID = async (
   event_id: string,
 ): Promise<EventData | null> => {
   try {
-    const data = (await TicketMasterClient.fetch(
+    const data = await TicketMasterClient.fetchValidated(
       `events/${event_id}`,
-    )) as TicketMasterEventResponse;
+      TicketMasterEventResponseSchema,
+    );
 
     // parse into EventData type
     const event: EventData = {
@@ -55,11 +56,19 @@ export const getEventByKeyword = async (
   };
 
   const requests = [
-    TicketMasterClient.fetch(`events`, query),
-    TicketMasterClient.fetch(`suggest`, query),
+    TicketMasterClient.fetchValidated(
+      `events`,
+      TicketMasterSearchResponseSchema,
+      query,
+    ),
+    TicketMasterClient.fetchValidated(
+      `suggest`,
+      TicketMasterSearchResponseSchema,
+      query,
+    ),
   ];
 
-  const data = (await Promise.all(requests)) as TicketMasterSearchResponse[];
+  const data = await Promise.all(requests);
 
   // remove data has no ._embedded, ._embedded.events properties or events length of 0
   const validData = data.filter(
@@ -105,10 +114,14 @@ export const fetchEventIdsByPage = async (
   page: number,
   size: number,
 ): Promise<string[]> => {
-  const data = (await TicketMasterClient.fetch("events", {
-    page: page.toString(),
-    size: size.toString(),
-  })) as TicketMasterSearchResponse;
+  const data = await TicketMasterClient.fetchValidated(
+    "events",
+    TicketMasterSearchResponseSchema,
+    {
+      page: page.toString(),
+      size: size.toString(),
+    },
+  );
 
   if (!data._embedded?.events) {
     return [];
@@ -130,11 +143,15 @@ export const fetchEventIdsByPageSorted = async (
   size: number,
   sort: string,
 ): Promise<string[]> => {
-  const data = (await TicketMasterClient.fetch("events", {
-    page: page.toString(),
-    size: size.toString(),
-    sort,
-  })) as TicketMasterSearchResponse;
+  const data = await TicketMasterClient.fetchValidated(
+    "events",
+    TicketMasterSearchResponseSchema,
+    {
+      page: page.toString(),
+      size: size.toString(),
+      sort,
+    },
+  );
 
   if (!data._embedded?.events) {
     return [];
@@ -152,9 +169,10 @@ export const fetchEventIdsByPageSorted = async (
 export const fetchEventPriceData = async (
   event_id: string,
 ): Promise<EventPriceData | null> => {
-  const data = (await TicketMasterClient.fetch(
+  const data = await TicketMasterClient.fetchValidated(
     `events/${event_id}`,
-  )) as TicketMasterEventResponse;
+    TicketMasterEventResponseSchema,
+  );
 
   const { priceRanges } = data;
   if (!priceRanges || priceRanges.length === 0 || !priceRanges[0]) {
