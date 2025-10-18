@@ -1,0 +1,17 @@
+{
+  "name": "@tixtrend/workers",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@tixtrend/core": "workspace:*",
+    "sst": "3.17.19"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.156",
+    "@types/node": "^24.7.2",
+    "typescript": "^5.9.3"
+  }
+}

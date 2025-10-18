@@ -1,14 +1,22 @@
 {
   "name": "tixtrend",
+  "private": true,
   "scripts": {
-    "sst": "sst",
-    "dev:site": "cd site && npm run dev",
-    "upload:lambda": "cd lambda && npm run upload"
-  },
-  "dependencies": {
-    "sst": "3.17.19"
+    "dev": "sst dev",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean && rm -rf .turbo node_modules",
+    "sst": "sst"
   },
   "devDependencies": {
-    "@types/aws-lambda": "8.10.156"
+    "@types/aws-lambda": "8.10.156",
+    "sst": "3.17.19",
+    "turbo": "^2.5.8",
+    "typescript": "^5.9.3"
+  },
+  "packageManager": "pnpm@10.18.3",
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
   }
 }

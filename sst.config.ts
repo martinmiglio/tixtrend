@@ -16,8 +16,6 @@ export default $config({
     };
   },
   async run() {
-    const { randomBytes } = await import("node:crypto");
-
     const TICKETMASTER_API_KEY = process.env.TICKETMASTER_API_KEY;
 
     if (!TICKETMASTER_API_KEY) {
@@ -26,8 +24,6 @@ export default $config({
 
     const stage = $app.stage;
     const isProduction = stage === "production";
-
-    const INTERNAL_API_KEY = randomBytes(32).toString("hex");
 
     const tables: Record<string, sst.aws.Dynamo> = isProduction
       ? {
@@ -85,8 +81,8 @@ export default $config({
       },
     });
 
-    const site = new sst.aws.TanStackStart("Site", {
-      path: "site",
+    new sst.aws.TanStackStart("Site", {
+      path: "apps/site",
       router: {
         instance: router,
         domain: baseDomain,
@@ -95,28 +91,32 @@ export default $config({
 
       environment: {
         TICKETMASTER_API_KEY,
-        INTERNAL_API_KEY,
       },
     });
 
     new sst.aws.Cron("PricePollerCron", {
       schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
       job: {
-        handler: "lambda/cron-trigger.handler",
-        link: [site],
+        handler: "apps/workers/src/cron-trigger.handler",
+        link: [...Object.values(tables), pricePollQueue],
         environment: {
-          SITE_URL: site.url,
-          INTERNAL_API_KEY,
+          TICKETMASTER_API_KEY,
+        },
+        nodejs: {
+          install: ["@tixtrend/core"],
         },
       },
     });
 
     pricePollQueue.subscribe(
       {
-        handler: "lambda/poll-prices-consumer.handler",
+        handler: "apps/workers/src/poll-prices-consumer.handler",
+        link: [...Object.values(tables)],
         environment: {
-          SITE_URL: site.url,
-          INTERNAL_API_KEY,
+          TICKETMASTER_API_KEY,
+        },
+        nodejs: {
+          install: ["@tixtrend/core"],
         },
       },
       {

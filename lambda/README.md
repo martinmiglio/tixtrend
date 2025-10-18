@@ -1,1 +1,0 @@
-# TixTrend lambda functions
