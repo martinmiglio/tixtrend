@@ -1,12 +1,12 @@
-import PopupNotification from "@/components/page/PopupNotification";
+import { Button } from "@tixtrend/ui/components/button";
 import type { EventData } from "@tixtrend/core";
-import { HeartPlus, HeartIcon } from "lucide-react";
+import { Heart } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
+import { toast } from "@tixtrend/ui/lib/toast";
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);
-  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     const savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");
@@ -21,12 +21,13 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
       savedEvents = savedEvents.filter(
         (savedEvent: EventData) => savedEvent.id !== event.id,
       );
+      toast.success("Event removed from your list!");
     } else {
       savedEvents.push(event);
+      toast.success("Event saved to your list!");
     }
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
     setSaved(!saved);
-    setShowPopup(true);
   };
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -35,32 +36,17 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
   };
 
   return (
-    <>
-      <button
-        type="button"
-        className={`btn btn-primary btn-sm`}
-        onClick={handleClick}
-        data-umami-event="save-event-button"
-        data-umami-event-action={saved ? "remove" : "add"}
-        data-umami-event-id={event.id}
-      >
-        {saved ? (
-          <HeartIcon className="h-5 w-5 text-red-500" />
-        ) : (
-          <HeartPlus className="h-5 w-5 text-gray-500" />
-        )}
-      </button>
-      <PopupNotification
-        isActive={showPopup}
-        setIsActiveCallback={setShowPopup}
-      >
-        <p className="text-gray-800">
-          {saved
-            ? "Event has been saved to your list!"
-            : "Event has been removed from your list!"}
-        </p>
-      </PopupNotification>
-    </>
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon-sm"
+      onClick={handleClick}
+      data-umami-event="save-event-button"
+      data-umami-event-action={saved ? "remove" : "add"}
+      data-umami-event-id={event.id}
+    >
+      <Heart className={saved ? "fill-red-500 text-red-500" : ""} />
+    </Button>
   );
 };
 

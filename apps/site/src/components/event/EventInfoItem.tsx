@@ -1,4 +1,11 @@
 import SaveEventButton from "./SaveEventButton";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardAction,
+} from "@tixtrend/ui/components/card";
 import type { EventData } from "@tixtrend/core";
 
 const EventInfoItem = ({
@@ -29,35 +36,37 @@ const EventInfoItem = ({
   });
 
   return (
-    <div className="flex w-full flex-col items-center justify-center sm:flex-row">
-      <div className="flex-initial px-0 sm:px-5">
-        <img
-          src={imageURL}
-          alt={eventData.name}
-          width={300}
-          height={169}
-          className="h-auto rounded-lg shadow-lg"
-        />
-      </div>
-      <div className="flex-1">
-        <div className="flex flex-col items-center justify-center px-2 sm:px-0">
-          <div className="flex flex-row pb-2">
-            <h1 className="flex-1 text-2xl font-semibold">{eventData.name}</h1>
+    <Card className="overflow-hidden">
+      <div className="flex w-full flex-col items-center justify-center sm:flex-row">
+        <div className="flex-initial px-0 sm:px-5">
+          <img
+            src={imageURL}
+            alt={eventData.name}
+            width={300}
+            height={169}
+            className="h-auto rounded-lg"
+          />
+        </div>
+        <div className="flex-1">
+          <CardHeader>
+            <CardTitle className="text-2xl">{eventData.name}</CardTitle>
             {showSaveButton && (
-              <div className="flex items-center justify-center pl-5">
+              <CardAction>
                 <SaveEventButton event={eventData} />
-              </div>
+              </CardAction>
             )}
-          </div>
-          <h2 className="overflow-ellipsis whitespace-nowrap text-xl text-gray-300">
-            {formattedDate}
-          </h2>
-          <h2 className="text-xl/2 overflow-ellipsis whitespace-nowrap text-gray-300">
-            {eventData.location}
-          </h2>
+            <CardDescription className="text-base space-y-1">
+              <div className="overflow-ellipsis whitespace-nowrap">
+                {formattedDate}
+              </div>
+              <div className="overflow-ellipsis whitespace-nowrap">
+                {eventData.location}
+              </div>
+            </CardDescription>
+          </CardHeader>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
