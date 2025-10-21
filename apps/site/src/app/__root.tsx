@@ -19,7 +19,7 @@ const env = schema.parse(import.meta.env);
 
 const metadataBase = baseURL;
 const iconURL = new URL("/favicon.ico", metadataBase);
-const ogURL = new URL("/og?v1", metadataBase);
+const ogURL = new URL("/og.png?v1", metadataBase);
 
 export const Route = createRootRoute({
   head: () => ({
