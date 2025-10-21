@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
+import { Separator } from "@tixtrend/ui/components/separator";
 
 const HeaderBar = () => {
   return (
-    <div className="mb-3 border-b border-gray-700">
+    <div className="mb-3">
       <div className="pb-2 sm:flex sm:items-center sm:justify-between">
         <Link to="/" className="mb-4 flex items-center sm:mb-0">
           <img
@@ -14,24 +15,28 @@ const HeaderBar = () => {
           />
           <h1 className="text-4xl">TixTrend</h1>
         </Link>
-        <ul className="mb-6 mr-4 flex flex-wrap items-center space-x-8 text-sm font-medium text-gray-500 dark:text-gray-400 sm:mb-0">
+        <ul className="mb-6 mr-4 flex flex-wrap items-center space-x-8 text-sm font-medium text-muted-foreground sm:mb-0">
           <li>
-            <Link to="/" className="hover:underline">
+            <Link to="/" className="hover:underline hover:text-foreground">
               Search
             </Link>
           </li>
           <li>
-            <Link to="/saved-events" className="hover:underline">
+            <Link
+              to="/saved-events"
+              className="hover:underline hover:text-foreground"
+            >
               Saved Events
             </Link>
           </li>
           <li>
-            <Link to="/about" className="hover:underline">
+            <Link to="/about" className="hover:underline hover:text-foreground">
               About
             </Link>
           </li>
         </ul>
       </div>
+      <Separator />
     </div>
   );
 };

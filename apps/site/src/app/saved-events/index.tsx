@@ -1,6 +1,7 @@
 import EventInfoItem from "@/components/event/EventInfoItem";
 import { getEvent } from "@/server/event-functions";
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { Badge } from "@tixtrend/ui/components/badge";
 import type { EventData } from "@tixtrend/core";
 import { useEffect, useState } from "react";
 
@@ -42,20 +43,20 @@ function RouteComponent() {
 
   return (
     <div className="inline-flex w-full flex-col items-center justify-center">
-      <div className="lg:text-center">
-        <h2 className="text-base font-semibold uppercase tracking-wide text-indigo-600">
+      <div className="lg:text-center mb-6">
+        <Badge variant="default" className="text-base px-3 py-1">
           Saved Events
-        </h2>
+        </Badge>
       </div>
       {savedEvents.length === 0 ? (
-        <p className="py-20 text-lg font-medium leading-6 opacity-50">
+        <p className="py-20 text-lg font-medium leading-6 text-muted-foreground">
           You have no saved events.
         </p>
       ) : (
-        <div className="flex w-full flex-col items-center justify-center">
+        <div className="flex w-full flex-col items-center justify-center gap-4">
           {savedEvents.map((event: EventData) => (
             <Link
-              className="my-5 w-full rounded-md p-5 shadow-xl"
+              className="w-full"
               to="/event/$eventid"
               params={{ eventid: event.id }}
               key={event.id}

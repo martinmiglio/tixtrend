@@ -1,0 +1,184 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@source "../../../../apps/**/*.{ts,tsx}";
+@source "../../../../packages/**/*.{ts,tsx}";
+
+@font-face {
+  font-family: "Averta-Regular";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Averta-Regular"),
+    url("https://fonts.cdnfonts.com/s/14933/Averta.woff") format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Averta-ExtraBoldItalic";
+  font-style: italic;
+  font-weight: 400;
+  src: local("Averta-ExtraBoldItalic"),
+    url("https://fonts.cdnfonts.com/s/14933/Averta Extra Bold Italic.woff")
+      format("woff");
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Averta-Bold";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Averta-Bold"),
+    url("https://fonts.cdnfonts.com/s/14933/Averta Bold.woff") format("woff");
+  font-display: swap;
+}
+
+@theme inline {
+  --font-sans: "Averta-Regular", "Helvetica Neue", "Helvetica", "Arial",
+    "sans-serif";
+  --font-tagline: "Averta-ExtraBoldItalic", "Helvetica Neue", "Helvetica",
+    "Arial", "sans-serif";
+  --font-heading: "Averta-Bold", "Helvetica Neue", "Helvetica", "Arial",
+    "sans-serif";
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-transparent: transparent;
+  --color-orange-accent: var(--orange-accent);
+  --color-yellow-accent: var(--yellow-accent);
+  --color-peach-accent: var(--peach-accent);
+
+  --animate-spinner: spinner-arc 1.4s ease-in-out infinite,
+    spin 1.4s linear infinite;
+  @keyframes spinner-arc {
+    0% {
+      stroke-dasharray: 1 200;
+      stroke-dashoffset: 0;
+    }
+    50% {
+      stroke-dasharray: 90 200;
+      stroke-dashoffset: -35;
+    }
+    100% {
+      stroke-dasharray: 90 200;
+      stroke-dashoffset: -125;
+    }
+  }
+}
+
+:root {
+  --background: oklch(0.2433 0.0247 263.9506);
+  --foreground: oklch(0.9423 0.0197 17.5072);
+  --card: oklch(0.2929 0.0376 262.8312);
+  --card-foreground: oklch(0.9832 0.0017 325.5901);
+  --popover: oklch(0.3939 0.0495 263.1163);
+  --popover-foreground: oklch(0.8607 0 0);
+  --primary: oklch(0.9276 0.0058 264.5313);
+  --primary-foreground: oklch(0.1938 0.0472 290.9085);
+  --secondary: oklch(0.4886 0.0237 21.7511);
+  --secondary-foreground: oklch(0.9132 0.0338 239.8582);
+  --muted: oklch(0.6798 0.035 18.0476);
+  --muted-foreground: oklch(0.7034 0.0189 17.6099);
+  --accent: oklch(0.7163 0.1564 0.7498);
+  --accent-foreground: oklch(0.2046 0 0);
+  --destructive: oklch(0.5932 0.2154 24.8258);
+  --destructive-foreground: oklch(0.2553 0.0045 17.4543);
+  --border: oklch(0.4201 0.0148 17.7579);
+  --input: oklch(0.9219 0 0);
+  --ring: oklch(0.709 0 0);
+  --chart-1: oklch(0.8088 0.0991 251.7533);
+  --chart-2: oklch(0.6207 0.1894 259.9358);
+  --chart-3: oklch(0.5495 0.2202 263.0917);
+  --chart-4: oklch(0.4893 0.2202 264.0405);
+  --chart-5: oklch(0.421 0.1792 266.0094);
+  --sidebar: oklch(0.9851 0 0);
+  --sidebar-foreground: oklch(0.1448 0 0);
+  --sidebar-primary: oklch(0.2046 0 0);
+  --sidebar-primary-foreground: oklch(0.9851 0 0);
+  --sidebar-accent: oklch(0.9702 0 0);
+  --sidebar-accent-foreground: oklch(0.2046 0 0);
+  --sidebar-border: oklch(0.9219 0 0);
+  --sidebar-ring: oklch(0.709 0 0);
+  --font-sans: Average Sans, ui-sans-serif, sans-serif, system-ui;
+  --font-serif: Domine, ui-serif, serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  --radius: 2rem;
+  --shadow-x: 0;
+  --shadow-y: 1px;
+  --shadow-blur: 3px;
+  --shadow-spread: 0px;
+  --shadow-opacity: 0.1;
+  --shadow-color: oklch(0 0 0);
+  --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
+  --shadow-sm: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
+    0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow: 0 1px 3px 0px hsl(0 0% 0% / 0.1), 0 1px 2px -1px hsl(0 0% 0% / 0.1);
+  --shadow-md: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
+    0 2px 4px -1px hsl(0 0% 0% / 0.1);
+  --shadow-lg: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
+    0 4px 6px -1px hsl(0 0% 0% / 0.1);
+  --shadow-xl: 0 1px 3px 0px hsl(0 0% 0% / 0.1),
+    0 8px 10px -1px hsl(0 0% 0% / 0.1);
+  --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
+  --tracking-normal: 0em;
+  --spacing: 0.25rem;
+}
+
+@custom-variant hover {
+  /* tailwind v4 breaks hover on some elements, this is a workaround */
+  &:hover {
+    @slot;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="number"],
+  input[type="select"],
+  input[type="password"] {
+    background-color: transparent !important;
+  }
+}

@@ -1,8 +1,13 @@
 // EventSearchBar.tsx
-
 /* This component is used to search for events by keywords.
 This will be used in the home page of the site to begin the flow. */
-import { X } from "lucide-react";
+import {
+  InputGroup,
+  InputGroupInput,
+  InputGroupAddon,
+  InputGroupButton,
+} from "@tixtrend/ui/components/input-group";
+import { Search, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 const EventSearchBar = ({
@@ -42,30 +47,32 @@ const EventSearchBar = ({
 
   return (
     <div className="flex items-center justify-center pb-4">
-      <div className="flex w-full text-base font-medium max-w-screen-sm items-center rounded-full bg-white py-3">
-        <input
-          ref={searchInput}
-          className="w-full appearance-none border-none bg-transparent px-5 text-slate-800 focus:outline-none"
-          type="text"
-          placeholder="Search for an event"
-          aria-label="Search for an event"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              onSearch(searchTerm);
-            }
-          }}
-        />
-        {searchTerm.length > 0 && (
-          <button
-            className="flex-shrink-0 rounded-full bg-transparent px-5 text-sm text-slate-800 hover:text-slate-700"
-            type="button"
-            onClick={clearSearch}
-          >
-            <X />
-          </button>
-        )}
+      <div className="max-w-screen-sm flex flex-grow">
+        <InputGroup>
+          <InputGroupAddon align="inline-start">
+            <Search className="size-4" />
+          </InputGroupAddon>
+          <InputGroupInput
+            ref={searchInput}
+            type="text"
+            placeholder="Search for an event"
+            aria-label="Search for an event"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                onSearch(searchTerm);
+              }
+            }}
+          />
+          {searchTerm.length > 0 && (
+            <InputGroupAddon align="inline-end">
+              <InputGroupButton onClick={clearSearch} variant="ghost">
+                <X className="size-4" />
+              </InputGroupButton>
+            </InputGroupAddon>
+          )}
+        </InputGroup>
       </div>
     </div>
   );

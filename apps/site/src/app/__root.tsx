@@ -8,6 +8,7 @@ import {
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { Toaster } from "@tixtrend/ui/components/sonner";
 import { z } from "zod";
 
 const schema = z.object({
@@ -90,6 +91,7 @@ function RootLayout() {
           </div>
           <FooterBar />
         </div>
+        <Toaster />
         <Scripts />
       </body>
     </html>

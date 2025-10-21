@@ -3,4 +3,6 @@ packages:
   - packages/*
 
 onlyBuiltDependencies:
+  - '@tailwindcss/oxide'
   - aws-sdk
+  - esbuild

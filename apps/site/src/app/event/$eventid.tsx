@@ -77,7 +77,7 @@ function RouteComponent() {
 
   if (!eventData) {
     return (
-      <div className="w-full rounded-md p-5 shadow-xl">
+      <div className="w-full">
         <BlankEventInfoItem />
       </div>
     );
@@ -85,7 +85,7 @@ function RouteComponent() {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
-      <div className="w-full rounded-md p-5 shadow-xl">
+      <div className="w-full">
         <EventInfoItem eventData={eventData} showSaveButton={true} />
       </div>
       <div className="w-screen flex-grow">

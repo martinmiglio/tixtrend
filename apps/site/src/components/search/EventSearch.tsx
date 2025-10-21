@@ -60,17 +60,14 @@ const EventSearch = () => {
           }}
           hasMore={hasMore}
           loader={
-            <div className="my-2 rounded-md shadow-lg hover:shadow-xl sm:pb-4">
+            <div className="my-2">
               <BlankEventInfoItem />
             </div>
           }
-          endMessage={<p className="text-center">No more events</p>}
+          endMessage={<p className="text-center text-muted-foreground py-4">No more events</p>}
         >
           {eventsData.map((eventData) => (
-            <div
-              className="my-2 rounded-md shadow-lg hover:shadow-xl sm:pb-4"
-              key={eventData.id}
-            >
+            <div className="my-2" key={eventData.id}>
               <Link to={`/event/$eventid`} params={{ eventid: eventData.id }}>
                 <EventInfoItem eventData={eventData} />
               </Link>

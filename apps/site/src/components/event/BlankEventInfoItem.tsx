@@ -1,27 +1,24 @@
-const BlankEventInfoItem = () => {
-  const COLOR = "bg-gray-600";
+import { Card, CardHeader } from "@tixtrend/ui/components/card";
+import { Skeleton } from "@tixtrend/ui/components/skeleton";
 
+const BlankEventInfoItem = () => {
   return (
-    <div className="flex w-full flex-col items-center justify-center sm:flex-row">
-      <div className="flex-initial px-0 sm:px-5">
-        <div
-          className={`animate-pulse ${COLOR} h-[169px] w-[300px] rounded-lg shadow-lg`}
-        ></div>
-      </div>
-      <div className="flex-1">
-        <div className="flex flex-col items-center justify-center px-2 sm:px-0">
-          <div
-            className={`animate-pulse ${COLOR}  mb-2 mt-2 h-10 w-80 rounded-lg shadow-lg sm:mb-4 sm:mt-1 sm:w-96`}
-          ></div>
-          <div
-            className={`animate-pulse ${COLOR}  mb-2 h-9 w-56 rounded-lg shadow-lg`}
-          ></div>
-          <div
-            className={`animate-pulse ${COLOR}  h-6 w-80 rounded-lg shadow-lg`}
-          ></div>
+    <Card className="overflow-hidden">
+      <div className="flex w-full flex-col items-center justify-center sm:flex-row">
+        <div className="flex-initial px-0 sm:px-5">
+          <Skeleton className="h-[169px] w-[300px] rounded-lg" />
+        </div>
+        <div className="flex-1">
+          <CardHeader>
+            <Skeleton className="mb-2 mt-2 h-10 w-full max-w-96" />
+            <div className="space-y-2">
+              <Skeleton className="h-6 w-56" />
+              <Skeleton className="h-6 w-64" />
+            </div>
+          </CardHeader>
         </div>
       </div>
-    </div>
+    </Card>
   );
 };
 
