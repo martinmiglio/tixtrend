@@ -10,13 +10,13 @@
   },
   "devDependencies": {
     "@types/aws-lambda": "8.10.156",
-    "sst": "3.17.19",
+    "sst": "3.17.12",
     "turbo": "^2.5.8",
     "typescript": "^5.9.3"
   },
-  "packageManager": "pnpm@10.18.3",
   "engines": {
-    "node": ">=20",
-    "pnpm": ">=10"
-  }
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.10.0"
 }
