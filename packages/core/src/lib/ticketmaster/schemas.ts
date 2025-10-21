@@ -8,13 +8,16 @@ import * as v from "valibot";
 
 /**
  * Event image data schema
+ *
+ * Note: Only `url` is required. Other fields are optional as Ticketmaster
+ * API responses may omit metadata fields like ratio, width, height, or fallback.
  */
 export const EventImageDataSchema = v.object({
   url: v.string(),
-  ratio: v.string(),
-  width: v.number(),
-  height: v.number(),
-  fallback: v.boolean(),
+  ratio: v.optional(v.string()),
+  width: v.optional(v.number()),
+  height: v.optional(v.number()),
+  fallback: v.optional(v.boolean()),
   attribution: v.optional(v.string()),
 });
 
