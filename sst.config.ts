@@ -62,7 +62,9 @@ export default $config({
           "https://sqs.us-east-1.amazonaws.com/501123347638/tixtrend-price-poll-queue.fifo"
         )
       : new sst.aws.Queue("PricePollQueue", {
-          fifo: true,
+          fifo: {
+            contentBasedDeduplication: true,
+          },
         });
 
     const baseDomain = isProduction
@@ -102,9 +104,6 @@ export default $config({
         environment: {
           TICKETMASTER_API_KEY,
         },
-        nodejs: {
-          install: ["@tixtrend/core"],
-        },
       },
     });
 
@@ -114,9 +113,6 @@ export default $config({
         link: [...Object.values(tables)],
         environment: {
           TICKETMASTER_API_KEY,
-        },
-        nodejs: {
-          install: ["@tixtrend/core"],
         },
       },
       {
