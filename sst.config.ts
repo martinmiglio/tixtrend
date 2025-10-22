@@ -122,4 +122,17 @@ export default $config({
       }
     );
   },
+  console: {
+    autodeploy: {
+      target(event) {
+        if (
+          event.type === "branch" &&
+          event.branch === "master" &&
+          event.action === "pushed"
+        ) {
+          return { stage: "production" };
+        }
+      },
+    },
+  },
 });
