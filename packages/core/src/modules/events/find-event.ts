@@ -1,4 +1,8 @@
-import { getEventByKeyword } from "../../lib/ticketmaster/events";
+import { getEventByID, getEventByKeyword } from "../../lib/ticketmaster/events";
+import {
+  isTicketmasterUrl,
+  translateUrlToDiscoveryId,
+} from "../../lib/ticketmaster/url-translator";
 
 /**
  * Search for events by keyword
@@ -21,4 +25,42 @@ export const findEventHandler = async (
   }
 
   return events;
+};
+
+/**
+ * Find event by Ticketmaster URL
+ *
+ * Translates a Ticketmaster event URL to a Discovery API ID,
+ * then fetches the full event details.
+ *
+ * @param url - Ticketmaster event URL
+ * @returns Event data if found and URL is valid
+ * @throws {Error} If URL is invalid or event not found
+ *
+ * @example
+ * const event = await findEventByUrlHandler(
+ *   "https://www.ticketmaster.com/bladee-martyr-tour-phoenix-arizona/event/19006291DE7F2F8F"
+ * );
+ */
+export const findEventByUrlHandler = async (url: string) => {
+  // Validate URL format
+  if (!isTicketmasterUrl(url)) {
+    throw new Error("Invalid Ticketmaster URL");
+  }
+
+  // Translate URL to Discovery API ID
+  const discoveryId = await translateUrlToDiscoveryId(url);
+
+  if (!discoveryId) {
+    throw new Error("Event not found for the provided URL");
+  }
+
+  // Fetch full event details
+  const event = await getEventByID(discoveryId);
+
+  if (!event) {
+    throw new Error("Event not found");
+  }
+
+  return event;
 };

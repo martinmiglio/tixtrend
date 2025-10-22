@@ -7,6 +7,7 @@
 import { createServerFn } from "@tanstack/react-start";
 import {
   findEventHandler,
+  findEventByUrlHandler,
   getEventHandler,
   getPricesHandler,
   watchEventHandler,
@@ -25,6 +26,13 @@ export const getEvent = createServerFn({ method: "GET" })
 export const findEvent = createServerFn({ method: "GET" })
   .inputValidator((data: { keyword: string; page: number }) => data)
   .handler(({ data }) => findEventHandler(data.keyword, data.page));
+
+/**
+ * Find event by Ticketmaster URL
+ */
+export const findEventByUrl = createServerFn({ method: "GET" })
+  .inputValidator((data: { url: string }) => data)
+  .handler(({ data }) => findEventByUrlHandler(data.url));
 
 /**
  * Get price history for an event

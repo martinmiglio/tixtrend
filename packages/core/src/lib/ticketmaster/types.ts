@@ -14,6 +14,7 @@ export type EventImageData = {
 export type TicketMasterEventResponse = {
   id: string;
   name: string;
+  url?: string;
   dates: {
     start: {
       dateTime: string;

@@ -43,6 +43,7 @@ export const VenueSchema = v.object({
 export const TicketMasterEventResponseSchema = v.object({
   id: v.string(),
   name: v.string(),
+  url: v.optional(v.string()),
   dates: v.object({
     start: v.object({
       dateTime: v.string(),
