@@ -3,13 +3,20 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier -u -l . && eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "prettier --write . && eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@tixtrend/core": "workspace:*",
     "sst": "3.17.19"
   },
   "devDependencies": {
+    "@tixtrend/eslint-config": "workspace:*",
+    "@tixtrend/prettier-config": "workspace:*",
+    "@tixtrend/typescript-config": "workspace:*",
     "@types/aws-lambda": "8.10.156",
     "@types/node": "^24.7.2",
     "typescript": "^5.9.3"

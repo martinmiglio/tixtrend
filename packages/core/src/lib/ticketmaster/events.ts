@@ -1,10 +1,10 @@
+import type { EventPriceData, PriceData } from "../../modules/prices/types";
 import TicketMasterClient from "./client";
 import {
   TicketMasterEventResponseSchema,
   TicketMasterSearchResponseSchema,
 } from "./schemas";
 import type { EventImageData } from "./types";
-import type { EventPriceData, PriceData } from "../../modules/prices/types";
 
 export type EventData = {
   id: string;

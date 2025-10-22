@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "sst dev",
     "lint": "turbo lint",
+    "lint:fix": "turbo lint:fix",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean && rm -rf .turbo node_modules",
     "sst": "sst"

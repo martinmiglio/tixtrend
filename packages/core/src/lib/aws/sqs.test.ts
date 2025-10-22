@@ -1,18 +1,20 @@
-import { mockClient } from "aws-sdk-client-mock";
+import { sendEventToQueue } from "./sqs";
 import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { mockClient } from "aws-sdk-client-mock";
 import {
   type CustomMatcher,
   toHaveReceivedCommandWith,
 } from "aws-sdk-client-mock-vitest";
-import { sendEventToQueue } from "./sqs";
+import { describe, it, expect, beforeEach, vi } from "vitest";
 
 // Register the matcher
 expect.extend({ toHaveReceivedCommandWith });
 
 // TypeScript declaration for type safety
 declare module "vitest" {
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface Assertion<T> extends CustomMatcher<T> {}
+  // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface AsymmetricMatchersContaining extends CustomMatcher {}
 }
 
@@ -72,7 +74,11 @@ describe("sendEventToQueue", () => {
     const calls = sqsMock.commandCalls(SendMessageCommand);
     expect(calls).toHaveLength(1);
 
-    const sentParams = calls[0].args[0].input;
+    const sentParams = calls[0]?.args[0].input;
+    if (!sentParams) {
+      throw new Error("No parameters sent to SQS");
+    }
+
     expect(sentParams.MessageDeduplicationId).toBe(event_id);
     expect(sentParams.MessageBody).toBe(event_id);
   });
@@ -86,7 +92,7 @@ describe("sendEventToQueue", () => {
 
     // Act & Assert
     await expect(sendEventToQueue(event_id)).rejects.toThrow(
-      "SQS service unavailable"
+      "SQS service unavailable",
     );
   });
 
@@ -123,8 +129,14 @@ describe("sendEventToQueue", () => {
     const calls = sqsMock.commandCalls(SendMessageCommand);
     expect(calls).toHaveLength(2);
 
-    expect(calls[0].args[0].input.MessageDeduplicationId).toBe(event_id);
-    expect(calls[1].args[0].input.MessageDeduplicationId).toBe(event_id);
+    const firstCall = calls[0]?.args[0].input;
+    const secondCall = calls[1]?.args[0].input;
+    if (!firstCall || !secondCall) {
+      throw new Error("Expected both calls to exist");
+    }
+
+    expect(firstCall.MessageDeduplicationId).toBe(event_id);
+    expect(secondCall.MessageDeduplicationId).toBe(event_id);
 
     // In production, SQS would reject the second message within the 5-minute window
     // but our mock doesn't enforce this behavior
@@ -154,7 +166,7 @@ describe("sendEventToQueue", () => {
     }
 
     expect(sqsMock.commandCalls(SendMessageCommand)).toHaveLength(
-      testEventIds.length
+      testEventIds.length,
     );
   });
 });

@@ -1,17 +1,15 @@
 {
+  "extends": "@tixtrend/typescript-config/react-app.json",
   "compilerOptions": {
-    "composite": true,
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.node.json"
-    }
+  "include": ["src", "sst-env.d.ts"],
+  "exclude": [
+    "**/*.test.tsx",
+    "**/*.test.ts",
+    "**/__tests__/**",
+    "../../packages/**"
   ]
 }

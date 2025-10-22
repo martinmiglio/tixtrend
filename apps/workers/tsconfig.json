@@ -1,9 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "composite": true,
-    "outDir": "./dist",
-    "rootDir": "./src"
-  },
+  "extends": "@tixtrend/typescript-config/node.json",
   "include": ["src/**/*", "sst-env.d.ts"]
 }

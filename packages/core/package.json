@@ -11,7 +11,10 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src/",
+    "lint": "prettier -u -l . && eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "prettier --write . && eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest"
   },
@@ -23,6 +26,9 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
+    "@tixtrend/eslint-config": "workspace:*",
+    "@tixtrend/prettier-config": "workspace:*",
+    "@tixtrend/typescript-config": "workspace:*",
     "@types/node": "^24.7.2",
     "aws-sdk-client-mock": "^4.1.0",
     "aws-sdk-client-mock-vitest": "^6.2.1",

@@ -1,9 +1,9 @@
-import { Button } from "@tixtrend/ui/components/button";
 import type { EventData } from "@tixtrend/core";
+import { Button } from "@tixtrend/ui/components/button";
+import { toast } from "@tixtrend/ui/lib/toast";
 import { Heart } from "lucide-react";
 import type React from "react";
 import { useEffect, useState } from "react";
-import { toast } from "@tixtrend/ui/lib/toast";
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
   const [saved, setSaved] = useState(false);

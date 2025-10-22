@@ -1,0 +1,15 @@
+{
+  "name": "@tixtrend/typescript-config",
+  "version": "1.0.0",
+  "private": true,
+  "exports": {
+    "./base.json": "./base.json",
+    "./node.json": "./node.json",
+    "./library.json": "./library.json",
+    "./react-library.json": "./react-library.json",
+    "./react-app.json": "./react-app.json"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
