@@ -1,5 +1,6 @@
 import type { EventPriceData, PriceData } from "../../modules/prices/types";
 import TicketMasterClient from "./client";
+import { DEFAULT_EVENT_TTL_DAYS, SECONDS_PER_DAY } from "./constants";
 import {
   TicketMasterEventResponseSchema,
   TicketMasterSearchResponseSchema,
@@ -27,12 +28,24 @@ export const getEventByID = async (
       TicketMasterEventResponseSchema,
     );
 
+    // Handle missing dateTime (TBA/TBD events)
+    let date: Date;
+    if (data.dates.start.dateTime) {
+      date = new Date(Date.parse(data.dates.start.dateTime));
+    } else if (data.dates.start.localDate) {
+      // Use localDate as fallback (date without time)
+      date = new Date(data.dates.start.localDate);
+    } else {
+      // Event has no valid date, skip it
+      return null;
+    }
+
     // parse into EventData type
     const event: EventData = {
       id: data.id,
       name: data.name,
       location: data._embedded?.venues?.[0]?.name ?? "TBA",
-      date: new Date(Date.parse(data.dates.start.dateTime)),
+      date,
       imageData: data.images,
     };
 
@@ -82,24 +95,38 @@ export const getEventByKeyword = async (
     (event, index, self) => index === self.findIndex((e) => e.id === event.id),
   );
 
+  // filter out events without valid dates and parse into EventData type
+  const eventsWithDates = uniqueEvents
+    .map((event) => {
+      // Handle missing dateTime (TBA/TBD events)
+      let date: Date | null = null;
+      if (event.dates.start.dateTime) {
+        date = new Date(Date.parse(event.dates.start.dateTime));
+      } else if (event.dates.start.localDate) {
+        // Use localDate as fallback (date without time)
+        date = new Date(event.dates.start.localDate);
+      }
+
+      if (!date) {
+        return null;
+      }
+
+      return {
+        id: event.id,
+        name: event.name,
+        location: event._embedded?.venues?.[0]?.name ?? "TBA",
+        date,
+        imageData: event.images,
+      };
+    })
+    .filter((event): event is EventData => event !== null);
+
   // order by date
-  uniqueEvents.sort((a, b) => {
-    return (
-      new Date(Date.parse(a.dates.start.dateTime)).getTime() -
-      new Date(Date.parse(b.dates.start.dateTime)).getTime()
-    );
+  eventsWithDates.sort((a, b) => {
+    return a.date.getTime() - b.date.getTime();
   });
 
-  // parse into EventData type
-  return uniqueEvents.map((event) => {
-    return {
-      id: event.id,
-      name: event.name,
-      location: event._embedded?.venues?.[0]?.name ?? "TBA",
-      date: new Date(Date.parse(event.dates.start.dateTime)),
-      imageData: event.images,
-    };
-  });
+  return eventsWithDates;
 };
 
 /**
@@ -179,10 +206,22 @@ export const fetchEventPriceData = async (
     return null;
   }
 
+  // Calculate TTL based on event date
+  let ttl: number;
+  if (data.dates.start.dateTime) {
+    const eventDateMs = Date.parse(data.dates.start.dateTime);
+    ttl = Math.floor(eventDateMs / 1000) + SECONDS_PER_DAY;
+  } else if (data.dates.start.localDate) {
+    const eventDateMs = Date.parse(data.dates.start.localDate);
+    ttl = Math.floor(eventDateMs / 1000) + SECONDS_PER_DAY;
+  } else {
+    // Event has no valid date, use default TTL (90 days from now)
+    ttl =
+      Math.floor(Date.now() / 1000) + DEFAULT_EVENT_TTL_DAYS * SECONDS_PER_DAY;
+  }
+
   const priceRange = priceRanges[0];
   const timestamp = Date.now();
-  const ttl =
-    Math.floor(Date.parse(data.dates.start.dateTime) / 1000) + 60 * 60 * 24;
 
   return {
     event_id,
