@@ -1,6 +1,8 @@
 // EventSearchBar.tsx
 /* This component is used to search for events by keywords.
 This will be used in the home page of the site to begin the flow. */
+import { useDebounce } from "@/hooks/useDebounce";
+import { useSearchNavigation } from "@/hooks/useSearchNavigation";
 import {
   InputGroup,
   InputGroupInput,
@@ -10,33 +12,27 @@ import {
 import { Search, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-const EventSearchBar = ({
-  onSearch,
-}: {
-  onSearch: (searchTerm: string) => void;
-}) => {
-  const DEBOUNCE_DURATION = 350; // milliseconds
+const EventSearchBar = () => {
+  const { keyword, setKeyword, reset } = useSearchNavigation();
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
+  const [searchTerm, setSearchTerm] = useState(keyword);
+  const debouncedSearchTerm = useDebounce(searchTerm, 350);
 
+  // Sync local state with URL param on mount
   useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedSearchTerm(searchTerm);
-    }, DEBOUNCE_DURATION);
+    setSearchTerm(keyword);
+  }, [keyword]);
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchTerm]);
-
+  // Update URL when debounced search term changes
   useEffect(() => {
-    onSearch(debouncedSearchTerm);
-  }, [debouncedSearchTerm, onSearch]);
+    if (debouncedSearchTerm !== keyword) {
+      setKeyword(debouncedSearchTerm);
+    }
+  }, [debouncedSearchTerm, keyword, setKeyword]);
 
   const clearSearch = () => {
     setSearchTerm("");
-    setDebouncedSearchTerm("");
+    reset();
   };
 
   const searchInput = useCallback((instance: HTMLInputElement | null) => {
@@ -61,7 +57,7 @@ const EventSearchBar = ({
             onChange={(e) => setSearchTerm(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
-                onSearch(searchTerm);
+                setKeyword(searchTerm);
               }
             }}
           />

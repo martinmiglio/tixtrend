@@ -1,7 +1,16 @@
 import EventSearch from "@/components/search/EventSearch";
 import { createFileRoute } from "@tanstack/react-router";
+import { z } from "zod";
+
+const searchParamsSchema = z.object({
+  keyword: z.string().optional().default(""),
+  page: z.number().int().positive().optional().default(1),
+});
+
+export type SearchParams = z.infer<typeof searchParamsSchema>;
 
 export const Route = createFileRoute("/")({
+  validateSearch: (search) => searchParamsSchema.parse(search),
   head: () => ({
     meta: [
       { title: "Tix Trend" },

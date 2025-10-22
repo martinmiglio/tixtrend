@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Database, ChartSpline } from "lucide-react";
 import { Badge } from "@tixtrend/ui/components/badge";
+import { Button } from "@tixtrend/ui/components/button";
 import {
   Card,
   CardHeader,
@@ -8,7 +8,7 @@ import {
   CardDescription,
   CardContent,
 } from "@tixtrend/ui/components/card";
-import { Button } from "@tixtrend/ui/components/button";
+import { Database, ChartSpline } from "lucide-react";
 
 export const Route = createFileRoute("/about/")({
   head: () => ({
@@ -49,7 +49,9 @@ function RouteComponent() {
             </CardHeader>
             <CardContent>
               <Button variant="link" className="px-0" asChild>
-                <Link to="/">Search for an event now &rarr;</Link>
+                <Link to="/" search={{ keyword: "", page: 1 }}>
+                  Search for an event now &rarr;
+                </Link>
               </Button>
             </CardContent>
           </Card>
