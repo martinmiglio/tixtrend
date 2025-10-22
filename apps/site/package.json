@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.5",
-    "@tanstack/react-router": "^1.133.3",
-    "@tanstack/react-start": "^1.133.3",
+    "@tanstack/react-router": "^1.133.22",
+    "@tanstack/react-start": "^1.133.22",
     "@tixtrend/core": "workspace:*",
     "@tixtrend/ui": "workspace:*",
     "apexcharts": ">=4.0.0",
