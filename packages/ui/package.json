@@ -10,7 +10,11 @@
     "./styles/*": "./src/styles/*"
   },
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "lint": "prettier -u -l . && eslint . --report-unused-disable-directives --max-warnings 0",
+    "lint:fix": "prettier --write . && eslint . --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
   },
   "dependencies": {
     "@radix-ui/react-separator": "^1.1.1",
@@ -27,6 +31,8 @@
     "tailwindcss": "^4.0.6"
   },
   "devDependencies": {
+    "@tixtrend/eslint-config": "workspace:*",
+    "@tixtrend/prettier-config": "workspace:*",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "tw-animate-css": "^1.3.6",
