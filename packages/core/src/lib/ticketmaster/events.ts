@@ -216,7 +216,8 @@ export const fetchEventPriceData = async (
     ttl = Math.floor(eventDateMs / 1000) + SECONDS_PER_DAY;
   } else {
     // Event has no valid date, use default TTL (90 days from now)
-    ttl = Math.floor(Date.now() / 1000) + DEFAULT_EVENT_TTL_DAYS * SECONDS_PER_DAY;
+    ttl =
+      Math.floor(Date.now() / 1000) + DEFAULT_EVENT_TTL_DAYS * SECONDS_PER_DAY;
   }
 
   const priceRange = priceRanges[0];
