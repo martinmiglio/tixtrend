@@ -1,4 +1,5 @@
 import SaveEventButton from "./SaveEventButton";
+import type { EventData } from "@tixtrend/core";
 import {
   Card,
   CardHeader,
@@ -6,7 +7,6 @@ import {
   CardDescription,
   CardAction,
 } from "@tixtrend/ui/components/card";
-import type { EventData } from "@tixtrend/core";
 
 const EventInfoItem = ({
   eventData,
@@ -25,7 +25,7 @@ const EventInfoItem = ({
 
   // select the largest image
   const imageURL = images.reduce((prev, current) => {
-    return prev.width > current.width ? prev : current;
+    return (prev.width ?? 0) > (current.width ?? 0) ? prev : current;
   }).url;
 
   const formattedDate = new Date(eventData.date).toLocaleDateString(undefined, {

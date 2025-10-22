@@ -13,6 +13,7 @@
     "typecheck": "tsc --build --force --verbose --noEmit"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.5",
     "@tanstack/react-router": "^1.133.3",
     "@tanstack/react-start": "^1.133.3",
     "@tixtrend/core": "workspace:*",
@@ -22,7 +23,6 @@
     "react": "^19.2.0",
     "react-apexcharts": "^1.5.0",
     "react-dom": "^19.2.0",
-    "react-infinite-scroll-component": "^6.1.0",
     "uuid": "^13.0.0",
     "valibot": "^1.1.0",
     "zod": "^4.1.12"

@@ -2,6 +2,7 @@ import FooterBar from "@/components/page/FooterBar";
 import HeaderBar from "@/components/page/HeaderBar";
 import { baseURL } from "@/consts";
 import appCss from "@/styles/globals.css?url";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   createRootRoute,
@@ -20,6 +21,15 @@ const env = schema.parse(import.meta.env);
 const metadataBase = baseURL;
 const iconURL = new URL("/favicon.ico", metadataBase);
 const ogURL = new URL("/og.png?v1", metadataBase);
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+      gcTime: 1000 * 60 * 5,
+    },
+  },
+});
 
 export const Route = createRootRoute({
   head: () => ({
@@ -84,14 +94,16 @@ function RootLayout() {
         )}
       </head>
       <body className="bg-background text-primary overflow-x-clip">
-        <div className="mx-auto flex h-[100dvh] min-h-screen w-full max-w-screen-xl flex-col p-4 md:py-8">
-          <HeaderBar />
-          <div className="flex-grow">
-            <Outlet />
+        <QueryClientProvider client={queryClient}>
+          <div className="mx-auto flex h-[100dvh] min-h-screen w-full max-w-screen-xl flex-col p-4 md:py-8">
+            <HeaderBar />
+            <div className="flex-grow">
+              <Outlet />
+            </div>
+            <FooterBar />
           </div>
-          <FooterBar />
-        </div>
-        <Toaster />
+          <Toaster />
+        </QueryClientProvider>
         <Scripts />
       </body>
     </html>

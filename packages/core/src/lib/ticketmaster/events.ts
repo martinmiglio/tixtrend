@@ -45,13 +45,12 @@ export const getEventByID = async (
 export const getEventByKeyword = async (
   keyword: string,
   page: number,
+  pageSize: number = 5,
 ): Promise<EventData[]> => {
-  const PAGE_SIZE = 5;
-
   const query = {
     keyword,
     page: page.toString(),
-    size: PAGE_SIZE.toString(),
+    size: pageSize.toString(),
     includeSpellcheck: "yes",
   };
 
