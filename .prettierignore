@@ -9,17 +9,18 @@ build/
 coverage/
 
 # Generated files
-src/routeTree.gen.ts
+routeTree.gen.ts
+sst-env.d.ts
+*.tsbuildinfo
 
 # Dependencies
 node_modules/
 
-# Config files that should maintain their format
+# Lock files and minified files
 package-lock.json
 pnpm-lock.yaml
 *.min.js
 *.min.css
-sst-env.d.ts
 
 # Logs
 *.log
@@ -27,3 +28,6 @@ sst-env.d.ts
 # IDE
 .vscode/
 .idea/
+
+# Turbo cache
+.turbo/

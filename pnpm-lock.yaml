@@ -8,6 +8,9 @@ importers:
 
   .:
     devDependencies:
+      '@tixtrend/prettier-config':
+        specifier: workspace:*
+        version: link:packages/prettier-config
       '@types/aws-lambda':
         specifier: 8.10.156
         version: 8.10.156
