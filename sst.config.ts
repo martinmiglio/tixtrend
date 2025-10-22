@@ -125,12 +125,14 @@ export default $config({
   console: {
     autodeploy: {
       target(event) {
-        if (
-          event.type === "branch" &&
-          event.branch === "master" &&
-          event.action === "pushed"
-        ) {
-          return { stage: "production" };
+        if (event.type === "branch" && event.action === "pushed") {
+          if (event.branch === "develop") {
+            return { stage: "develop" };
+          }
+
+          if (event.branch === "master") {
+            return { stage: "production" };
+          }
         }
       },
     },
