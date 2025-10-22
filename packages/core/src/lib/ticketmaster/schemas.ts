@@ -39,13 +39,22 @@ export const VenueSchema = v.object({
 
 /**
  * Ticketmaster event response schema
+ *
+ * Note: dateTime is optional as events may have TBA/TBD dates.
+ * Use localDate, dateTBA, timeTBA, and dateTBD flags to handle such cases.
  */
 export const TicketMasterEventResponseSchema = v.object({
   id: v.string(),
   name: v.string(),
   dates: v.object({
     start: v.object({
-      dateTime: v.string(),
+      dateTime: v.optional(v.string()),
+      localDate: v.optional(v.string()),
+      localTime: v.optional(v.string()),
+      dateTBD: v.optional(v.boolean()),
+      dateTBA: v.optional(v.boolean()),
+      timeTBA: v.optional(v.boolean()),
+      noSpecificTime: v.optional(v.boolean()),
     }),
   }),
   images: v.array(EventImageDataSchema),
