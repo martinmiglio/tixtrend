@@ -38,6 +38,7 @@ tixtrend/
 ```
 
 **Key packages:**
+
 - `@tixtrend/core` - Framework-agnostic business logic shared between site and workers
 - `@tixtrend/workers` - AWS Lambda handlers that directly import from core (no HTTP calls)
 - `@tixtrend/site` - TanStack Start web application
@@ -83,6 +84,7 @@ pnpm sst deploy --stage production
 ### Architecture
 
 TixTrend follows Domain-Driven Design (DDD) and Hexagonal Architecture principles:
+
 - **Domain Layer** (@tixtrend/core): Pure business logic
 - **Application Layer** (workers & site): Adapters that use the domain logic
 - **Infrastructure Layer**: AWS services (DynamoDB, SQS, Lambda, EventBridge)

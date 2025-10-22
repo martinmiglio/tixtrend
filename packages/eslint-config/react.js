@@ -1,7 +1,7 @@
+import baseConfig from "./base.js";
 import pluginReact from "eslint-plugin-react";
 import pluginReactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
-import baseConfig from "./base.js";
 
 /**
  * ESLint configuration for React packages, extending the base config.
@@ -33,10 +33,6 @@ export default [
     },
   },
   {
-    ignores: [
-      "**/.tanstack/**",
-      ".vinxi/**",
-      "src/routeTree.gen.ts",
-    ],
+    ignores: ["**/.tanstack/**", ".vinxi/**", "src/routeTree.gen.ts"],
   },
 ];
