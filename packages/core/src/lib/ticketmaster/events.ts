@@ -9,6 +9,7 @@ import type { EventImageData } from "./types";
 export type EventData = {
   id: string;
   name: string;
+  url?: string;
   location: string;
   date: Date;
   imageURL?: string;
@@ -31,6 +32,7 @@ export const getEventByID = async (
     const event: EventData = {
       id: data.id,
       name: data.name,
+      url: data.url,
       location: data._embedded?.venues?.[0]?.name ?? "TBA",
       date: new Date(Date.parse(data.dates.start.dateTime)),
       imageData: data.images,
@@ -95,6 +97,7 @@ export const getEventByKeyword = async (
     return {
       id: event.id,
       name: event.name,
+      url: event.url,
       location: event._embedded?.venues?.[0]?.name ?? "TBA",
       date: new Date(Date.parse(event.dates.start.dateTime)),
       imageData: event.images,

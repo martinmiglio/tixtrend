@@ -7,8 +7,21 @@
  */
 export { queueEventsForPolling } from "./modules/events/queue-events-for-polling";
 export { watchEventHandler } from "./modules/events/watch-event";
-export { findEventHandler } from "./modules/events/find-event";
+export {
+  findEventHandler,
+  findEventByUrlHandler,
+} from "./modules/events/find-event";
 export { getEventHandler } from "./modules/events/get-event";
+
+/**
+ * Ticketmaster URL utilities
+ */
+export {
+  isTicketmasterUrl,
+  parseTicketmasterUrl,
+  translateUrlToDiscoveryId,
+} from "./lib/ticketmaster/url-translator";
+export type { ParsedTicketmasterUrl } from "./lib/ticketmaster/url-translator";
 
 /**
  * Price polling handlers
