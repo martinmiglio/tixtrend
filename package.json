@@ -1,15 +1,17 @@
 {
   "name": "tixtrend",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "sst dev",
-    "lint": "turbo lint",
-    "lint:fix": "turbo lint:fix",
+    "lint": "prettier -u -l . && turbo lint",
+    "lint:fix": "prettier --write . && turbo lint:fix",
     "typecheck": "turbo typecheck",
     "clean": "turbo clean && rm -rf .turbo node_modules",
     "sst": "sst"
   },
   "devDependencies": {
+    "@tixtrend/prettier-config": "workspace:*",
     "@types/aws-lambda": "8.10.156",
     "sst": "3.17.12",
     "turbo": "^2.5.8",

@@ -29,11 +29,11 @@ export default $config({
       ? {
           eventPricesTable: sst.aws.Dynamo.get(
             "EventPricesTable",
-            "tixtrend-event-prices"
+            "tixtrend-event-prices",
           ),
           watchedEventsTable: sst.aws.Dynamo.get(
             "WatchedEventsTable",
-            "tixtrend-watched-events"
+            "tixtrend-watched-events",
           ),
         }
       : {
@@ -59,7 +59,7 @@ export default $config({
     const pricePollQueue: sst.aws.Queue = isProduction
       ? sst.aws.Queue.get(
           "PricePollQueue",
-          "https://sqs.us-east-1.amazonaws.com/501123347638/tixtrend-price-poll-queue.fifo"
+          "https://sqs.us-east-1.amazonaws.com/501123347638/tixtrend-price-poll-queue.fifo",
         )
       : new sst.aws.Queue("PricePollQueue", {
           fifo: {
@@ -119,7 +119,7 @@ export default $config({
         batch: {
           size: 10,
         },
-      }
+      },
     );
   },
   console: {
