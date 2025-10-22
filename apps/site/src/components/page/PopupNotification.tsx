@@ -1,5 +1,4 @@
 // PopupNotification.tsx
-
 /* a popup notificaiton which appears in the botttom middle of the screen */
 import type React from "react";
 import { useState, useEffect } from "react";

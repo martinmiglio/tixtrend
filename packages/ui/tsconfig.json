@@ -1,15 +1,6 @@
 {
+  "extends": "@tixtrend/typescript-config/react-library.json",
   "compilerOptions": {
-    "target": "ES2022",
-    "jsx": "react-jsx",
-    "module": "ESNext",
-    "lib": ["ES2022", "DOM", "DOM.Iterable"],
-    "moduleResolution": "bundler",
-    "allowImportingTsExtensions": true,
-    "verbatimModuleSyntax": false,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "strict": true,
     "paths": {
       "@tixtrend/ui/components/*": ["./src/components/*"],
       "@tixtrend/ui/lib/*": ["./src/lib/*"],

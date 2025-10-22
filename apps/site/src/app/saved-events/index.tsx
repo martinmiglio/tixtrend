@@ -1,8 +1,8 @@
 import EventInfoItem from "@/components/event/EventInfoItem";
 import { getEvent } from "@/server/event-functions";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { Badge } from "@tixtrend/ui/components/badge";
 import type { EventData } from "@tixtrend/core";
+import { Badge } from "@tixtrend/ui/components/badge";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/saved-events/")({

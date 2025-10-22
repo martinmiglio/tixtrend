@@ -28,6 +28,7 @@
   "devDependencies": {
     "@tixtrend/eslint-config": "workspace:*",
     "@tixtrend/prettier-config": "workspace:*",
+    "@tixtrend/typescript-config": "workspace:*",
     "@types/node": "^24.7.2",
     "aws-sdk-client-mock": "^4.1.0",
     "aws-sdk-client-mock-vitest": "^6.2.1",

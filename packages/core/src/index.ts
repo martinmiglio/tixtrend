@@ -5,16 +5,16 @@
 /**
  * Event management handlers
  */
-export { queueEventsForPolling } from './modules/events/queue-events-for-polling';
-export { watchEventHandler } from './modules/events/watch-event';
-export { findEventHandler } from './modules/events/find-event';
-export { getEventHandler } from './modules/events/get-event';
+export { queueEventsForPolling } from "./modules/events/queue-events-for-polling";
+export { watchEventHandler } from "./modules/events/watch-event";
+export { findEventHandler } from "./modules/events/find-event";
+export { getEventHandler } from "./modules/events/get-event";
 
 /**
  * Price polling handlers
  */
-export { pollEventHandler } from './modules/prices/poll-event';
-export { getPricesHandler } from './modules/prices/get-prices';
+export { pollEventHandler } from "./modules/prices/poll-event";
+export { getPricesHandler } from "./modules/prices/get-prices";
 
 // =============================================================================
 // PUBLIC API - Types
@@ -23,10 +23,7 @@ export { getPricesHandler } from './modules/prices/get-prices';
 /**
  * Price data types
  */
-export type {
-  PriceData,
-  EventPriceData
-} from './modules/prices/types';
+export type { PriceData, EventPriceData } from "./modules/prices/types";
 
 /**
  * Ticketmaster event types
@@ -35,15 +32,12 @@ export type {
   TicketMasterEventResponse,
   TicketMasterSearchResponse,
   EventImageData,
-} from './lib/ticketmaster/types';
+} from "./lib/ticketmaster/types";
 
 /**
  * Transformed event data type (returned by handlers)
  */
-export type {
-  EventData,
-} from './lib/ticketmaster/events';
-
+export type { EventData } from "./lib/ticketmaster/events";
 
 // =============================================================================
 // INTERNAL ONLY - Not exported

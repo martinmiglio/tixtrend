@@ -1,6 +1,6 @@
 import PriceChart from "../chart/PriceChart";
-import type { EventData } from "@tixtrend/core";
 import { Link } from "@tanstack/react-router";
+import type { EventData } from "@tixtrend/core";
 
 export const EventPriceChart = ({ eventData }: { eventData: EventData }) => {
   if (eventData.date < new Date()) {
@@ -10,7 +10,11 @@ export const EventPriceChart = ({ eventData }: { eventData: EventData }) => {
           Event has already passed.
         </div>
         <div className="my-10 text-center text-xl font-thin text-gray-400">
-          <Link className="underline hover:no-underline" to="/">
+          <Link
+            className="underline hover:no-underline"
+            to="/"
+            search={{ keyword: "", page: 1 }}
+          >
             Look for other events
           </Link>
         </div>

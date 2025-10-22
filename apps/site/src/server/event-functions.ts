@@ -4,7 +4,6 @@
  * These functions import from @tixtrend/core and are only included in the server bundle.
  * Client-side code should import from this file, not directly from @tixtrend/core.
  */
-
 import { createServerFn } from "@tanstack/react-start";
 import {
   findEventHandler,

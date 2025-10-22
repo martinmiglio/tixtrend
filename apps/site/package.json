@@ -10,7 +10,7 @@
     "lint:fix": "prettier --write . && eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "typecheck": "tsc --build --force --verbose --noEmit"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.5",
@@ -31,6 +31,7 @@
     "@tailwindcss/vite": "^4.1.14",
     "@tixtrend/eslint-config": "workspace:*",
     "@tixtrend/prettier-config": "workspace:*",
+    "@tixtrend/typescript-config": "workspace:*",
     "@types/node": "^24.7.2",
     "@types/react": "^19.2.2",
     "@types/react-dom": "18.3.1",

@@ -16,6 +16,7 @@
   "devDependencies": {
     "@tixtrend/eslint-config": "workspace:*",
     "@tixtrend/prettier-config": "workspace:*",
+    "@tixtrend/typescript-config": "workspace:*",
     "@types/aws-lambda": "8.10.156",
     "@types/node": "^24.7.2",
     "typescript": "^5.9.3"

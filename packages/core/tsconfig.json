@@ -1,10 +1,4 @@
 {
-  "extends": "../../tsconfig.json",
-  "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
-    "declaration": true,
-    "declarationMap": true
-  },
+  "extends": "@tixtrend/typescript-config/library.json",
   "include": ["src/**/*", "sst-env.d.ts"]
 }

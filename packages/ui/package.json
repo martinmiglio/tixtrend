@@ -33,6 +33,7 @@
   "devDependencies": {
     "@tixtrend/eslint-config": "workspace:*",
     "@tixtrend/prettier-config": "workspace:*",
+    "@tixtrend/typescript-config": "workspace:*",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "tw-animate-css": "^1.3.6",
