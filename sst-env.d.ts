@@ -5,6 +5,26 @@
 
 declare module "sst" {
   export interface Resource {
+    "ApiRouter": {
+      "type": "sst.aws.Router"
+      "url": string
+    }
+    "EventPricesTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
+    "PricePollQueue": {
+      "type": "sst.aws.Queue"
+      "url": string
+    }
+    "Site": {
+      "type": "sst.aws.TanstackStart"
+      "url": string
+    }
+    "WatchedEventsTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
   }
 }
 /// <reference path="sst-env.d.ts" />
