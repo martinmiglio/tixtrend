@@ -1,29 +1,35 @@
-import BlankEventInfoItem from "@/components/event/BlankEventInfoItem";
 import EventInfoItem from "@/components/event/EventInfoItem";
 import { EventPriceChart } from "@/components/event/PriceChart";
 import { getEvent, getPrices, watchEvent } from "@/server/event-functions";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/event/$eventid")({
   ssr: "data-only",
   loader: async ({ params }) => {
     const { eventid } = params;
 
-    // Call server functions - loader runs on server
-    watchEvent({ data: { event_id: eventid } });
-    const eventDataPromise = getEvent({ data: { event_id: eventid } });
-    const priceHistoryPromise = getPrices({ data: { event_id: eventid } });
+    try {
+      watchEvent({ data: { event_id: eventid } });
+      const eventDataPromise = getEvent({ data: { event_id: eventid } });
+      const priceHistoryPromise = getPrices({ data: { event_id: eventid } });
 
-    const [eventData, priceHistory] = await Promise.all([
-      eventDataPromise,
-      priceHistoryPromise,
-    ]);
+      const [eventData, priceHistory] = await Promise.all([
+        eventDataPromise,
+        priceHistoryPromise,
+      ]);
 
-    if (eventData && priceHistory) {
-      eventData.priceHistory = priceHistory;
+      if (eventData && priceHistory) {
+        eventData.priceHistory = priceHistory;
+      }
+
+      return { eventData };
+    } catch (error) {
+      if (error instanceof Error && error.message === "Event not found") {
+        throw notFound();
+      }
+
+      throw error;
     }
-
-    return { eventData };
   },
   head: ({ loaderData }) => {
     if (!loaderData?.eventData) {
@@ -70,14 +76,6 @@ export const Route = createFileRoute("/event/$eventid")({
 
 function RouteComponent() {
   const { eventData } = Route.useLoaderData();
-
-  if (!eventData) {
-    return (
-      <div className="w-full">
-        <BlankEventInfoItem />
-      </div>
-    );
-  }
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center">
