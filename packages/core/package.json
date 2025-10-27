@@ -19,7 +19,7 @@
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.914.0",
     "@aws-sdk/client-sqs": "^3.914.0",
-    "@aws-sdk/lib-dynamodb": "^3.911.0",
+    "@aws-sdk/lib-dynamodb": "^3.917.0",
     "valibot": "^1.0.0",
     "zod": "^4.1.12"
   },
