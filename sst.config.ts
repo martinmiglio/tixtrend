@@ -96,16 +96,19 @@ export default $config({
       },
     });
 
-    new sst.aws.Cron("PricePollerCron", {
-      schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
-      job: {
-        handler: "apps/workers/src/cron-trigger.handler",
-        link: [...Object.values(tables), pricePollQueue],
-        environment: {
-          TICKETMASTER_API_KEY,
+    // Only enable cron in develop and production stages
+    if (stage === "develop" || stage === "production") {
+      new sst.aws.Cron("PricePollerCron", {
+        schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
+        job: {
+          handler: "apps/workers/src/cron-trigger.handler",
+          link: [...Object.values(tables), pricePollQueue],
+          environment: {
+            TICKETMASTER_API_KEY,
+          },
         },
-      },
-    });
+      });
+    }
 
     pricePollQueue.subscribe(
       {
