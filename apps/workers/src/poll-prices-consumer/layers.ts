@@ -1,28 +1,35 @@
 import { Effect, Layer } from "effect";
 import { pollEventHandler } from "@tixtrend/core";
-import { saveFailure as saveFailureImpl } from "@tixtrend/core/modules/prices";
+import { NoPriceDataError, saveFailure as saveFailureImpl } from "@tixtrend/core/modules/prices";
 import { EventPoller, FailureTracker, Logger } from "./services";
 
 /**
  * Live implementation of EventPoller using the actual pollEventHandler
- * Wraps the promise-based API in Effect.promise
+ * Uses the object form of Effect.tryPromise with a catch mapper to preserve
+ * NoPriceDataError identity — the single-arg form wraps all errors in
+ * UnknownException, which would break the Schedule.whileInput filter in programs.ts.
  */
 export const EventPollerLive = Layer.succeed(
   EventPoller,
   EventPoller.of({
-    pollEvent: (eventId) => Effect.promise(() => pollEventHandler(eventId)),
+    pollEvent: (eventId) =>
+      Effect.tryPromise({
+        try: () => pollEventHandler(eventId),
+        catch: (e) => (e instanceof NoPriceDataError ? e : new Error(String(e))),
+      }),
   })
 );
 
 /**
  * Live implementation of FailureTracker using actual DynamoDB
- * Wraps the promise-based saveFailure in Effect.promise
+ * Wraps the promise-based saveFailure in Effect.tryPromise so DynamoDB
+ * errors surface as typed failures rather than defects
  */
 export const FailureTrackerLive = Layer.succeed(
   FailureTracker,
   FailureTracker.of({
     saveFailure: (eventId, error) =>
-      Effect.promise(() => saveFailureImpl(eventId, error)),
+      Effect.tryPromise(() => saveFailureImpl(eventId, error)),
   })
 );
 

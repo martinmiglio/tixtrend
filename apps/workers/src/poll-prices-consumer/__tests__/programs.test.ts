@@ -1,7 +1,11 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Layer, Ref } from "effect";
+import { Effect, Layer, Ref, Schedule } from "effect";
+import { NoPriceDataError } from "@tixtrend/core/modules/prices";
 import { processEventWithRetry, processBatch } from "../programs";
 import { EventPoller, FailureTracker, Logger } from "../services";
+
+// Zero-delay retry schedule for tests — same max retries as production but no waits
+const testRetryPolicy = Schedule.recurs(5);
 
 describe("poll-prices-consumer programs", () => {
   // Helper to create mock success result
@@ -50,7 +54,10 @@ describe("poll-prices-consumer programs", () => {
       Effect.gen(function* () {
         const result = yield* processEventWithRetry("event-1");
 
-        expect(result).toEqual(createMockSuccessResult("event-1"));
+        expect(result).toMatchObject({
+          message: "Polled event-1",
+          eventPrice: expect.objectContaining({ event_id: "event-1", currency: "USD", min: 50, max: 150 }),
+        });
       }).pipe(Effect.provide(createMockLayers()))
     );
 
@@ -90,7 +97,7 @@ describe("poll-prices-consumer programs", () => {
           )
         );
 
-        const result = yield* processEventWithRetry("event-1").pipe(
+        const result = yield* processEventWithRetry("event-1", testRetryPolicy).pipe(
           Effect.provide(layer)
         );
 
@@ -137,7 +144,7 @@ describe("poll-prices-consumer programs", () => {
           )
         );
 
-        const result = yield* processEventWithRetry("event-1").pipe(
+        const result = yield* processEventWithRetry("event-1", testRetryPolicy).pipe(
           Effect.provide(layer)
         );
 
@@ -147,6 +154,58 @@ describe("poll-prices-consumer programs", () => {
         expect(result).toBeNull();
         expect(wasCalled).toBe(true);
         expect(capturedEventId).toBe("event-1");
+      })
+    );
+
+    it.effect("should skip retries and record failure for NoPriceDataError", () =>
+      Effect.gen(function* () {
+        const callCount = yield* Ref.make(0);
+        const savedTag = yield* Ref.make("");
+
+        const noPricePoller = Layer.succeed(
+          EventPoller,
+          EventPoller.of({
+            pollEvent: (eventId) =>
+              Effect.gen(function* () {
+                yield* Ref.update(callCount, (n) => n + 1);
+                return yield* Effect.fail(new NoPriceDataError(eventId));
+              }),
+          })
+        );
+
+        const trackingFailureTracker = Layer.succeed(
+          FailureTracker,
+          FailureTracker.of({
+            saveFailure: (_eventId, error) =>
+              Effect.sync(() => {
+                Ref.set(savedTag, error._tag).pipe(Effect.runSync);
+              }),
+          })
+        );
+
+        const layer = Layer.mergeAll(
+          noPricePoller,
+          trackingFailureTracker,
+          Layer.succeed(
+            Logger,
+            Logger.of({
+              info: () => Effect.succeed(undefined),
+              warn: () => Effect.succeed(undefined),
+              error: () => Effect.succeed(undefined),
+            })
+          )
+        );
+
+        const result = yield* processEventWithRetry("event-1").pipe(
+          Effect.provide(layer)
+        );
+
+        const count = yield* Ref.get(callCount);
+        const tag = yield* Ref.get(savedTag);
+
+        expect(result).toBeNull();
+        expect(count).toBe(1); // No retries
+        expect(tag).toBe("NoPriceDataError");
       })
     );
 
@@ -184,7 +243,7 @@ describe("poll-prices-consumer programs", () => {
 
         const layer = Layer.mergeAll(failingPoller, failingSaveFailure, trackingLogger);
 
-        const result = yield* processEventWithRetry("event-1").pipe(
+        const result = yield* processEventWithRetry("event-1", testRetryPolicy).pipe(
           Effect.provide(layer)
         );
 
@@ -242,18 +301,17 @@ describe("poll-prices-consumer programs", () => {
           )
         );
 
-        const { successes, failures } = yield* processBatch([
-          "event-1",
-          "event-2",
-          "event-3",
-        ]).pipe(Effect.provide(layer));
+        const { successes, failures } = yield* processBatch(
+          ["event-1", "event-2", "event-3"],
+          testRetryPolicy
+        ).pipe(Effect.provide(layer));
 
         expect(successes).toHaveLength(1);
         expect(failures).toHaveLength(2);
       })
     );
 
-    it.effect("should respect max 5 concurrent operations", () =>
+    it.live("should respect max 5 concurrent operations", () =>
       Effect.gen(function* () {
         const concurrentCalls = yield* Ref.make(0);
         const maxConcurrent = yield* Ref.make(0);
