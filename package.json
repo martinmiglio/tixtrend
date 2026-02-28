@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "sst dev",
+    "dev:mono": "sst dev --mode mono --verbose",
     "lint": "prettier -u -l . && turbo lint",
     "lint:fix": "prettier --write . && turbo lint:fix",
     "typecheck": "turbo typecheck",

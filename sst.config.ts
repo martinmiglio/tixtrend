@@ -25,6 +25,12 @@ export default $config({
     const stage = $app.stage;
     const isProduction = stage === "production";
 
+    // Use SOFT validation in production to handle incomplete API responses gracefully
+    // Use STRICT in other environments to catch schema issues during development
+    const TICKETMASTER_VALIDATION_MODE =
+      process.env.TICKETMASTER_VALIDATION_MODE ||
+      (isProduction ? "SOFT" : "STRICT");
+
     const tables: Record<string, sst.aws.Dynamo> = isProduction
       ? {
           eventPricesTable: sst.aws.Dynamo.get(
@@ -34,6 +40,10 @@ export default $config({
           watchedEventsTable: sst.aws.Dynamo.get(
             "WatchedEventsTable",
             "tixtrend-watched-events",
+          ),
+          eventPollFailuresTable: sst.aws.Dynamo.get(
+            "EventPollFailuresTable",
+            "tixtrend-event-poll-failures",
           ),
         }
       : {
@@ -54,18 +64,16 @@ export default $config({
             primaryIndex: { hashKey: "event_id" },
             ttl: "ttl",
           }),
+          eventPollFailuresTable: new sst.aws.Dynamo(`EventPollFailuresTable`, {
+            deletionProtection: false,
+            fields: {
+              event_id: "string",
+              timestamp: "number",
+            },
+            primaryIndex: { hashKey: "event_id", rangeKey: "timestamp" },
+            ttl: "ttl",
+          }),
         };
-
-    const pricePollQueue: sst.aws.Queue = isProduction
-      ? sst.aws.Queue.get(
-          "PricePollQueue",
-          "https://sqs.us-east-1.amazonaws.com/501123347638/tixtrend-price-poll-queue.fifo",
-        )
-      : new sst.aws.Queue("PricePollQueue", {
-          fifo: {
-            contentBasedDeduplication: true,
-          },
-        });
 
     const baseDomain = isProduction
       ? "tixtrend.martinmiglio.dev"
@@ -89,11 +97,23 @@ export default $config({
         instance: router,
         domain: baseDomain,
       },
-      link: [...Object.values(tables), pricePollQueue],
+      link: [...Object.values(tables)],
 
       environment: {
         TICKETMASTER_API_KEY,
+        TICKETMASTER_VALIDATION_MODE,
       },
+    });
+
+    // Create standalone consumer Lambda for direct invocation
+    const priceConsumer = new sst.aws.Function("PriceConsumer", {
+      handler: "apps/workers/src/poll-prices-consumer.handler",
+      link: [...Object.values(tables)],
+      environment: {
+        TICKETMASTER_API_KEY,
+        TICKETMASTER_VALIDATION_MODE,
+      },
+      timeout: "15 minutes",
     });
 
     // Only enable cron in develop and production stages
@@ -102,28 +122,15 @@ export default $config({
         schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
         job: {
           handler: "apps/workers/src/cron-trigger.handler",
-          link: [...Object.values(tables), pricePollQueue],
+          link: [...Object.values(tables), priceConsumer],
           environment: {
             TICKETMASTER_API_KEY,
+            TICKETMASTER_VALIDATION_MODE,
           },
+          timeout: "5 minutes",
         },
       });
     }
-
-    pricePollQueue.subscribe(
-      {
-        handler: "apps/workers/src/poll-prices-consumer.handler",
-        link: [...Object.values(tables)],
-        environment: {
-          TICKETMASTER_API_KEY,
-        },
-      },
-      {
-        batch: {
-          size: 10,
-        },
-      },
-    );
   },
   console: {
     autodeploy: {

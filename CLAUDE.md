@@ -1,0 +1,1 @@
+- use `pnpm dev:mono` for running the dev server. logs will be in the console with verbose logs in `./.sst/`

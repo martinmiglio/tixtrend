@@ -5,18 +5,24 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --report-unused-disable-directives --max-warnings 0",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "@aws-sdk/client-lambda": "^3.914.0",
+    "@effect/platform": "^0.92.1",
     "@tixtrend/core": "workspace:*",
-    "sst": "3.17.19"
+    "effect": "^3.18.4"
   },
   "devDependencies": {
+    "@effect/vitest": "^0.26.0",
     "@tixtrend/eslint-config": "workspace:*",
     "@tixtrend/prettier-config": "workspace:*",
     "@tixtrend/typescript-config": "workspace:*",
     "@types/aws-lambda": "8.10.156",
     "@types/node": "^24.7.2",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
   }
 }
