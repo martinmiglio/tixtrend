@@ -1,28 +1,17 @@
 // PriceTable.tsx
 // This component is used to display a price table for a given event.
 import type { PriceData } from "@tixtrend/core";
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 
 const PriceTable = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
-  const [eventDataMaxPrice, setEventDataMaxPrice] = useState<number[]>([]);
-  const [eventDataMinPrice, setEventDataMinPrice] = useState<number[]>([]);
-  const [eventDataDate, setEventDataDate] = useState<Date[]>([]);
-
-  useEffect(() => {
+  const { minPrices, maxPrices, dates } = useMemo(() => {
     if (!priceDataSet || priceDataSet.length === 0) {
-      return;
+      return { minPrices: [], maxPrices: [], dates: [] };
     }
-    const minPrices = priceDataSet.map((price) => price.min);
-    const maxPrices = priceDataSet.map((price) => price.max);
-    const dates = priceDataSet.map((price) => new Date(price.timestamp));
-    setEventDataMinPrice(minPrices);
-    setEventDataMaxPrice(maxPrices);
-    setEventDataDate(dates);
-
-    return () => {
-      setEventDataMinPrice([]);
-      setEventDataMaxPrice([]);
-      setEventDataDate([]);
+    return {
+      minPrices: priceDataSet.map((price) => price.min),
+      maxPrices: priceDataSet.map((price) => price.max),
+      dates: priceDataSet.map((price) => new Date(price.timestamp)),
     };
   }, [priceDataSet]);
 
@@ -37,12 +26,12 @@ const PriceTable = ({ priceDataSet }: { priceDataSet: PriceData[] }) => {
           </tr>
         </thead>
         <tbody>
-          {eventDataDate.map((date, index) => {
+          {dates.map((date, index) => {
             return (
               <tr key={date.valueOf()}>
                 <td className="border px-4 py-2">{date.toDateString()}</td>
-                <td className="border px-4 py-2">{eventDataMinPrice[index]}</td>
-                <td className="border px-4 py-2">{eventDataMaxPrice[index]}</td>
+                <td className="border px-4 py-2">{minPrices[index]}</td>
+                <td className="border px-4 py-2">{maxPrices[index]}</td>
               </tr>
             );
           })}

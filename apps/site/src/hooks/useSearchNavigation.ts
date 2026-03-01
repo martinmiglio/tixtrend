@@ -1,4 +1,4 @@
-import { Route } from "@/app/index";
+import { Route, type SearchParams } from "@/app/index";
 import { useNavigate } from "@tanstack/react-router";
 import { useCallback } from "react";
 
@@ -13,7 +13,7 @@ export function useSearchNavigation() {
   const setPage = useCallback(
     (page: number) => {
       navigate({
-        search: (prev) => ({
+        search: (prev: SearchParams) => ({
           ...prev,
           page,
         }),
