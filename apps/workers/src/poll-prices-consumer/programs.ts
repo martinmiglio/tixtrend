@@ -1,6 +1,6 @@
-import { Effect, Schedule } from "effect";
-import { NoPriceDataError } from "@tixtrend/core/modules/prices";
 import { EventPoller, FailureTracker, Logger } from "./services";
+import { NoPriceDataError } from "@tixtrend/core/modules/prices";
+import { Effect, Schedule } from "effect";
 
 /**
  * Exponential backoff schedule for retries
@@ -10,12 +10,12 @@ import { EventPoller, FailureTracker, Logger } from "./services";
 export const retrySchedule = Schedule.exponential("1 second").pipe(
   Schedule.jittered,
   Schedule.upTo("2 minutes"),
-  Schedule.intersect(Schedule.recurs(5))
+  Schedule.intersect(Schedule.recurs(5)),
 );
 
 // Production retry policy: exponential backoff, skip retries for permanent no-data errors
 const defaultRetryPolicy = retrySchedule.pipe(
-  Schedule.whileInput((error: Error) => !(error instanceof NoPriceDataError))
+  Schedule.whileInput((error: Error) => !(error instanceof NoPriceDataError)),
 );
 
 /**
@@ -30,8 +30,10 @@ const defaultRetryPolicy = retrySchedule.pipe(
  *
  * @param retryPolicy - Override the retry schedule (useful for testing with Schedule.recurs(n))
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const processEventWithRetry = (eventId: string, retryPolicy: Schedule.Schedule<any, Error, never> = defaultRetryPolicy) =>
+export const processEventWithRetry = (
+  eventId: string,
+  retryPolicy: Schedule.Schedule<any, Error, never> = defaultRetryPolicy,
+) =>
   Effect.gen(function* () {
     const poller = yield* EventPoller;
     const tracker = yield* FailureTracker;
@@ -43,16 +45,20 @@ export const processEventWithRetry = (eventId: string, retryPolicy: Schedule.Sch
       Effect.catchAll((error) =>
         Effect.gen(function* () {
           // Log the error
-          yield* logger.error(`Event ${eventId} failed after all retries:`, error);
+          yield* logger.error(
+            `Event ${eventId} failed after all retries:`,
+            error,
+          );
 
           // Save failure synchronously using Effect
           yield* tracker
             .saveFailure(eventId, {
-              _tag: error instanceof NoPriceDataError
-                ? "NoPriceDataError"
-                : (error as any)?._tag === "TimeoutException"
-                  ? "TimeoutError"
-                  : "ProcessingError",
+              _tag:
+                error instanceof NoPriceDataError
+                  ? "NoPriceDataError"
+                  : (error as any)?._tag === "TimeoutException"
+                    ? "TimeoutError"
+                    : "ProcessingError",
               eventId,
               cause: error,
             })
@@ -61,18 +67,18 @@ export const processEventWithRetry = (eventId: string, retryPolicy: Schedule.Sch
                 Effect.gen(function* () {
                   yield* logger.error(
                     `Failed to save failure for ${eventId}:`,
-                    saveError
+                    saveError,
                   );
                   // Don't fail the whole process if failure tracking fails
                   return;
-                })
-              )
+                }),
+              ),
             );
 
           // Return null to indicate failure
           return null;
-        })
-      )
+        }),
+      ),
     );
 
     return result;
@@ -89,13 +95,15 @@ export const processEventWithRetry = (eventId: string, retryPolicy: Schedule.Sch
  *
  * @param retryPolicy - Override the retry schedule (useful for testing with Schedule.recurs(n))
  */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export const processBatch = (eventIds: string[], retryPolicy?: Schedule.Schedule<any, Error, never>) =>
+export const processBatch = (
+  eventIds: string[],
+  retryPolicy?: Schedule.Schedule<any, Error, never>,
+) =>
   Effect.gen(function* () {
     const logger = yield* Logger;
 
     yield* logger.info(
-      `Processing batch of ${eventIds.length} events with max 5 concurrent`
+      `Processing batch of ${eventIds.length} events with max 5 concurrent`,
     );
 
     // Process events with controlled concurrency
@@ -104,30 +112,30 @@ export const processBatch = (eventIds: string[], retryPolicy?: Schedule.Schedule
       (eventId, index) =>
         Effect.gen(function* () {
           yield* logger.info(
-            `Processing event ${index + 1}/${eventIds.length}: ${eventId}`
+            `Processing event ${index + 1}/${eventIds.length}: ${eventId}`,
           );
           return yield* processEventWithRetry(eventId, retryPolicy);
         }),
-      { concurrency: 5 } // Max 5 concurrent API calls
+      { concurrency: 5 }, // Max 5 concurrent API calls
     );
 
     const successes = results.filter((r) => r !== null);
     const failures = results.filter((r) => r === null);
 
     yield* logger.info(
-      `Batch complete: ${successes.length} succeeded, ${failures.length} failed`
+      `Batch complete: ${successes.length} succeeded, ${failures.length} failed`,
     );
 
     if (successes.length > 0) {
       yield* logger.info(
         "Successfully processed:",
-        successes.map((r) => r?.eventPrice?.event_id)
+        successes.map((r) => r?.eventPrice?.event_id),
       );
     }
 
     if (failures.length > 0) {
       yield* logger.warn(
-        `${failures.length} events failed and were recorded in failure tracking`
+        `${failures.length} events failed and were recorded in failure tracking`,
       );
     }
 

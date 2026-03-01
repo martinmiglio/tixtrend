@@ -1,8 +1,8 @@
-import { describe, expect, it } from "@effect/vitest";
-import { Effect, Fiber, Layer, Ref, Schedule, TestClock } from "effect";
-import { NoPriceDataError } from "@tixtrend/core/modules/prices";
 import { processEventWithRetry, processBatch } from "../programs";
 import { EventPoller, FailureTracker, Logger } from "../services";
+import { describe, expect, it } from "@effect/vitest";
+import { NoPriceDataError } from "@tixtrend/core/modules/prices";
+import { Effect, Layer, Ref, Schedule } from "effect";
 
 // Zero-delay retry schedule for tests — same max retries as production but no waits
 const testRetryPolicy = Schedule.recurs(5);
@@ -26,15 +26,16 @@ describe("poll-prices-consumer programs", () => {
     const mockEventPoller = Layer.succeed(
       EventPoller,
       EventPoller.of({
-        pollEvent: (eventId) => Effect.succeed(createMockSuccessResult(eventId)),
-      })
+        pollEvent: (eventId) =>
+          Effect.succeed(createMockSuccessResult(eventId)),
+      }),
     );
 
     const mockFailureTracker = Layer.succeed(
       FailureTracker,
       FailureTracker.of({
         saveFailure: () => Effect.succeed(undefined),
-      })
+      }),
     );
 
     const mockLogger = Layer.succeed(
@@ -43,7 +44,7 @@ describe("poll-prices-consumer programs", () => {
         info: () => Effect.succeed(undefined),
         warn: () => Effect.succeed(undefined),
         error: () => Effect.succeed(undefined),
-      })
+      }),
     );
 
     return Layer.mergeAll(mockEventPoller, mockFailureTracker, mockLogger);
@@ -56,9 +57,14 @@ describe("poll-prices-consumer programs", () => {
 
         expect(result).toMatchObject({
           message: "Polled event-1",
-          eventPrice: expect.objectContaining({ event_id: "event-1", currency: "USD", min: 50, max: 150 }),
+          eventPrice: expect.objectContaining({
+            event_id: "event-1",
+            currency: "USD",
+            min: 50,
+            max: 150,
+          }),
         });
-      }).pipe(Effect.provide(createMockLayers()))
+      }).pipe(Effect.provide(createMockLayers())),
     );
 
     it.effect("should retry on failure and eventually succeed", () =>
@@ -76,7 +82,7 @@ describe("poll-prices-consumer programs", () => {
                 }
                 return createMockSuccessResult(eventId);
               }),
-          })
+          }),
         );
 
         const layer = Layer.mergeAll(
@@ -85,7 +91,7 @@ describe("poll-prices-consumer programs", () => {
             FailureTracker,
             FailureTracker.of({
               saveFailure: () => Effect.succeed(undefined),
-            })
+            }),
           ),
           Layer.succeed(
             Logger,
@@ -93,18 +99,19 @@ describe("poll-prices-consumer programs", () => {
               info: () => Effect.succeed(undefined),
               warn: () => Effect.succeed(undefined),
               error: () => Effect.succeed(undefined),
-            })
-          )
+            }),
+          ),
         );
 
-        const result = yield* processEventWithRetry("event-1", testRetryPolicy).pipe(
-          Effect.provide(layer)
-        );
+        const result = yield* processEventWithRetry(
+          "event-1",
+          testRetryPolicy,
+        ).pipe(Effect.provide(layer));
 
         const finalCount = yield* Ref.get(callCount);
         expect(finalCount).toBe(3);
         expect(result).not.toBeNull();
-      })
+      }),
     );
 
     it.effect("should save failure after max retries", () =>
@@ -116,7 +123,7 @@ describe("poll-prices-consumer programs", () => {
           EventPoller,
           EventPoller.of({
             pollEvent: () => Effect.fail(new Error("Persistent error")),
-          })
+          }),
         );
 
         const trackingFailureTracker = Layer.succeed(
@@ -128,7 +135,7 @@ describe("poll-prices-consumer programs", () => {
                 yield* Ref.set(saveFailureEventId, eventId);
                 expect(error._tag).toBe("ProcessingError");
               }),
-          })
+          }),
         );
 
         const layer = Layer.mergeAll(
@@ -140,13 +147,14 @@ describe("poll-prices-consumer programs", () => {
               info: () => Effect.succeed(undefined),
               warn: () => Effect.succeed(undefined),
               error: () => Effect.succeed(undefined),
-            })
-          )
+            }),
+          ),
         );
 
-        const result = yield* processEventWithRetry("event-1", testRetryPolicy).pipe(
-          Effect.provide(layer)
-        );
+        const result = yield* processEventWithRetry(
+          "event-1",
+          testRetryPolicy,
+        ).pipe(Effect.provide(layer));
 
         const wasCalled = yield* Ref.get(saveFailureCalled);
         const capturedEventId = yield* Ref.get(saveFailureEventId);
@@ -154,24 +162,78 @@ describe("poll-prices-consumer programs", () => {
         expect(result).toBeNull();
         expect(wasCalled).toBe(true);
         expect(capturedEventId).toBe("event-1");
-      })
+      }),
     );
 
-    it.effect("should skip retries and record failure for NoPriceDataError", () =>
-      Effect.gen(function* () {
-        const callCount = yield* Ref.make(0);
-        const savedTag = yield* Ref.make("");
+    it.effect(
+      "should skip retries and record failure for NoPriceDataError",
+      () =>
+        Effect.gen(function* () {
+          const callCount = yield* Ref.make(0);
+          const savedTag = yield* Ref.make("");
 
-        const noPricePoller = Layer.succeed(
+          const noPricePoller = Layer.succeed(
+            EventPoller,
+            EventPoller.of({
+              pollEvent: (eventId) =>
+                Effect.gen(function* () {
+                  yield* Ref.update(callCount, (n) => n + 1);
+                  return yield* Effect.fail(new NoPriceDataError(eventId));
+                }),
+            }),
+          );
+
+          const trackingFailureTracker = Layer.succeed(
+            FailureTracker,
+            FailureTracker.of({
+              saveFailure: (_eventId, error) =>
+                Effect.sync(() => {
+                  Ref.set(savedTag, error._tag).pipe(Effect.runSync);
+                }),
+            }),
+          );
+
+          const layer = Layer.mergeAll(
+            noPricePoller,
+            trackingFailureTracker,
+            Layer.succeed(
+              Logger,
+              Logger.of({
+                info: () => Effect.succeed(undefined),
+                warn: () => Effect.succeed(undefined),
+                error: () => Effect.succeed(undefined),
+              }),
+            ),
+          );
+
+          const result = yield* processEventWithRetry("event-1").pipe(
+            Effect.provide(layer),
+          );
+
+          const count = yield* Ref.get(callCount);
+          const tag = yield* Ref.get(savedTag);
+
+          expect(result).toBeNull();
+          expect(count).toBe(1); // No retries
+          expect(tag).toBe("NoPriceDataError");
+        }),
+    );
+
+    it.effect("should track timeout as TimeoutError", () =>
+      Effect.gen(function* () {
+        // Simulate a TimeoutException — the same error shape Effect.timeout produces
+        const timeoutError = Object.assign(new Error("Timeout"), {
+          _tag: "TimeoutException",
+        });
+
+        const timeoutPoller = Layer.succeed(
           EventPoller,
           EventPoller.of({
-            pollEvent: (eventId) =>
-              Effect.gen(function* () {
-                yield* Ref.update(callCount, (n) => n + 1);
-                return yield* Effect.fail(new NoPriceDataError(eventId));
-              }),
-          })
+            pollEvent: () => Effect.fail(timeoutError),
+          }),
         );
+
+        const savedTag = yield* Ref.make("");
 
         const trackingFailureTracker = Layer.succeed(
           FailureTracker,
@@ -180,11 +242,11 @@ describe("poll-prices-consumer programs", () => {
               Effect.sync(() => {
                 Ref.set(savedTag, error._tag).pipe(Effect.runSync);
               }),
-          })
+          }),
         );
 
         const layer = Layer.mergeAll(
-          noPricePoller,
+          timeoutPoller,
           trackingFailureTracker,
           Layer.succeed(
             Logger,
@@ -192,65 +254,19 @@ describe("poll-prices-consumer programs", () => {
               info: () => Effect.succeed(undefined),
               warn: () => Effect.succeed(undefined),
               error: () => Effect.succeed(undefined),
-            })
-          )
+            }),
+          ),
         );
 
-        const result = yield* processEventWithRetry("event-1").pipe(
-          Effect.provide(layer)
-        );
-
-        const count = yield* Ref.get(callCount);
-        const tag = yield* Ref.get(savedTag);
-
-        expect(result).toBeNull();
-        expect(count).toBe(1); // No retries
-        expect(tag).toBe("NoPriceDataError");
-      })
-    );
-
-    it.effect("should track timeout as TimeoutError", () =>
-      Effect.gen(function* () {
-        // Simulate a TimeoutException — the same error shape Effect.timeout produces
-        const timeoutError = Object.assign(new Error("Timeout"), { _tag: "TimeoutException" });
-
-        const timeoutPoller = Layer.succeed(
-          EventPoller,
-          EventPoller.of({
-            pollEvent: () => Effect.fail(timeoutError),
-          })
-        );
-
-        const savedTag = yield* Ref.make("");
-
-        const trackingFailureTracker = Layer.succeed(
-          FailureTracker,
-          FailureTracker.of({
-            saveFailure: (_eventId, error) =>
-              Effect.sync(() => {
-                Ref.set(savedTag, error._tag).pipe(Effect.runSync);
-              }),
-          })
-        );
-
-        const layer = Layer.mergeAll(
-          timeoutPoller,
-          trackingFailureTracker,
-          Layer.succeed(Logger, Logger.of({
-            info: () => Effect.succeed(undefined),
-            warn: () => Effect.succeed(undefined),
-            error: () => Effect.succeed(undefined),
-          }))
-        );
-
-        const result = yield* processEventWithRetry("event-timeout", testRetryPolicy).pipe(
-          Effect.provide(layer)
-        );
+        const result = yield* processEventWithRetry(
+          "event-timeout",
+          testRetryPolicy,
+        ).pipe(Effect.provide(layer));
         const tag = yield* Ref.get(savedTag);
 
         expect(result).toBeNull();
         expect(tag).toBe("TimeoutError");
-      })
+      }),
     );
 
     it.effect("should handle saveFailure errors gracefully", () =>
@@ -261,14 +277,14 @@ describe("poll-prices-consumer programs", () => {
           EventPoller,
           EventPoller.of({
             pollEvent: () => Effect.fail(new Error("API error")),
-          })
+          }),
         );
 
         const failingSaveFailure = Layer.succeed(
           FailureTracker,
           FailureTracker.of({
             saveFailure: () => Effect.fail(new Error("DynamoDB error")),
-          })
+          }),
         );
 
         const trackingLogger = Layer.succeed(
@@ -282,19 +298,24 @@ describe("poll-prices-consumer programs", () => {
                   Ref.set(errorLogged, true).pipe(Effect.runSync);
                 }
               }),
-          })
+          }),
         );
 
-        const layer = Layer.mergeAll(failingPoller, failingSaveFailure, trackingLogger);
-
-        const result = yield* processEventWithRetry("event-1", testRetryPolicy).pipe(
-          Effect.provide(layer)
+        const layer = Layer.mergeAll(
+          failingPoller,
+          failingSaveFailure,
+          trackingLogger,
         );
+
+        const result = yield* processEventWithRetry(
+          "event-1",
+          testRetryPolicy,
+        ).pipe(Effect.provide(layer));
 
         const wasLogged = yield* Ref.get(errorLogged);
         expect(result).toBeNull();
         expect(wasLogged).toBe(true);
-      })
+      }),
     );
   });
 
@@ -303,13 +324,13 @@ describe("poll-prices-consumer programs", () => {
       Effect.gen(function* () {
         const eventIds = ["event-1", "event-2", "event-3"];
         const { successes, failures } = yield* processBatch(eventIds).pipe(
-          Effect.provide(createMockLayers())
+          Effect.provide(createMockLayers()),
         );
 
         expect(successes).toHaveLength(3);
         expect(failures).toHaveLength(0);
         expect(successes[0]?.eventPrice.event_id).toBe("event-1");
-      })
+      }),
     );
 
     it.effect("should handle mixed success and failure", () =>
@@ -324,7 +345,7 @@ describe("poll-prices-consumer programs", () => {
                 }
                 return yield* Effect.fail(new Error("API error"));
               }),
-          })
+          }),
         );
 
         const layer = Layer.mergeAll(
@@ -333,7 +354,7 @@ describe("poll-prices-consumer programs", () => {
             FailureTracker,
             FailureTracker.of({
               saveFailure: () => Effect.succeed(undefined),
-            })
+            }),
           ),
           Layer.succeed(
             Logger,
@@ -341,18 +362,18 @@ describe("poll-prices-consumer programs", () => {
               info: () => Effect.succeed(undefined),
               warn: () => Effect.succeed(undefined),
               error: () => Effect.succeed(undefined),
-            })
-          )
+            }),
+          ),
         );
 
         const { successes, failures } = yield* processBatch(
           ["event-1", "event-2", "event-3"],
-          testRetryPolicy
+          testRetryPolicy,
         ).pipe(Effect.provide(layer));
 
         expect(successes).toHaveLength(1);
         expect(failures).toHaveLength(2);
-      })
+      }),
     );
 
     it.live("should respect max 5 concurrent operations", () =>
@@ -367,7 +388,9 @@ describe("poll-prices-consumer programs", () => {
               Effect.gen(function* () {
                 yield* Ref.update(concurrentCalls, (n) => n + 1);
                 const current = yield* Ref.get(concurrentCalls);
-                yield* Ref.update(maxConcurrent, (max) => Math.max(max, current));
+                yield* Ref.update(maxConcurrent, (max) =>
+                  Math.max(max, current),
+                );
 
                 // Simulate async work
                 yield* Effect.sleep("10 millis");
@@ -375,7 +398,7 @@ describe("poll-prices-consumer programs", () => {
                 yield* Ref.update(concurrentCalls, (n) => n - 1);
                 return createMockSuccessResult(eventId);
               }),
-          })
+          }),
         );
 
         const layer = Layer.mergeAll(
@@ -384,7 +407,7 @@ describe("poll-prices-consumer programs", () => {
             FailureTracker,
             FailureTracker.of({
               saveFailure: () => Effect.succeed(undefined),
-            })
+            }),
           ),
           Layer.succeed(
             Logger,
@@ -392,31 +415,31 @@ describe("poll-prices-consumer programs", () => {
               info: () => Effect.succeed(undefined),
               warn: () => Effect.succeed(undefined),
               error: () => Effect.succeed(undefined),
-            })
-          )
+            }),
+          ),
         );
 
         const eventIds = Array.from({ length: 10 }, (_, i) => `event-${i}`);
         const { successes } = yield* processBatch(eventIds).pipe(
-          Effect.provide(layer)
+          Effect.provide(layer),
         );
 
         const max = yield* Ref.get(maxConcurrent);
         expect(successes).toHaveLength(10);
         expect(max).toBeLessThanOrEqual(5);
         expect(max).toBeGreaterThan(1);
-      })
+      }),
     );
 
     it.effect("should handle empty events list", () =>
       Effect.gen(function* () {
         const { successes, failures } = yield* processBatch([]).pipe(
-          Effect.provide(createMockLayers())
+          Effect.provide(createMockLayers()),
         );
 
         expect(successes).toHaveLength(0);
         expect(failures).toHaveLength(0);
-      })
+      }),
     );
 
     it.effect("should log batch progress correctly", () =>
@@ -428,44 +451,49 @@ describe("poll-prices-consumer programs", () => {
           Logger.of({
             info: (message) =>
               Effect.sync(() => {
-                Ref.update(loggedMessages, (msgs) => [...msgs, message as string]).pipe(
-                  Effect.runSync
-                );
+                Ref.update(loggedMessages, (msgs) => [
+                  ...msgs,
+                  message as string,
+                ]).pipe(Effect.runSync);
               }),
             warn: (message) =>
               Effect.sync(() => {
-                Ref.update(loggedMessages, (msgs) => [...msgs, message as string]).pipe(
-                  Effect.runSync
-                );
+                Ref.update(loggedMessages, (msgs) => [
+                  ...msgs,
+                  message as string,
+                ]).pipe(Effect.runSync);
               }),
             error: () => Effect.succeed(undefined),
-          })
+          }),
         );
 
         const layer = Layer.mergeAll(
           Layer.succeed(
             EventPoller,
             EventPoller.of({
-              pollEvent: (eventId) => Effect.succeed(createMockSuccessResult(eventId)),
-            })
+              pollEvent: (eventId) =>
+                Effect.succeed(createMockSuccessResult(eventId)),
+            }),
           ),
           Layer.succeed(
             FailureTracker,
             FailureTracker.of({
               saveFailure: () => Effect.succeed(undefined),
-            })
+            }),
           ),
-          trackingLogger
+          trackingLogger,
         );
 
         yield* processBatch(["event-1", "event-2"]).pipe(Effect.provide(layer));
 
         const messages = yield* Ref.get(loggedMessages);
-        expect(messages).toContain("Processing batch of 2 events with max 5 concurrent");
+        expect(messages).toContain(
+          "Processing batch of 2 events with max 5 concurrent",
+        );
         expect(messages).toContain("Processing event 1/2: event-1");
         expect(messages).toContain("Processing event 2/2: event-2");
         expect(messages).toContain("Batch complete: 2 succeeded, 0 failed");
-      })
+      }),
     );
   });
 });

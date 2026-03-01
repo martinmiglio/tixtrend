@@ -1,5 +1,5 @@
-import { Context, Effect } from "effect";
 import type { EventPriceData } from "@tixtrend/core/modules/prices";
+import { Context, Effect } from "effect";
 
 /**
  * Service for polling events from Ticketmaster API
@@ -24,7 +24,7 @@ export interface FailureTrackerService {
       _tag: string;
       eventId: string;
       cause: unknown;
-    }
+    },
   ) => Effect.Effect<void, Error>;
 }
 

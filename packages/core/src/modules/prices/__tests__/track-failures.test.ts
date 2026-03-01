@@ -1,3 +1,10 @@
+import {
+  saveFailure,
+  getRecentFailures,
+  shouldSkipEvent,
+  type PollError,
+} from "../track-failures.js";
+import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
 const { mockSend } = vi.hoisted(() => ({
@@ -13,9 +20,7 @@ vi.mock("@aws-sdk/lib-dynamodb", () => ({
     from: vi.fn(() => ({ send: mockSend })),
   },
   PutCommand: vi.fn((input: unknown) => ({ _input: input, _type: "Put" })),
-  QueryCommand: vi.fn(
-    (input: unknown) => ({ _input: input, _type: "Query" }),
-  ),
+  QueryCommand: vi.fn((input: unknown) => ({ _input: input, _type: "Query" })),
 }));
 
 vi.mock("sst", () => ({
@@ -23,14 +28,6 @@ vi.mock("sst", () => ({
     EventPollFailuresTable: { name: "test-table" },
   },
 }));
-
-import {
-  saveFailure,
-  getRecentFailures,
-  shouldSkipEvent,
-  type PollError,
-} from "../track-failures.js";
-import { PutCommand, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 beforeEach(() => {
   mockSend.mockReset();
@@ -54,18 +51,18 @@ describe("saveFailure", () => {
         }),
       }),
     );
-    const putArg = vi.mocked(PutCommand).mock.calls[0][0];
-    expect(typeof putArg.Item!.timestamp).toBe("number");
+    const putArg = vi.mocked(PutCommand).mock.calls[0]?.[0];
+    expect(typeof putArg!.Item!.timestamp).toBe("number");
   });
 
   it("sets TTL to approximately 30 days from now", async () => {
     const now = Date.now();
     await saveFailure("event-123", { _tag: "NetworkError" });
 
-    const putArg = vi.mocked(PutCommand).mock.calls[0][0];
+    const putArg = vi.mocked(PutCommand).mock.calls[0]?.[0];
     const expectedTtl = Math.floor(now / 1000) + 30 * 24 * 60 * 60;
-    expect(putArg.Item!.ttl).toBeGreaterThanOrEqual(expectedTtl - 5);
-    expect(putArg.Item!.ttl).toBeLessThanOrEqual(expectedTtl + 5);
+    expect(putArg!.Item!.ttl).toBeGreaterThanOrEqual(expectedTtl - 5);
+    expect(putArg!.Item!.ttl).toBeLessThanOrEqual(expectedTtl + 5);
   });
 
   it("uses cause.message when _tag is ProcessingError and cause is an Error", async () => {
@@ -76,8 +73,8 @@ describe("saveFailure", () => {
 
     await saveFailure("event-456", error);
 
-    const putArg = vi.mocked(PutCommand).mock.calls[0][0];
-    expect(putArg.Item!.error_message).toBe("something broke");
+    const putArg = vi.mocked(PutCommand).mock.calls[0]?.[0];
+    expect(putArg!.Item!.error_message).toBe("something broke");
   });
 
   it("falls back to JSON-stringified error when cause is not an Error", async () => {
@@ -88,9 +85,9 @@ describe("saveFailure", () => {
 
     await saveFailure("event-789", error);
 
-    const putArg = vi.mocked(PutCommand).mock.calls[0][0];
-    expect(putArg.Item!.error_message).toContain("ProcessingError");
-    expect(putArg.Item!.error_message).toContain(JSON.stringify(error));
+    const putArg = vi.mocked(PutCommand).mock.calls[0]?.[0];
+    expect(putArg!.Item!.error_message).toContain("ProcessingError");
+    expect(putArg!.Item!.error_message).toContain(JSON.stringify(error));
   });
 });
 
@@ -104,15 +101,14 @@ describe("getRecentFailures", () => {
     expect(QueryCommand).toHaveBeenCalledWith(
       expect.objectContaining({
         TableName: "test-table",
-        KeyConditionExpression:
-          "event_id = :event_id AND #timestamp > :cutoff",
+        KeyConditionExpression: "event_id = :event_id AND #timestamp > :cutoff",
         ExpressionAttributeValues: expect.objectContaining({
           ":event_id": "event-123",
         }),
       }),
     );
-    const queryArg = vi.mocked(QueryCommand).mock.calls[0][0];
-    const cutoff = queryArg.ExpressionAttributeValues![":cutoff"] as number;
+    const queryArg = vi.mocked(QueryCommand).mock.calls[0]?.[0];
+    const cutoff = queryArg!.ExpressionAttributeValues![":cutoff"] as number;
     const expectedCutoff = now - 7 * 24 * 60 * 60 * 1000;
     expect(cutoff).toBeGreaterThanOrEqual(expectedCutoff - 1000);
     expect(cutoff).toBeLessThanOrEqual(expectedCutoff + 1000);
@@ -148,9 +144,27 @@ describe("shouldSkipEvent", () => {
   it("returns true when there are 3 recent failures", async () => {
     mockSend.mockResolvedValueOnce({
       Items: [
-        { event_id: "e", timestamp: 1, error_message: "", error_type: "", ttl: 0 },
-        { event_id: "e", timestamp: 2, error_message: "", error_type: "", ttl: 0 },
-        { event_id: "e", timestamp: 3, error_message: "", error_type: "", ttl: 0 },
+        {
+          event_id: "e",
+          timestamp: 1,
+          error_message: "",
+          error_type: "",
+          ttl: 0,
+        },
+        {
+          event_id: "e",
+          timestamp: 2,
+          error_message: "",
+          error_type: "",
+          ttl: 0,
+        },
+        {
+          event_id: "e",
+          timestamp: 3,
+          error_message: "",
+          error_type: "",
+          ttl: 0,
+        },
       ],
     });
 
@@ -160,8 +174,20 @@ describe("shouldSkipEvent", () => {
   it("returns false when there are 2 recent failures", async () => {
     mockSend.mockResolvedValueOnce({
       Items: [
-        { event_id: "e", timestamp: 1, error_message: "", error_type: "", ttl: 0 },
-        { event_id: "e", timestamp: 2, error_message: "", error_type: "", ttl: 0 },
+        {
+          event_id: "e",
+          timestamp: 1,
+          error_message: "",
+          error_type: "",
+          ttl: 0,
+        },
+        {
+          event_id: "e",
+          timestamp: 2,
+          error_message: "",
+          error_type: "",
+          ttl: 0,
+        },
       ],
     });
 

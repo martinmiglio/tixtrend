@@ -1,5 +1,5 @@
-import { Resource } from "sst";
 import { TicketmasterValidationError } from "./errors";
+import { Resource } from "sst";
 import * as v from "valibot";
 
 /**

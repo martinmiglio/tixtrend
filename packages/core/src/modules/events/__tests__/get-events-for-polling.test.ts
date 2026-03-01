@@ -1,5 +1,19 @@
-import { describe, it, expect, vi, beforeEach, type Mock } from "vitest";
+import { scanWatchedEvents } from "../../../lib/aws/dynamo";
+import {
+  fetchEventIdsByPage,
+  fetchEventIdsByPageSorted,
+} from "../../../lib/ticketmaster/events";
+import { shouldSkipEvent } from "../../prices/track-failures";
 import { getEventsForPolling } from "../get-events-for-polling";
+import {
+  describe,
+  it,
+  expect,
+  vi,
+  beforeEach,
+  afterEach,
+  type Mock,
+} from "vitest";
 
 vi.mock("sst", () => ({
   Resource: {
@@ -21,13 +35,6 @@ vi.mock("../../prices/track-failures", () => ({
   shouldSkipEvent: vi.fn(),
 }));
 
-import { scanWatchedEvents } from "../../../lib/aws/dynamo";
-import {
-  fetchEventIdsByPage,
-  fetchEventIdsByPageSorted,
-} from "../../../lib/ticketmaster/events";
-import { shouldSkipEvent } from "../../prices/track-failures";
-
 const mockScanWatchedEvents = scanWatchedEvents as Mock;
 const mockFetchEventIdsByPage = fetchEventIdsByPage as Mock;
 const mockFetchEventIdsByPageSorted = fetchEventIdsByPageSorted as Mock;
@@ -36,7 +43,7 @@ const mockShouldSkipEvent = shouldSkipEvent as Mock;
 beforeEach(() => {
   vi.clearAllMocks();
   // Replace setTimeout with an instant version to avoid delays in collectPopularEvents/collectSaleSoonEvents
-  vi.spyOn(globalThis, "setTimeout").mockImplementation((fn: Function) => {
+  vi.spyOn(globalThis, "setTimeout").mockImplementation((fn: () => void) => {
     fn();
     return 0 as unknown as NodeJS.Timeout;
   });
@@ -91,9 +98,13 @@ describe("getEventsForPolling", () => {
       { event_id: "w3" },
     ]);
     // Return popular events on first page, empty on subsequent
-    mockFetchEventIdsByPage.mockResolvedValueOnce(["p1", "p2"]).mockResolvedValue([]);
+    mockFetchEventIdsByPage
+      .mockResolvedValueOnce(["p1", "p2"])
+      .mockResolvedValue([]);
     // shouldSkipEvent returns true for w2 and p2
-    mockShouldSkipEvent.mockImplementation(async (id: string) => id === "w2" || id === "p2");
+    mockShouldSkipEvent.mockImplementation(
+      async (id: string) => id === "w2" || id === "p2",
+    );
 
     const result = await getEventsForPolling();
 
@@ -122,9 +133,7 @@ describe("getEventsForPolling", () => {
   });
 
   it("fills remaining capacity with popular events", async () => {
-    mockScanWatchedEvents.mockResolvedValue([
-      { event_id: "w1" },
-    ]);
+    mockScanWatchedEvents.mockResolvedValue([{ event_id: "w1" }]);
     mockFetchEventIdsByPage.mockResolvedValue(["p1", "p2"]);
 
     const result = await getEventsForPolling();
@@ -144,9 +153,24 @@ describe("getEventsForPolling", () => {
     mockScanWatchedEvents.mockResolvedValue(watchItems);
     // With 3990 watched events, remaining capacity is 10 for popular
     // Popular returns "shared1" on first page
-    mockFetchEventIdsByPage.mockResolvedValueOnce(["shared1", "p1", "p2", "p3", "p4", "p5", "p6", "p7", "p8", "p9"]).mockResolvedValue([]);
+    mockFetchEventIdsByPage
+      .mockResolvedValueOnce([
+        "shared1",
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8",
+        "p9",
+      ])
+      .mockResolvedValue([]);
     // saleSoon has 0 remaining capacity, so it won't be called meaningfully
-    mockFetchEventIdsByPageSorted.mockResolvedValueOnce(["shared1", "s1"]).mockResolvedValue([]);
+    mockFetchEventIdsByPageSorted
+      .mockResolvedValueOnce(["shared1", "s1"])
+      .mockResolvedValue([]);
 
     const result = await getEventsForPolling();
 
@@ -156,7 +180,10 @@ describe("getEventsForPolling", () => {
     expect(result.stats.saleSoon).toBe(0);
     // total is after dedup, so it equals watchList + popular + saleSoon - duplicatesRemoved
     expect(result.stats.total).toBe(
-      result.stats.watchList + result.stats.popular + result.stats.saleSoon - result.stats.duplicatesRemoved,
+      result.stats.watchList +
+        result.stats.popular +
+        result.stats.saleSoon -
+        result.stats.duplicatesRemoved,
     );
   });
 
@@ -179,8 +206,12 @@ describe("getEventsForPolling", () => {
       { event_id: "w2" },
     ]);
     // Return data only on first page, empty on subsequent
-    mockFetchEventIdsByPage.mockResolvedValueOnce(["p1", "p2", "p3"]).mockResolvedValue([]);
-    mockFetchEventIdsByPageSorted.mockResolvedValueOnce(["s1", "s2"]).mockResolvedValue([]);
+    mockFetchEventIdsByPage
+      .mockResolvedValueOnce(["p1", "p2", "p3"])
+      .mockResolvedValue([]);
+    mockFetchEventIdsByPageSorted
+      .mockResolvedValueOnce(["s1", "s2"])
+      .mockResolvedValue([]);
 
     // Skip one popular event
     mockShouldSkipEvent.mockImplementation(async (id: string) => id === "p2");
@@ -195,7 +226,10 @@ describe("getEventsForPolling", () => {
     expect(result.stats.skipped).toBeGreaterThanOrEqual(1);
     expect(result.stats.total).toBe(result.eventIds.length);
     expect(result.stats.total).toBe(
-      result.stats.watchList + result.stats.popular + result.stats.saleSoon - result.stats.duplicatesRemoved,
+      result.stats.watchList +
+        result.stats.popular +
+        result.stats.saleSoon -
+        result.stats.duplicatesRemoved,
     );
   });
 });

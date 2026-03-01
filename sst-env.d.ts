@@ -25,6 +25,10 @@ declare module "sst" {
       "type": "sst.aws.TanstackStart"
       "url": string
     }
+    "TicketmasterApiKey": {
+      "type": "sst.Secret"
+      "value": string
+    }
     "WatchedEventsTable": {
       "name": string
       "type": "sst.aws.Dynamo"

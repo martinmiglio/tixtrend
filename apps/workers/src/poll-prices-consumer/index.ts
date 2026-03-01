@@ -1,6 +1,6 @@
-import { Effect } from "effect";
-import { processBatch } from "./programs";
 import { AppLayer } from "./layers";
+import { processBatch } from "./programs";
+import { Effect } from "effect";
 
 type PriceConsumerPayload = {
   Records: Array<{ body: string; messageId: string }>;
@@ -17,9 +17,9 @@ type PriceConsumerPayload = {
  * All business logic is in programs.ts, making it testable
  */
 export const handler = async (event: PriceConsumerPayload) => {
-  const eventIds = event.Records
-    .map((r) => r.body?.trim())
-    .filter((id): id is string => !!id && id.length > 0);
+  const eventIds = event.Records.map((r) => r.body?.trim()).filter(
+    (id): id is string => !!id && id.length > 0,
+  );
 
   const program = processBatch(eventIds).pipe(Effect.provide(AppLayer));
 

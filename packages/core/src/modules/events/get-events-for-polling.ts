@@ -29,8 +29,12 @@ async function filterEventsWithBatchedQueries(
     filterResults.push(...batchResults);
   }
 
-  const eventsToInclude = filterResults.filter((r) => !r.skip).map((r) => r.event_id);
-  const eventsToSkip = filterResults.filter((r) => r.skip).map((r) => r.event_id);
+  const eventsToInclude = filterResults
+    .filter((r) => !r.skip)
+    .map((r) => r.event_id);
+  const eventsToSkip = filterResults
+    .filter((r) => r.skip)
+    .map((r) => r.event_id);
 
   return { eventsToInclude, eventsToSkip };
 }
@@ -72,7 +76,8 @@ export const getEventsForPolling =
     const watchListResults = await collectWatchList();
 
     const numberOfFillerEvents = MAX_EVENTS - watchListResults.eventIds.length;
-    const popularEventsResults = await collectPopularEvents(numberOfFillerEvents);
+    const popularEventsResults =
+      await collectPopularEvents(numberOfFillerEvents);
 
     const numberOfSaleSoonEvents =
       numberOfFillerEvents - popularEventsResults.eventIds.length;

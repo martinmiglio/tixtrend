@@ -1,7 +1,10 @@
-import { Effect, Layer } from "effect";
-import { pollEventHandler } from "@tixtrend/core";
-import { NoPriceDataError, saveFailure as saveFailureImpl } from "@tixtrend/core/modules/prices";
 import { EventPoller, FailureTracker, Logger } from "./services";
+import { pollEventHandler } from "@tixtrend/core";
+import {
+  NoPriceDataError,
+  saveFailure as saveFailureImpl,
+} from "@tixtrend/core/modules/prices";
+import { Effect, Layer } from "effect";
 
 /**
  * Live implementation of EventPoller using the actual pollEventHandler
@@ -15,9 +18,10 @@ export const EventPollerLive = Layer.succeed(
     pollEvent: (eventId) =>
       Effect.tryPromise({
         try: () => pollEventHandler(eventId),
-        catch: (e) => (e instanceof NoPriceDataError ? e : new Error(String(e))),
+        catch: (e) =>
+          e instanceof NoPriceDataError ? e : new Error(String(e)),
       }),
-  })
+  }),
 );
 
 /**
@@ -30,7 +34,7 @@ export const FailureTrackerLive = Layer.succeed(
   FailureTracker.of({
     saveFailure: (eventId, error) =>
       Effect.tryPromise(() => saveFailureImpl(eventId, error)),
-  })
+  }),
 );
 
 /**
@@ -46,7 +50,7 @@ export const LoggerLive = Layer.succeed(
       Effect.sync(() => console.warn(message, ...args)),
     error: (message, ...args) =>
       Effect.sync(() => console.error(message, ...args)),
-  })
+  }),
 );
 
 /**
@@ -56,5 +60,5 @@ export const LoggerLive = Layer.succeed(
 export const AppLayer = Layer.mergeAll(
   EventPollerLive,
   FailureTrackerLive,
-  LoggerLive
+  LoggerLive,
 );

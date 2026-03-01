@@ -1,6 +1,6 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Effect } from "effect";
 import { NoPriceDataError } from "@tixtrend/core/modules/prices";
+import { Effect } from "effect";
 
 /**
  * Tests for the live layer implementations in layers.ts.
@@ -31,10 +31,10 @@ describe("EventPollerLive catch mapper", () => {
         expect(result.left).toBe(noPriceError);
         expect(result.left).toBeInstanceOf(NoPriceDataError);
         expect(result.left.message).toBe(
-          "Event event-1 not found or has no price data."
+          "Event event-1 not found or has no price data.",
         );
       }
-    })
+    }),
   );
 
   it.effect("should wrap generic Error as new Error(String(e))", () =>
@@ -58,7 +58,7 @@ describe("EventPollerLive catch mapper", () => {
         expect(result.left).not.toBeInstanceOf(NoPriceDataError);
         expect(result.left.message).toBe("Error: something broke");
       }
-    })
+    }),
   );
 });
 
@@ -71,7 +71,7 @@ describe("FailureTrackerLive", () => {
       const result = yield* Effect.either(effect);
 
       expect(result._tag).toBe("Right");
-    })
+    }),
   );
 
   it.effect("should fail with Error when saveFailure rejects", () =>
@@ -87,6 +87,6 @@ describe("FailureTrackerLive", () => {
       if (result._tag === "Left") {
         expect(result.left).toBeInstanceOf(Error);
       }
-    })
+    }),
   );
 });

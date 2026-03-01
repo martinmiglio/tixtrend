@@ -15,7 +15,10 @@ async function invokeLambdaWithRetry(
   batch: string[],
   batchIndex: number,
   retryCount = 0,
-): Promise<{ success: true; batch: number } | { success: false; batch: number; error: unknown }> {
+): Promise<
+  | { success: true; batch: number }
+  | { success: false; batch: number; error: unknown }
+> {
   try {
     await lambda.send(
       new InvokeCommand({
@@ -84,10 +87,14 @@ export const handler: EventBridgeHandler<
       batches.push(result.eventIds.slice(i, i + BATCH_SIZE));
     }
 
-    console.info(`Split into ${batches.length} batches of ${BATCH_SIZE} events`);
+    console.info(
+      `Split into ${batches.length} batches of ${BATCH_SIZE} events`,
+    );
 
     // Invoke consumer Lambda for each batch (async invocation with retry, concurrency-limited)
-    const invocationResults: Awaited<ReturnType<typeof invokeLambdaWithRetry>>[] = [];
+    const invocationResults: Awaited<
+      ReturnType<typeof invokeLambdaWithRetry>
+    >[] = [];
     for (let i = 0; i < batches.length; i += CONCURRENCY_LIMIT) {
       const chunk = batches.slice(i, i + CONCURRENCY_LIMIT);
       const chunkResults = await Promise.all(

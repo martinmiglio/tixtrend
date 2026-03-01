@@ -109,7 +109,10 @@ export const shouldSkipEvent = async (eventId: string): Promise<boolean> => {
     const recentFailures = await getRecentFailures(eventId, 7);
     return recentFailures.length >= 3;
   } catch (error) {
-    console.error(`Failed to check failures for ${eventId}, allowing event to proceed:`, error);
+    console.error(
+      `Failed to check failures for ${eventId}, allowing event to proceed:`,
+      error,
+    );
     return false;
   }
 };
