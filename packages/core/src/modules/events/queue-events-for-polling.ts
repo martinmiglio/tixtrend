@@ -79,10 +79,12 @@ const queueWatchList = async () => {
     );
   }
 
-  const eventIds = Items.map((item) => item.event_id);
+  const eventIds = Items.map(
+    (item: Record<string, unknown>) => item.event_id as string,
+  );
   console.info("watch list eventIds", eventIds);
 
-  const promises = eventIds.map(async (event_id) => {
+  const promises = eventIds.map(async (event_id: string) => {
     return await sendEventToQueue(event_id);
   });
 
