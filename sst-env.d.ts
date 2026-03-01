@@ -9,17 +9,25 @@ declare module "sst" {
       "type": "sst.aws.Router"
       "url": string
     }
+    "EventPollFailuresTable": {
+      "name": string
+      "type": "sst.aws.Dynamo"
+    }
     "EventPricesTable": {
       "name": string
       "type": "sst.aws.Dynamo"
     }
-    "PricePollQueue": {
-      "type": "sst.aws.Queue"
-      "url": string
+    "PriceConsumer": {
+      "name": string
+      "type": "sst.aws.Function"
     }
     "Site": {
       "type": "sst.aws.TanstackStart"
       "url": string
+    }
+    "TicketmasterApiKey": {
+      "type": "sst.Secret"
+      "value": string
     }
     "WatchedEventsTable": {
       "name": string

@@ -5,7 +5,7 @@
 /**
  * Event management handlers
  */
-export { queueEventsForPolling } from "./modules/events/queue-events-for-polling";
+export { getEventsForPolling } from "./modules/events/get-events-for-polling";
 export { watchEventHandler } from "./modules/events/watch-event";
 export { findEventHandler } from "./modules/events/find-event";
 export { getEventHandler } from "./modules/events/get-event";
@@ -44,7 +44,6 @@ export type { EventData } from "./lib/ticketmaster/events";
 // =============================================================================
 // The following modules are internal implementation details:
 // - lib/aws/dynamo (DynamoDB operations)
-// - lib/aws/sqs (SQS operations)
 // - lib/ticketmaster/client (HTTP client)
 // - lib/ticketmaster/events (Ticketmaster API calls)
 // - lib/ticketmaster/schemas (Zod validation schemas)
