@@ -48,7 +48,11 @@ export const processEventWithRetry = (eventId: string, retryPolicy: Schedule.Sch
           // Save failure synchronously using Effect
           yield* tracker
             .saveFailure(eventId, {
-              _tag: error instanceof NoPriceDataError ? "NoPriceDataError" : "ProcessingError",
+              _tag: error instanceof NoPriceDataError
+                ? "NoPriceDataError"
+                : (error as any)?._tag === "TimeoutException"
+                  ? "TimeoutError"
+                  : "ProcessingError",
               eventId,
               cause: error,
             })
@@ -60,7 +64,7 @@ export const processEventWithRetry = (eventId: string, retryPolicy: Schedule.Sch
                     saveError
                   );
                   // Don't fail the whole process if failure tracking fails
-                  return yield* Effect.succeed(undefined);
+                  return;
                 })
               )
             );

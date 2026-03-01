@@ -42,6 +42,7 @@ export type GetEventsForPollingResult = {
     popular: number;
     saleSoon: number;
     skipped: number;
+    duplicatesRemoved: number;
     total: number;
   };
 };
@@ -79,11 +80,13 @@ export const getEventsForPolling =
       numberOfSaleSoonEvents,
     );
 
-    const eventIds = Array.from(new Set([
+    const allEventIds = [
       ...watchListResults.eventIds,
       ...popularEventsResults.eventIds,
       ...saleSoonEventsResults.eventIds,
-    ]));
+    ];
+    const eventIds = Array.from(new Set(allEventIds));
+    const duplicatesRemoved = allEventIds.length - eventIds.length;
 
     const totalSkipped =
       watchListResults.skipped +
@@ -100,6 +103,7 @@ export const getEventsForPolling =
         popular: popularEventsResults.eventIds.length,
         saleSoon: saleSoonEventsResults.eventIds.length,
         skipped: totalSkipped,
+        duplicatesRemoved,
         total: eventIds.length,
       },
     };
@@ -115,29 +119,19 @@ const collectWatchList = async () => {
   console.info("watch list count", Items.length);
 
   if (Items.length > MAX_EVENTS) {
+    const originalLength = Items.length;
     Items = Items.slice(0, MAX_EVENTS);
     console.warn(
-      `Watch list has ${Items.length} events. Only collecting ${MAX_EVENTS} events.`,
+      `Watch list has ${originalLength} events. Only collecting ${MAX_EVENTS} events.`,
     );
   }
 
   const eventIds = Items.map((item) => item.event_id);
   console.info("watch list eventIds", eventIds);
 
-  // Filter out events that should be skipped due to recent failures (batched queries)
-  const { eventsToInclude, eventsToSkip } =
-    await filterEventsWithBatchedQueries(eventIds);
-
-  if (eventsToSkip.length > 0) {
-    console.info(
-      `Skipping ${eventsToSkip.length} watched events due to recent failures:`,
-      eventsToSkip,
-    );
-  }
-
   return {
-    eventIds: eventsToInclude,
-    skipped: eventsToSkip.length,
+    eventIds,
+    skipped: 0,
   };
 };
 
@@ -155,7 +149,7 @@ const collectPopularEvents = async (numberOfEvents: number) => {
         return [];
       }
 
-      const delay = page * TIME_BETWEEN_REQUESTS;
+      const delay = index * TIME_BETWEEN_REQUESTS;
       await new Promise((resolve) => setTimeout(resolve, delay));
 
       return await fetchEventIdsByPage(page, size);
@@ -198,7 +192,7 @@ const collectSaleSoonEvents = async (numberOfEvents: number) => {
         return [];
       }
 
-      const delay = page * TIME_BETWEEN_REQUESTS;
+      const delay = index * TIME_BETWEEN_REQUESTS;
       await new Promise((resolve) => setTimeout(resolve, delay));
 
       return await fetchEventIdsByPageSorted(page, size, "onSaleStartDate,asc");

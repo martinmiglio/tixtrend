@@ -7,7 +7,9 @@ import {
 import { Resource } from "sst";
 
 const client = new DynamoDBClient({});
-const dynamo = DynamoDBDocumentClient.from(client);
+const dynamo = DynamoDBDocumentClient.from(client, {
+  marshallOptions: { removeUndefinedValues: true },
+});
 
 /**
  * Simple error type for tracking poll failures
@@ -44,10 +46,11 @@ export const saveFailure = async (
   // TTL: 30 days from now (for automatic cleanup)
   const ttl = Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60;
 
-  const errorMessage =
+  const rawMessage =
     error._tag === "ProcessingError" && error.cause instanceof Error
       ? error.cause.message
       : `${error._tag}: ${JSON.stringify(error)}`;
+  const errorMessage = rawMessage.slice(0, 200);
 
   await dynamo.send(
     new PutCommand({
@@ -102,6 +105,11 @@ export const getRecentFailures = async (
  * @returns true if the event should be skipped, false otherwise
  */
 export const shouldSkipEvent = async (eventId: string): Promise<boolean> => {
-  const recentFailures = await getRecentFailures(eventId, 7);
-  return recentFailures.length >= 3;
+  try {
+    const recentFailures = await getRecentFailures(eventId, 7);
+    return recentFailures.length >= 3;
+  } catch (error) {
+    console.error(`Failed to check failures for ${eventId}, allowing event to proceed:`, error);
+    return false;
+  }
 };

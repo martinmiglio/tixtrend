@@ -173,4 +173,10 @@ describe("shouldSkipEvent", () => {
 
     expect(await shouldSkipEvent("e")).toBe(false);
   });
+
+  it("returns false when DynamoDB query fails", async () => {
+    mockSend.mockRejectedValueOnce(new Error("DynamoDB service unavailable"));
+
+    expect(await shouldSkipEvent("e")).toBe(false);
+  });
 });

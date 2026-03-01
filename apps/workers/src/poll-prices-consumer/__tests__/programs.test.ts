@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@effect/vitest";
-import { Effect, Layer, Ref, Schedule } from "effect";
+import { Effect, Fiber, Layer, Ref, Schedule, TestClock } from "effect";
 import { NoPriceDataError } from "@tixtrend/core/modules/prices";
 import { processEventWithRetry, processBatch } from "../programs";
 import { EventPoller, FailureTracker, Logger } from "../services";
@@ -206,6 +206,50 @@ describe("poll-prices-consumer programs", () => {
         expect(result).toBeNull();
         expect(count).toBe(1); // No retries
         expect(tag).toBe("NoPriceDataError");
+      })
+    );
+
+    it.effect("should track timeout as TimeoutError", () =>
+      Effect.gen(function* () {
+        // Simulate a TimeoutException — the same error shape Effect.timeout produces
+        const timeoutError = Object.assign(new Error("Timeout"), { _tag: "TimeoutException" });
+
+        const timeoutPoller = Layer.succeed(
+          EventPoller,
+          EventPoller.of({
+            pollEvent: () => Effect.fail(timeoutError),
+          })
+        );
+
+        const savedTag = yield* Ref.make("");
+
+        const trackingFailureTracker = Layer.succeed(
+          FailureTracker,
+          FailureTracker.of({
+            saveFailure: (_eventId, error) =>
+              Effect.sync(() => {
+                Ref.set(savedTag, error._tag).pipe(Effect.runSync);
+              }),
+          })
+        );
+
+        const layer = Layer.mergeAll(
+          timeoutPoller,
+          trackingFailureTracker,
+          Layer.succeed(Logger, Logger.of({
+            info: () => Effect.succeed(undefined),
+            warn: () => Effect.succeed(undefined),
+            error: () => Effect.succeed(undefined),
+          }))
+        );
+
+        const result = yield* processEventWithRetry("event-timeout", testRetryPolicy).pipe(
+          Effect.provide(layer)
+        );
+        const tag = yield* Ref.get(savedTag);
+
+        expect(result).toBeNull();
+        expect(tag).toBe("TimeoutError");
       })
     );
 

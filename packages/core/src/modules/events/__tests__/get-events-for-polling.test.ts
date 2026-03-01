@@ -64,6 +64,7 @@ describe("getEventsForPolling", () => {
       popular: 0,
       saleSoon: 0,
       skipped: 0,
+      duplicatesRemoved: 0,
       total: 0,
     });
   });
@@ -83,21 +84,29 @@ describe("getEventsForPolling", () => {
     expect(result.eventIds).toContain("w3");
   });
 
-  it("skips events where shouldSkipEvent returns true, increments stats.skipped", async () => {
+  it("skips popular/saleSoon events where shouldSkipEvent returns true, but never skips watched events", async () => {
     mockScanWatchedEvents.mockResolvedValue([
       { event_id: "w1" },
       { event_id: "w2" },
       { event_id: "w3" },
     ]);
-    mockShouldSkipEvent.mockImplementation(async (id: string) => id === "w2");
+    // Return popular events on first page, empty on subsequent
+    mockFetchEventIdsByPage.mockResolvedValueOnce(["p1", "p2"]).mockResolvedValue([]);
+    // shouldSkipEvent returns true for w2 and p2
+    mockShouldSkipEvent.mockImplementation(async (id: string) => id === "w2" || id === "p2");
 
     const result = await getEventsForPolling();
 
+    // Watched events are exempt from failure-skipping, so w2 is still included
     expect(result.eventIds).toContain("w1");
+    expect(result.eventIds).toContain("w2");
     expect(result.eventIds).toContain("w3");
-    expect(result.eventIds).not.toContain("w2");
+    expect(result.stats.watchList).toBe(3);
+    // Popular event p2 should be skipped
+    expect(result.eventIds).toContain("p1");
+    expect(result.eventIds).not.toContain("p2");
     expect(result.stats.skipped).toBeGreaterThanOrEqual(1);
-    expect(result.stats.watchList).toBe(2);
+    expect(result.stats.popular).toBe(1); // p1 only, p2 skipped
   });
 
   it("limits watchlist to MAX_EVENTS (4000) if it exceeds that", async () => {
@@ -126,9 +135,9 @@ describe("getEventsForPolling", () => {
     expect(result.eventIds).toContain("p1");
   });
 
-  it("does not deduplicate events across categories", async () => {
-    // The implementation does NOT deduplicate between categories.
-    // If the same event appears in both popular and on-sale-soon, both are included.
+  it("deduplicates events across categories and tracks duplicatesRemoved", async () => {
+    // The implementation deduplicates between categories using Set.
+    // If the same event appears in multiple categories, duplicates are removed.
     const watchItems = Array.from({ length: 3990 }, (_, i) => ({
       event_id: `w${i}`,
     }));
@@ -145,8 +154,9 @@ describe("getEventsForPolling", () => {
     expect(result.stats.popular).toBe(10);
     // saleSoon gets 0 remaining
     expect(result.stats.saleSoon).toBe(0);
+    // total is after dedup, so it equals watchList + popular + saleSoon - duplicatesRemoved
     expect(result.stats.total).toBe(
-      result.stats.watchList + result.stats.popular + result.stats.saleSoon,
+      result.stats.watchList + result.stats.popular + result.stats.saleSoon - result.stats.duplicatesRemoved,
     );
   });
 
@@ -185,7 +195,7 @@ describe("getEventsForPolling", () => {
     expect(result.stats.skipped).toBeGreaterThanOrEqual(1);
     expect(result.stats.total).toBe(result.eventIds.length);
     expect(result.stats.total).toBe(
-      result.stats.watchList + result.stats.popular + result.stats.saleSoon,
+      result.stats.watchList + result.stats.popular + result.stats.saleSoon - result.stats.duplicatesRemoved,
     );
   });
 });

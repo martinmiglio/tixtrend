@@ -92,17 +92,17 @@ describe("cron-trigger", () => {
       const firstCall = mockLambdaSend.mock.calls[0]![0];
       expect(firstCall.input).toBeDefined();
       expect(firstCall.input.FunctionName).toBe("test-price-consumer-function");
-      const firstPayload = JSON.parse(firstCall.input.Payload.toString());
+      const firstPayload = JSON.parse(firstCall.input.Payload);
       expect(firstPayload.Records).toHaveLength(10);
       expect(firstPayload.Records[0].body).toBe("event-0");
 
       // Verify second batch (10 events)
-      const secondPayload = JSON.parse(mockLambdaSend.mock.calls[1]![0].input.Payload.toString());
+      const secondPayload = JSON.parse(mockLambdaSend.mock.calls[1]![0].input.Payload);
       expect(secondPayload.Records).toHaveLength(10);
       expect(secondPayload.Records[0].body).toBe("event-10");
 
       // Verify third batch (5 events)
-      const thirdPayload = JSON.parse(mockLambdaSend.mock.calls[2]![0].input.Payload.toString());
+      const thirdPayload = JSON.parse(mockLambdaSend.mock.calls[2]![0].input.Payload);
       expect(thirdPayload.Records).toHaveLength(5);
       expect(thirdPayload.Records[0].body).toBe("event-20");
 
@@ -125,7 +125,7 @@ describe("cron-trigger", () => {
       await handler(createMockEvent("2025-11-10T10:00:00Z"), {} as any, vi.fn() as any);
 
       expect(mockLambdaSend).toHaveBeenCalledOnce();
-      const payload = JSON.parse(mockLambdaSend.mock.calls[0]![0].input.Payload.toString());
+      const payload = JSON.parse(mockLambdaSend.mock.calls[0]![0].input.Payload);
       expect(payload.Records).toHaveLength(10);
     });
 
@@ -138,7 +138,7 @@ describe("cron-trigger", () => {
       await handler(createMockEvent("2025-11-10T10:00:00Z"), {} as any, vi.fn() as any);
 
       expect(mockLambdaSend).toHaveBeenCalledOnce();
-      const payload = JSON.parse(mockLambdaSend.mock.calls[0]![0].input.Payload.toString());
+      const payload = JSON.parse(mockLambdaSend.mock.calls[0]![0].input.Payload);
       expect(payload.Records).toHaveLength(1);
       expect(payload.Records[0].body).toBe("event-1");
     });
@@ -177,7 +177,7 @@ describe("cron-trigger", () => {
 
       await handler(createMockEvent("2025-11-10T10:00:00Z"), {} as any, vi.fn() as any);
 
-      const payload = JSON.parse(mockLambdaSend.mock.calls[0]![0].input.Payload.toString());
+      const payload = JSON.parse(mockLambdaSend.mock.calls[0]![0].input.Payload);
       expect(payload.Records[0].messageId).toBe("batch-0-event-123");
       expect(payload.Records[1].messageId).toBe("batch-0-event-456");
     });
@@ -201,15 +201,15 @@ describe("cron-trigger", () => {
       // First attempt fails immediately
       await vi.advanceTimersByTimeAsync(0);
 
-      // Second attempt after 1s delay
+      // Second attempt after ~1s delay (500-1000ms with jitter)
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Failed to invoke batch 0 (attempt 1/3), retrying in 1000ms")
+        expect.stringContaining("attempt 1/3")
       );
       await vi.advanceTimersByTimeAsync(1000);
 
-      // Third attempt after 2s delay (total 3s from start)
+      // Third attempt after ~2s delay (1000-2000ms with jitter)
       expect(consoleWarnSpy).toHaveBeenCalledWith(
-        expect.stringContaining("Failed to invoke batch 0 (attempt 2/3), retrying in 2000ms")
+        expect.stringContaining("attempt 2/3")
       );
       await vi.advanceTimersByTimeAsync(2000);
 
@@ -334,9 +334,7 @@ describe("cron-trigger", () => {
       const invokeCommand = mockLambdaSend.mock.calls[0]![0];
       expect(invokeCommand.input.FunctionName).toBe("test-price-consumer-function");
       expect(invokeCommand.input.InvocationType).toBe("Event");
-      expect(invokeCommand.input.Payload).toBeInstanceOf(Buffer);
-
-      const payload = JSON.parse(invokeCommand.input.Payload.toString());
+      const payload = JSON.parse(invokeCommand.input.Payload);
       expect(payload).toEqual({
         Records: [
           {
@@ -347,7 +345,7 @@ describe("cron-trigger", () => {
       });
     });
 
-    it("should encode payload as UTF-8 Buffer", async () => {
+    it("should encode payload as JSON string", async () => {
       vi.mocked(getEventsForPolling).mockResolvedValue({
         eventIds: ["event-special-™"],
         stats: { watchList: 1, popular: 0, saleSoon: 0, skipped: 0, total: 1 },
@@ -356,7 +354,8 @@ describe("cron-trigger", () => {
       await handler(createMockEvent("2025-11-10T10:00:00Z"), {} as any, vi.fn() as any);
 
       const invokeCommand = mockLambdaSend.mock.calls[0]![0];
-      const payload = JSON.parse(invokeCommand.input.Payload.toString("utf8"));
+      expect(typeof invokeCommand.input.Payload).toBe("string");
+      const payload = JSON.parse(invokeCommand.input.Payload);
       expect(payload.Records[0].body).toBe("event-special-™");
     });
   });

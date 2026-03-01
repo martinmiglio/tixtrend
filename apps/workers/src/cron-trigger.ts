@@ -6,6 +6,7 @@ import { Resource } from "sst";
 const lambda = new LambdaClient({});
 const BATCH_SIZE = 10;
 const MAX_INVOCATION_RETRIES = 3;
+const CONCURRENCY_LIMIT = 25;
 
 /**
  * Helper function to invoke Lambda with exponential backoff retry
@@ -20,15 +21,12 @@ async function invokeLambdaWithRetry(
       new InvokeCommand({
         FunctionName: Resource.PriceConsumer.name,
         InvocationType: "Event", // Async invocation
-        Payload: Buffer.from(
-          JSON.stringify({
-            Records: batch.map((eventId) => ({
-              body: eventId,
-              messageId: `batch-${batchIndex}-${eventId}`,
-            })),
-          }),
-          "utf8",
-        ),
+        Payload: JSON.stringify({
+          Records: batch.map((eventId) => ({
+            body: eventId,
+            messageId: `batch-${batchIndex}-${eventId}`,
+          })),
+        }),
       }),
     );
     return { success: true, batch: batchIndex };
@@ -43,8 +41,9 @@ async function invokeLambdaWithRetry(
       return { success: false, batch: batchIndex, error };
     }
 
-    // Exponential backoff: 1s, 2s, 4s
-    const delayMs = Math.pow(2, retryCount) * 1000;
+    // Exponential backoff with jitter: ~1s, ~2s, ~4s
+    const baseDelay = Math.pow(2, retryCount) * 1000;
+    const delayMs = Math.round(baseDelay * (0.5 + Math.random() * 0.5));
     console.warn(
       `Failed to invoke batch ${batchIndex} (attempt ${retryCount + 1}/${MAX_INVOCATION_RETRIES}), retrying in ${delayMs}ms...`,
     );
@@ -87,13 +86,17 @@ export const handler: EventBridgeHandler<
 
     console.info(`Split into ${batches.length} batches of ${BATCH_SIZE} events`);
 
-    // Invoke consumer Lambda for each batch (async invocation with retry)
-    const invocations = batches.map((batch, index) =>
-      invokeLambdaWithRetry(batch, index),
-    );
-
-    // Wait for all invocations to be queued
-    const invocationResults = await Promise.all(invocations);
+    // Invoke consumer Lambda for each batch (async invocation with retry, concurrency-limited)
+    const invocationResults: Awaited<ReturnType<typeof invokeLambdaWithRetry>>[] = [];
+    for (let i = 0; i < batches.length; i += CONCURRENCY_LIMIT) {
+      const chunk = batches.slice(i, i + CONCURRENCY_LIMIT);
+      const chunkResults = await Promise.all(
+        chunk.map((batch, chunkIndex) =>
+          invokeLambdaWithRetry(batch, i + chunkIndex),
+        ),
+      );
+      invocationResults.push(...chunkResults);
+    }
     const successful = invocationResults.filter((r) => r.success).length;
 
     console.info(
