@@ -1,28 +1,136 @@
-import { queueEventsForPolling } from "@tixtrend/core";
+import { InvokeCommand, LambdaClient } from "@aws-sdk/client-lambda";
+import { getEventsForPolling } from "@tixtrend/core";
 import type { EventBridgeHandler } from "aws-lambda";
+import { Resource } from "sst";
+
+const lambda = new LambdaClient({});
+const BATCH_SIZE = 10;
+const MAX_INVOCATION_RETRIES = 3;
+const CONCURRENCY_LIMIT = 25;
+
+/**
+ * Helper function to invoke Lambda with exponential backoff retry
+ */
+async function invokeLambdaWithRetry(
+  batch: string[],
+  batchIndex: number,
+  retryCount = 0,
+): Promise<
+  | { success: true; batch: number }
+  | { success: false; batch: number; error: unknown }
+> {
+  try {
+    await lambda.send(
+      new InvokeCommand({
+        FunctionName: Resource.PriceConsumer.name,
+        InvocationType: "Event", // Async invocation
+        Payload: JSON.stringify({
+          Records: batch.map((eventId) => ({
+            body: eventId,
+            messageId: `batch-${batchIndex}-${eventId}`,
+          })),
+        }),
+      }),
+    );
+    return { success: true, batch: batchIndex };
+  } catch (error) {
+    const isLastRetry = retryCount >= MAX_INVOCATION_RETRIES - 1;
+
+    if (isLastRetry) {
+      console.error(
+        `Failed to invoke batch ${batchIndex} after ${MAX_INVOCATION_RETRIES} attempts:`,
+        error,
+      );
+      return { success: false, batch: batchIndex, error };
+    }
+
+    // Exponential backoff with jitter: ~1s, ~2s, ~4s
+    const baseDelay = Math.pow(2, retryCount) * 1000;
+    const delayMs = Math.round(baseDelay * (0.5 + Math.random() * 0.5));
+    console.warn(
+      `Failed to invoke batch ${batchIndex} (attempt ${retryCount + 1}/${MAX_INVOCATION_RETRIES}), retrying in ${delayMs}ms...`,
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, delayMs));
+    return invokeLambdaWithRetry(batch, batchIndex, retryCount + 1);
+  }
+}
 
 /**
  * EventBridge cron handler (runs daily at 10am UTC)
- * Queues watched events and popular events to SQS for price polling
+ * Collects events and directly invokes consumer Lambda in batches
  */
 export const handler: EventBridgeHandler<
   "Scheduled Event",
   void,
   void
 > = async (event) => {
-  console.info("Cron triggered:", event.time);
+  console.info(`Cron triggered at ${event.time}`);
 
   try {
-    const result = await queueEventsForPolling();
+    // Collect all event IDs (with failure filtering)
+    const result = await getEventsForPolling();
 
-    console.info("Successfully queued events:", {
-      watchList: result.watchList,
-      popular: result.popular,
-      saleSoon: result.saleSoon,
-      total: result.total,
+    console.info(
+      `Collected ${result.stats.total} events: ${result.stats.watchList} watched, ${result.stats.popular} popular, ${result.stats.saleSoon} on-sale-soon`,
+    );
+
+    if (result.stats.skipped > 0) {
+      console.info(
+        `Skipped ${result.stats.skipped} events due to recent failures (failed 3+ times in last 7 days)`,
+      );
+    }
+
+    // Chunk into batches of 10
+    const batches: string[][] = [];
+    for (let i = 0; i < result.eventIds.length; i += BATCH_SIZE) {
+      batches.push(result.eventIds.slice(i, i + BATCH_SIZE));
+    }
+
+    console.info(
+      `Split into ${batches.length} batches of ${BATCH_SIZE} events`,
+    );
+
+    // Invoke consumer Lambda for each batch (async invocation with retry, concurrency-limited)
+    const invocationResults: Awaited<
+      ReturnType<typeof invokeLambdaWithRetry>
+    >[] = [];
+    for (let i = 0; i < batches.length; i += CONCURRENCY_LIMIT) {
+      const chunk = batches.slice(i, i + CONCURRENCY_LIMIT);
+      const chunkResults = await Promise.all(
+        chunk.map((batch, chunkIndex) =>
+          invokeLambdaWithRetry(batch, i + chunkIndex),
+        ),
+      );
+      invocationResults.push(...chunkResults);
+    }
+    const successful = invocationResults.filter((r) => r.success).length;
+
+    console.info(
+      `Successfully invoked ${successful}/${batches.length} batches`,
+    );
+
+    console.info("Event breakdown:", {
+      watchList: result.stats.watchList,
+      popular: result.stats.popular,
+      saleSoon: result.stats.saleSoon,
+      skipped: result.stats.skipped,
+      total: result.stats.total,
+      batches: batches.length,
     });
+
+    // Report failed invocations
+    const failed = invocationResults.filter((r) => !r.success);
+    if (failed.length > 0) {
+      console.error(
+        `${failed.length} batch invocations failed:`,
+        failed.map((f) => f.batch),
+      );
+    }
   } catch (error) {
-    console.error("Error queueing events:", error);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error(`Failed to process events: ${errorMessage}`);
+    console.error("Full error details:", error);
     throw error;
   }
 };

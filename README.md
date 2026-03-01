@@ -1,6 +1,6 @@
 # TixTrend
 
-[![TixTrend](https://tixtrend.martinmiglio.dev/og)](https://tixtrend.martinmiglio.dev/)
+[![TixTrend](https://tixtrend.martinmiglio.dev/og.png)](https://tixtrend.martinmiglio.dev/)
 
 TixTrend is a website that allows you to track ticket prices for your favorite events over time. It provides a user-friendly interface to visualize historical price trends and make informed decisions about purchasing tickets.
 

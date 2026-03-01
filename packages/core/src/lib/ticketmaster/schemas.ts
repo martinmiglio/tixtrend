@@ -65,9 +65,11 @@ export const PriceRangeSchema = v.object({
 
 /**
  * Venue schema
+ *
+ * Note: name field is optional as Ticketmaster API may return venues without names.
  */
 export const VenueSchema = v.object({
-  name: v.string(),
+  name: v.optional(v.string()),
 });
 
 /**

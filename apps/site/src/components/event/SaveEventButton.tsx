@@ -3,19 +3,26 @@ import { Button } from "@tixtrend/ui/components/button";
 import { toast } from "@tixtrend/ui/lib/toast";
 import { Heart } from "lucide-react";
 import type React from "react";
-import { useEffect, useState } from "react";
+import { useCallback, useSyncExternalStore } from "react";
+
+function subscribeToStorage(callback: () => void) {
+  window.addEventListener("storage", callback);
+  return () => window.removeEventListener("storage", callback);
+}
+
+function getIsSaved(eventId: string): boolean {
+  const savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");
+  return savedEvents.some((e: EventData) => e.id === eventId);
+}
 
 const SaveEventButton = ({ event }: { event: EventData }) => {
-  const [saved, setSaved] = useState(false);
+  const saved = useSyncExternalStore(
+    subscribeToStorage,
+    () => getIsSaved(event.id),
+    () => false,
+  );
 
-  useEffect(() => {
-    const savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");
-    setSaved(
-      savedEvents.some((savedEvent: EventData) => savedEvent.id === event.id),
-    );
-  }, [event.id]);
-
-  const saveEvent = () => {
+  const saveEvent = useCallback(() => {
     let savedEvents = JSON.parse(localStorage.getItem("savedEvents") ?? "[]");
     if (saved) {
       savedEvents = savedEvents.filter(
@@ -27,11 +34,11 @@ const SaveEventButton = ({ event }: { event: EventData }) => {
       toast.success("Event saved to your list!");
     }
     localStorage.setItem("savedEvents", JSON.stringify(savedEvents));
-    setSaved(!saved);
-  };
+    window.dispatchEvent(new Event("storage"));
+  }, [event, saved]);
 
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    event.preventDefault();
+  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    e.preventDefault();
     saveEvent();
   };
 

@@ -1,4 +1,5 @@
 import { TicketmasterValidationError } from "./errors";
+import { Resource } from "sst";
 import * as v from "valibot";
 
 /**
@@ -55,10 +56,10 @@ class TicketMasterClient {
     path: string,
     params?: { [key: string]: string },
   ): Promise<unknown> {
-    const apiKey = process.env.TICKETMASTER_API_KEY;
+    const apiKey = Resource.TicketmasterApiKey.value;
 
     if (!apiKey) {
-      throw new Error("TICKETMASTER_API_KEY is not defined");
+      throw new Error("TicketmasterApiKey secret is not defined");
     }
 
     const url = new URL(path, this.baseUrl);

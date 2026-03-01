@@ -62,14 +62,25 @@ export const addWatchedEvent = async ({
 };
 
 export const scanWatchedEvents = async () => {
-  const { Items } = await dynamo.send(
-    new ScanCommand({
-      TableName: Resource.WatchedEventsTable.name,
-      ProjectionExpression: "event_id",
-    }),
-  );
+  const items: Record<string, any>[] = [];
+  let lastKey: Record<string, any> | undefined;
 
-  return Items || [];
+  do {
+    const result = await dynamo.send(
+      new ScanCommand({
+        TableName: Resource.WatchedEventsTable.name,
+        ProjectionExpression: "event_id",
+        ExclusiveStartKey: lastKey,
+      }),
+    );
+
+    if (result.Items) {
+      items.push(...result.Items);
+    }
+    lastKey = result.LastEvaluatedKey;
+  } while (lastKey);
+
+  return items;
 };
 
 // Event Prices Table operations

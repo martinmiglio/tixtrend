@@ -16,16 +16,19 @@ export default $config({
     };
   },
   async run() {
-    const TICKETMASTER_API_KEY = process.env.TICKETMASTER_API_KEY;
-
-    if (!TICKETMASTER_API_KEY) {
-      throw new Error("TICKETMASTER_API_KEY is not defined");
-    }
+    const ticketmasterApiKey = new sst.Secret("TicketmasterApiKey");
 
     const stage = $app.stage;
     const isProduction = stage === "production";
 
-    const tables: Record<string, sst.aws.Dynamo> = isProduction
+    // Use SOFT validation in production to handle incomplete API responses gracefully
+    // Use STRICT in other environments to catch schema issues during development
+    const TICKETMASTER_VALIDATION_MODE =
+      process.env.TICKETMASTER_VALIDATION_MODE ||
+      (isProduction ? "SOFT" : "STRICT");
+
+    // Existing tables were created before SST — adopt them in production
+    const adoptedTables = isProduction
       ? {
           eventPricesTable: sst.aws.Dynamo.get(
             "EventPricesTable",
@@ -56,16 +59,21 @@ export default $config({
           }),
         };
 
-    const pricePollQueue: sst.aws.Queue = isProduction
-      ? sst.aws.Queue.get(
-          "PricePollQueue",
-          "https://sqs.us-east-1.amazonaws.com/501123347638/tixtrend-price-poll-queue.fifo",
-        )
-      : new sst.aws.Queue("PricePollQueue", {
-          fifo: {
-            contentBasedDeduplication: true,
-          },
-        });
+    // New tables — SST creates and manages them in all stages
+    const eventPollFailuresTable = new sst.aws.Dynamo(
+      `EventPollFailuresTable`,
+      {
+        deletionProtection: isProduction,
+        fields: {
+          event_id: "string",
+          timestamp: "number",
+        },
+        primaryIndex: { hashKey: "event_id", rangeKey: "timestamp" },
+        ttl: "ttl",
+      },
+    );
+
+    const tables = { ...adoptedTables, eventPollFailuresTable };
 
     const baseDomain = isProduction
       ? "tixtrend.martinmiglio.dev"
@@ -89,38 +97,44 @@ export default $config({
         instance: router,
         domain: baseDomain,
       },
-      link: [...Object.values(tables), pricePollQueue],
+      link: [
+        tables.eventPricesTable,
+        tables.watchedEventsTable,
+        ticketmasterApiKey,
+      ],
 
       environment: {
-        TICKETMASTER_API_KEY,
+        TICKETMASTER_VALIDATION_MODE,
       },
     });
 
-    new sst.aws.Cron("PricePollerCron", {
-      schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
-      job: {
-        handler: "apps/workers/src/cron-trigger.handler",
-        link: [...Object.values(tables), pricePollQueue],
-        environment: {
-          TICKETMASTER_API_KEY,
-        },
+    // Create standalone consumer Lambda for direct invocation.
+    // Deployed to all stages (including martin) to allow manual invocation for testing.
+    const priceConsumer = new sst.aws.Function("PriceConsumer", {
+      handler: "apps/workers/src/poll-prices-consumer.handler",
+      link: [...Object.values(tables), ticketmasterApiKey],
+      environment: {
+        TICKETMASTER_VALIDATION_MODE,
       },
+      timeout: "15 minutes",
+      memory: "512 MB",
+      reservedConcurrency: 50,
     });
 
-    pricePollQueue.subscribe(
-      {
-        handler: "apps/workers/src/poll-prices-consumer.handler",
-        link: [...Object.values(tables)],
-        environment: {
-          TICKETMASTER_API_KEY,
+    // Only enable cron in develop and production stages
+    if (stage === "develop" || stage === "production") {
+      new sst.aws.Cron("PricePollerCron", {
+        schedule: "cron(0 10 * * ? *)", // Daily at 10am UTC
+        job: {
+          handler: "apps/workers/src/cron-trigger.handler",
+          link: [...Object.values(tables), priceConsumer, ticketmasterApiKey],
+          environment: {
+            TICKETMASTER_VALIDATION_MODE,
+          },
+          timeout: "15 minutes",
         },
-      },
-      {
-        batch: {
-          size: 10,
-        },
-      },
-    );
+      });
+    }
   },
   console: {
     autodeploy: {

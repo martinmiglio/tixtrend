@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "sst dev",
+    "dev:mono": "sst dev --mode mono --verbose",
     "lint": "prettier -u -l . && turbo lint",
     "lint:fix": "prettier --write . && turbo lint:fix",
     "typecheck": "turbo typecheck",
@@ -21,5 +22,10 @@
     "node": ">=22.0.0",
     "pnpm": ">=9.0.0"
   },
-  "packageManager": "pnpm@9.10.0"
+  "packageManager": "pnpm@9.10.0",
+  "pnpm": {
+    "overrides": {
+      "@smithy/types": "4.8.1"
+    }
+  }
 }

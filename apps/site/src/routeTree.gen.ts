@@ -38,8 +38,8 @@ const EventEventidRoute = EventEventidRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/event/$eventid': typeof EventEventidRoute
-  '/about': typeof AboutIndexRoute
-  '/saved-events': typeof SavedEventsIndexRoute
+  '/about/': typeof AboutIndexRoute
+  '/saved-events/': typeof SavedEventsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -56,7 +56,7 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/event/$eventid' | '/about' | '/saved-events'
+  fullPaths: '/' | '/event/$eventid' | '/about/' | '/saved-events/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/event/$eventid' | '/about' | '/saved-events'
   id: '__root__' | '/' | '/event/$eventid' | '/about/' | '/saved-events/'
@@ -81,14 +81,14 @@ declare module '@tanstack/react-router' {
     '/saved-events/': {
       id: '/saved-events/'
       path: '/saved-events'
-      fullPath: '/saved-events'
+      fullPath: '/saved-events/'
       preLoaderRoute: typeof SavedEventsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about/': {
       id: '/about/'
       path: '/about'
-      fullPath: '/about'
+      fullPath: '/about/'
       preLoaderRoute: typeof AboutIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
