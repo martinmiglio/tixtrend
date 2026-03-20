@@ -12,7 +12,7 @@
   "dependencies": {
     "@aws-sdk/client-lambda": "^3.917.0",
     "@tixtrend/core": "workspace:*",
-    "effect": "^3.18.4"
+    "effect": "^3.20.0"
   },
   "devDependencies": {
     "@effect/vitest": "^0.26.0",
