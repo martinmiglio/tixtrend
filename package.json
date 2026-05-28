@@ -15,7 +15,7 @@
     "@tixtrend/prettier-config": "workspace:*",
     "@types/aws-lambda": "8.10.156",
     "sst": "3.17.12",
-    "turbo": "^2.5.8",
+    "turbo": "^2.9.14",
     "typescript": "^5.9.3"
   },
   "engines": {
